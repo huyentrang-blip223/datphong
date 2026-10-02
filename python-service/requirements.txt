@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pandas
+numpy
+scikit-learn
+SQLAlchemy
+PyMySQL
+python-dotenv
+pydantic
+pytest
+httpx

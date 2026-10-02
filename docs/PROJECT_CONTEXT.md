@@ -161,3 +161,18 @@ The Laravel 9 app now has a first M2 business-flow implementation aligned with t
 - normal availability conflict returns HTTP 409 for JSON/API-style requests
 
 Current local database evidence from the configured `dt07_homestay` connection now shows 583 main tourism records after running `M2TourismDatasetSeeder`, which meets the >=300 M2 evidence threshold. This is a deterministic M2 demo dataset, not the previously prepared 3,850-record target dataset.
+
+## 12. Week 7 / M3 implementation status
+M3 extends the project with the second core business module and an integrated Python data service:
+- local product browsing/filter/detail pages at `/san-pham-dia-phuong`
+- product detail recommendations rendered on the Laravel UI through FastAPI, with Laravel fallback when Python is unavailable
+- cultural experience listing/detail pages at `/trai-nghiem`
+- guest experience booking with capacity checks and HTTP 409 conflict for normal capacity conflicts
+- admin dashboard includes homestay/room/booking/product counts plus Python analytics for seasonality and top homestays
+- `PythonDataService` uses timeout, retry, 30-minute cache, logging, token header, and Eloquent fallback
+- FastAPI endpoints: `/healthz`, `/recommend/local-products/{product_id}`, `/analytics/seasonality`, `/analytics/top-homestays`, `/cache/refresh`
+- ETL script cleans local product CSV input, writes clean CSV and stats JSON, and logs before/after counts
+- runtime data evidence remains 583 main tourism records, meeting the >=300 threshold
+- Python tests, Laravel M1/M2/M3 tests, and the full Laravel suite were executed successfully on 2026-10-02
+
+Known limitation: the runtime dataset is deterministic synthetic/project-seed data, not the previously documented 3,850-record target dataset. Seller CRUD for products remains outside this M3 implementation; browsing/recommendation/product data integration were prioritized.

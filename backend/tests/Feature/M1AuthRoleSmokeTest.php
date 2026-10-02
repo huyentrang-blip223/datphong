@@ -48,6 +48,16 @@ class M1AuthRoleSmokeTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_stale_logout_token_redirects_to_login_instead_of_419(): void
+    {
+        $user = $this->makeUser('logout-stale-smoke@dt07.test', 'guest');
+
+        $this->actingAs($user)
+            ->withSession(['_token' => 'fresh-session-token'])
+            ->post('/dang-xuat', ['_token' => 'stale-form-token'])
+            ->assertRedirect('/dang-nhap');
+    }
+
     private function makeUser(string $email, string $role): User
     {
         return User::create([

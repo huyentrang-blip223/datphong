@@ -2,16 +2,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Homestay;
+use App\Models\Booking;
+use App\Models\LocalProduct;
+use App\Models\Room;
 use App\Models\User;
+use App\Services\PythonDataService;
 
 class DashboardController extends Controller
 {
-    public function admin()
+    public function admin(PythonDataService $pythonDataService)
     {
         return view('dashboard.admin', [
             'homestayCount' => Homestay::count(),
             'pendingCount' => Homestay::where('status', 'pending')->count(),
             'userCount' => User::count(),
+            'roomCount' => Room::count(),
+            'bookingCount' => Booking::count(),
+            'localProductCount' => LocalProduct::where('status', 'published')->count(),
+            'seasonality' => $pythonDataService->seasonality(),
+            'topHomestays' => $pythonDataService->topHomestays(10),
         ]);
     }
 
