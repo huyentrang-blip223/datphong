@@ -14,6 +14,7 @@ Week 6 / M2: first tourism business flow implemented on the existing Laravel 9 a
 - Implemented booking creation inside a DB transaction with deterministic `room_availability.stay_date` ordering and `lockForUpdate()`.
 - Re-checks availability after locking and returns HTTP 409 for JSON availability conflicts.
 - Creates `bookings`, increments `room_availability.units_sold`, and writes `booking_status_logs`.
+- Added and ran `M2TourismDatasetSeeder` to insert an idempotent M2 demo dataset over the >=300-record threshold.
 - Added focused M2 feature tests plus M1 regression coverage through the full suite.
 
 ## Files changed
@@ -35,6 +36,7 @@ Week 6 / M2: first tourism business flow implemented on the existing Laravel 9 a
 - `backend/app/Policies/RoomPolicy.php`
 - `backend/app/Providers/AuthServiceProvider.php`
 - `backend/app/Services/BookingService.php`
+- `backend/database/seeders/M2TourismDatasetSeeder.php`
 - `backend/resources/views/host/rooms/_form.blade.php`
 - `backend/resources/views/host/rooms/create.blade.php`
 - `backend/resources/views/host/rooms/edit.blade.php`
@@ -49,6 +51,7 @@ Week 6 / M2: first tourism business flow implemented on the existing Laravel 9 a
 ## Database/schema changes
 - No migrations were added or run.
 - Implementation maps to existing Week 4 tables: `rooms`, `room_availability`, `seasonal_prices`, `bookings`, and `booking_status_logs`.
+- `M2TourismDatasetSeeder` inserted deterministic demo rows using `m2-*` emails/slugs/names and fixed booking/product-order codes.
 
 ## Routes/endpoints added
 - `GET /tim-kiem` -> `search.index`
@@ -94,6 +97,11 @@ C:\xampp\php\php.exe artisan route:list --path=chu-homestay/rooms
 C:\xampp\php\php.exe -r "...DB record count script..."
 rg --files -g '*.sql' -g '*seed*' -g '*.csv' -g '*.json'
 git status --short
+C:\xampp\php\php.exe -l database/seeders/M2TourismDatasetSeeder.php
+C:\xampp\php\php.exe artisan db:seed --class=M2TourismDatasetSeeder
+C:\xampp\php\php.exe -r "...DB record count script after M2 seed..."
+C:\xampp\php\php.exe artisan test --filter=M2BookingFlowTest
+C:\xampp\php\php.exe artisan test
 ```
 
 ## Actual record counts
@@ -101,19 +109,21 @@ Configured DB connection: `dt07_homestay`.
 
 | Table | Count |
 |---|---:|
-| homestays | 3 |
-| rooms | 0 |
-| room_availability | 0 |
-| seasonal_prices | 0 |
-| bookings | 0 |
-| local_products | 0 |
-| product_orders | 0 |
-| experiences | 0 |
-| experience_bookings | 0 |
-| reviews | 0 |
-| tourism_total | 3 |
+| homestays | 15 |
+| rooms | 36 |
+| room_availability | 360 |
+| seasonal_prices | 36 |
+| bookings | 24 |
+| local_products | 24 |
+| product_orders | 20 |
+| experiences | 24 |
+| experience_bookings | 24 |
+| reviews | 20 |
+| tourism_total | 583 |
 
-Result: the runnable DB does not currently meet the M2 data-proof threshold of >=300 tourism records. The repo snapshot only contains `database/schema_DT07.sql`; no prepared seed SQL/CSV/JSON dataset was found.
+Additional relation count: `product_order_items=40`.
+
+Result: the runnable DB now meets the M2 data-proof threshold of >=300 tourism records. The inserted data is a deterministic M2 demo dataset; the previously documented 3,850-record prepared dataset is still not present in this repository snapshot.
 
 ## Tests and checks actually executed
 | Test/check | Result |
@@ -123,12 +133,13 @@ Result: the runnable DB does not currently meet the M2 data-proof threshold of >
 | `php artisan test --filter=M1AuthRoleSmokeTest` | Passed: 5 tests, 5 passed. |
 | `php artisan test` | Passed: 16 tests, 16 passed. |
 | `route:list` for M2 paths | Passed: new search, booking, and host room routes are registered. |
+| `php artisan db:seed --class=M2TourismDatasetSeeder` | Passed: inserted/updated M2 demo dataset. |
 
 ## Concurrency-test method/result
 True parallel HTTP execution was not used in the local feature test harness. The implemented proof is at the service/transaction level: two booking attempts target the same last available unit; the first booking commits, the second raises `AvailabilityConflictException`, and only one booking row exists for that room/date. The production code uses `DB::transaction()` and `lockForUpdate()` on `room_availability` rows ordered by `stay_date`.
 
 ## Known issues / unfinished work
-- The prepared 3,850-record tourism dataset is not present in this repository snapshot and is not loaded in the configured local DB; data proof remains incomplete.
+- The prepared 3,850-record tourism dataset is not present in this repository snapshot. M2 data proof is satisfied by the new 583-record deterministic demo dataset, not by the full target dataset.
 - `backend/.env` currently shows `SESSION_DRIVER=file`, while the previous M1 handoff said database sessions were enabled. Re-check the student's local `.env` before capturing session-storage evidence.
 - Host room CRUD currently covers room fields only. A richer availability/calendar editing screen can be added next; M2 availability behavior is currently exercised through data rows and booking/search tests.
 - No browser screenshots were captured by Codex.

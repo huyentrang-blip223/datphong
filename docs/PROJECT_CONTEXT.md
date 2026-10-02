@@ -160,4 +160,4 @@ The Laravel 9 app now has a first M2 business-flow implementation aligned with t
 - checkout date remains exclusive for nightly calculations
 - normal availability conflict returns HTTP 409 for JSON/API-style requests
 
-Current local database evidence from the configured `dt07_homestay` connection showed only 3 tourism records loaded, not the >=300 M2 evidence threshold. The prepared 3,850-record tourism dataset is not present in this repository snapshot and still needs to be loaded or supplied before claiming dataset proof.
+Current local database evidence from the configured `dt07_homestay` connection now shows 583 main tourism records after running `M2TourismDatasetSeeder`, which meets the >=300 M2 evidence threshold. This is a deterministic M2 demo dataset, not the previously prepared 3,850-record target dataset.
