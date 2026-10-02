@@ -17,9 +17,10 @@
 <body>
 <header><div class="wrap"><strong>ĐT-07 Homestay Cộng Đồng</strong><nav style="margin-top:8px">
 <a href="{{ route('home') }}">Trang chủ</a>
+<a href="{{ route('search.index') }}">Tìm homestay</a>
 @auth
 @if(auth()->user()->role === 'admin')<a href="{{ route('admin.dashboard') }}">Quản trị</a>@endif
-@if(auth()->user()->role === 'host')<a href="{{ route('host.dashboard') }}">Chủ homestay</a>@endif
+@if(auth()->user()->role === 'host')<a href="{{ route('host.dashboard') }}">Chủ homestay</a><a href="{{ route('host.rooms.index') }}">Phòng</a>@endif
 <form action="{{ route('logout') }}" method="post" style="display:inline">@csrf <button>Đăng xuất</button></form>
 @else <a href="{{ route('login') }}">Đăng nhập</a> @endauth
 </nav></div></header>

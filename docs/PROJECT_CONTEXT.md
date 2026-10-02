@@ -149,3 +149,15 @@ Week 6 / M2 should build the first major business flow:
 - load/use the prepared tourism data
 
 Do not jump to Week 6 until M1 is runnable and minimally verified.
+
+## 11. Week 6 / M2 implementation status
+The Laravel 9 app now has a first M2 business-flow implementation aligned with the Week 4 schema:
+- host room CRUD routes under `/chu-homestay/rooms`
+- public search routes under `/tim-kiem` and `/tim-kiem/ket-qua`
+- guest booking route at `POST /bookings`
+- `BookingService` for quote calculation, availability checks, booking creation, status logs, and transaction/row-level locking with deterministic stay-date ordering
+- price precedence implemented as `room_availability.price_override` -> `seasonal_prices.price_per_night` -> `rooms.base_price`
+- checkout date remains exclusive for nightly calculations
+- normal availability conflict returns HTTP 409 for JSON/API-style requests
+
+Current local database evidence from the configured `dt07_homestay` connection showed only 3 tourism records loaded, not the >=300 M2 evidence threshold. The prepared 3,850-record tourism dataset is not present in this repository snapshot and still needs to be loaded or supplied before claiming dataset proof.

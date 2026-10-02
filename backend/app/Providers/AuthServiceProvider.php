@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Homestay;
+use App\Models\Room;
 use App\Policies\HomestayPolicy;
+use App\Policies\RoomPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -15,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Homestay::class => HomestayPolicy::class,
+        Room::class => RoomPolicy::class,
     ];
 
     /**
