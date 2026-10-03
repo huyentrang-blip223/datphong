@@ -1,0 +1,7 @@
+flowchart LR
+    Search[Search room] --> Booking[Create booking]
+    Booking --> Pay[Mock payment]
+    Booking --> Cancel[Cancel if allowed]
+    Products[Browse products] --> Order[Create product order]
+    Experiences[Browse experiences] --> ExpBook[Book experience]
+    Booking --> Review[Review after completed]

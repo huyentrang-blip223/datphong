@@ -1,0 +1,5 @@
+flowchart LR
+    Dashboard[Host dashboard] --> Rooms[Room CRUD]
+    Rooms --> Availability[Update availability range]
+    Rooms --> Seasonal[Create seasonal price]
+    Availability --> Guard[Guard total >= held + sold]

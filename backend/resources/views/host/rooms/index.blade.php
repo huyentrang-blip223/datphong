@@ -22,7 +22,11 @@
             <td>{{ $room->max_guests }} khách</td>
             <td>{{ number_format($room->base_price) }}</td>
             <td>{{ $room->active ? 'Đang mở' : 'Tạm ẩn' }}</td>
-            <td><a href="{{ route('host.rooms.edit', $room) }}">Sửa</a></td>
+            <td>
+                <a href="{{ route('host.rooms.edit', $room) }}">Sửa</a>
+                <a href="{{ route('host.availability.index', ['room_id' => $room->id]) }}">Lịch</a>
+                <a href="{{ route('host.seasonal-prices.index', ['room_id' => $room->id]) }}">Giá mùa</a>
+            </td>
         </tr>
     @empty
         <tr><td colspan="6">Chưa có phòng.</td></tr>

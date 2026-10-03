@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LocalProduct extends Model
 {
@@ -34,5 +35,10 @@ class LocalProduct extends Model
     {
         return $this->belongsToMany(Homestay::class, 'homestay_products', 'product_id', 'homestay_id')
             ->withPivot(['featured', 'display_order']);
+    }
+
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(ProductOrderItem::class, 'product_id');
     }
 }

@@ -12,6 +12,22 @@
     @endif
 </div>
 
+@auth
+@if(auth()->user()->role === 'guest' && $product->stock_qty > 0)
+<div class="card">
+    <h2>Đặt mua test</h2>
+    <form method="post" action="{{ route('guest.orders.store') }}">
+        @csrf
+        <input type="hidden" name="items[0][product_id]" value="{{ $product->id }}">
+        <label>Số lượng
+            <input type="number" min="1" max="{{ $product->stock_qty }}" name="items[0][quantity]" value="1" required>
+        </label>
+        <button class="btn" type="submit">Tạo đơn hàng</button>
+    </form>
+</div>
+@endif
+@endauth
+
 <h2>Sản phẩm gợi ý</h2>
 <p>Nguồn gợi ý: {{ $recommendations['source'] === 'python' ? 'Python service' : 'Laravel fallback' }}</p>
 @if(!empty($recommendations['message']))

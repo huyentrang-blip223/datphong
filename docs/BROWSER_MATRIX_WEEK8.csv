@@ -1,0 +1,13 @@
+browser,viewport,route_or_flow,result,screenshot_path,notes
+Chromium,390x844,/,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+Chromium,390x844,/tim-kiem,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+Chromium,390x844,/san-pham-dia-phuong,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+Chromium,768x1024,/trai-nghiem,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+Chromium,768x1024,login dashboard flow,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+Chromium,1440x900,/quan-tri/bang-dieu-khien,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+Firefox,390x844,/,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+Firefox,768x1024,/san-pham-dia-phuong,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+Firefox,1440x900,/trai-nghiem,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+WebKit,390x844,/tim-kiem,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+WebKit,768x1024,login dashboard flow,BLOCKED,,node/npm/npx unavailable so Playwright could not run
+WebKit,1440x900,/quan-tri/bang-dieu-khien,BLOCKED,,node/npm/npx unavailable so Playwright could not run

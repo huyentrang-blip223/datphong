@@ -1,0 +1,8 @@
+flowchart LR
+    Guest[Guest] --> Laravel[Laravel 9 Web App]
+    Host[Host] --> Laravel
+    Seller[Seller] --> Laravel
+    Admin[Admin] --> Laravel
+    Laravel --> MySQL[(MySQL dt07_homestay)]
+    Laravel --> Python[FastAPI Python Service]
+    Python --> MySQL

@@ -4,31 +4,40 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'ĐT-07 Homestay Cộng Đồng')</title>
-    <style>
-        body{font-family:Arial,sans-serif;margin:0;background:#f6f7f8;color:#222}.wrap{max-width:1100px;margin:auto;padding:16px}
-        header,footer{background:#fff;border-bottom:1px solid #ddd}footer{border-top:1px solid #ddd;border-bottom:0;margin-top:36px}
-        nav a{margin-right:14px}.card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:16px;margin:12px 0}
-        table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid #ddd;padding:8px;text-align:left}.btn{display:inline-block;padding:8px 12px;border:1px solid #333;border-radius:6px;text-decoration:none;background:#fff;color:#111}
-        input,select,textarea{width:100%;box-sizing:border-box;padding:8px;margin-top:4px;margin-bottom:10px}.alert{padding:10px;background:#fff;border:1px solid #999;margin:10px 0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-        @media(max-width:700px){.grid{grid-template-columns:1fr}.wrap{padding:12px}}
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script>
+        (function () {
+            const saved = localStorage.getItem('dt07-theme');
+            const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'forest' : 'light';
+            document.documentElement.dataset.theme = saved || preferred;
+        })();
+    </script>
 </head>
 <body>
-<header><div class="wrap"><strong>ĐT-07 Homestay Cộng Đồng</strong><nav style="margin-top:8px">
+<header class="site-header"><div class="wrap header-inner"><strong>ĐT-07 Homestay Cộng Đồng</strong><nav class="site-nav">
 <a href="{{ route('home') }}">Trang chủ</a>
 <a href="{{ route('search.index') }}">Tìm homestay</a>
 <a href="{{ route('products.index') }}">Sản phẩm</a>
 <a href="{{ route('experiences.index') }}">Trải nghiệm</a>
 @auth
 @if(auth()->user()->role === 'admin')<a href="{{ route('admin.dashboard') }}">Quản trị</a>@endif
-@if(auth()->user()->role === 'host')<a href="{{ route('host.dashboard') }}">Chủ homestay</a><a href="{{ route('host.rooms.index') }}">Phòng</a>@endif
-<form action="{{ route('logout') }}" method="post" style="display:inline">@csrf <button>Đăng xuất</button></form>
+@if(auth()->user()->role === 'host')<a href="{{ route('host.dashboard') }}">Chủ homestay</a><a href="{{ route('host.rooms.index') }}">Phòng</a><a href="{{ route('host.availability.index') }}">Lịch phòng</a><a href="{{ route('host.seasonal-prices.index') }}">Giá mùa</a>@endif
+@if(auth()->user()->role === 'seller')<a href="{{ route('seller.products.index') }}">Seller</a>@endif
+@if(auth()->user()->role === 'guest')<a href="{{ route('guest.bookings.index') }}">Booking của tôi</a><a href="{{ route('guest.orders.index') }}">Đơn hàng</a>@endif
+<form action="{{ route('logout') }}" method="post" class="inline-form">@csrf <button class="link-button">Đăng xuất</button></form>
 @else <a href="{{ route('login') }}">Đăng nhập</a> @endauth
+<button class="btn btn-small" type="button" data-theme-toggle aria-label="Đổi theme">Theme</button>
 </nav></div></header>
 <main class="wrap">
 @if(session('status'))<div class="alert" role="status">{{ session('status') }}</div>@endif
 @if($errors->any())<div class="alert"><ul>@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>@endif
 @yield('content')
 </main>
+<footer class="site-footer">
+    <div class="wrap">
+        <strong>CSE703073 - Lập trình ứng dụng web trong du lịch 2</strong>
+        <p>ĐT-07 Homestay Cộng Đồng. Sản phẩm học thuật, dữ liệu mô phỏng/project-seed, phiên bản Week 8 Round 1.</p>
+    </div>
+</footer>
+<script src="{{ asset('js/theme.js') }}" defer></script>
 </body></html>

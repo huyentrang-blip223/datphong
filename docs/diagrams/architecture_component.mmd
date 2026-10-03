@@ -1,0 +1,9 @@
+flowchart TB
+    Routes[Web Routes] --> Middleware[Auth Role CSRF]
+    Middleware --> Controllers[Controllers]
+    Controllers --> Requests[Form Requests]
+    Controllers --> Services[Business Services]
+    Services --> Models[Eloquent Models]
+    Models --> DB[(MySQL)]
+    Services --> PyClient[PythonDataService]
+    PyClient --> FastAPI[FastAPI recommender analytics]

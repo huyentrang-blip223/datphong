@@ -1,0 +1,6 @@
+page,before_performance_score,before_lcp,before_cls,before_tbt,after_performance_score,after_lcp,after_cls,after_tbt,changes,notes
+Trang chủ,,,,,,,,,Theme CSS extracted,NOT EXECUTED because Lighthouse/npx unavailable
+Tìm kiếm,,,,,,,,,Responsive table/form CSS,NOT EXECUTED because Lighthouse/npx unavailable
+Chi tiết sản phẩm,,,,,,,,,Order form added,NOT EXECUTED because Lighthouse/npx unavailable
+Trải nghiệm,,,,,,,,,Regression only,NOT EXECUTED because Lighthouse/npx unavailable
+Admin/Host dashboard,,,,,,,,,Footer/theme shared,NOT EXECUTED because Lighthouse/npx unavailable

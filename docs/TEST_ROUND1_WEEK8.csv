@@ -1,0 +1,61 @@
+test_id,module,objective,precondition,input_data,steps,expected_result,actual_result,status,severity_if_fail,tester,executed_date,notes
+AUTH-01,AUTH,Login valid user,Seed users exist,valid email/password,Run M1 auth regression,User authenticated,M1AuthRoleSmokeTest passed,PASS,High,Codex,2026-10-03,Automated
+AUTH-02,AUTH,Logout valid session,Authenticated user,POST logout,Run M1 auth regression,Session invalidated,M1AuthRoleSmokeTest passed,PASS,High,Codex,2026-10-03,Automated stale logout case
+AUTH-03,AUTH,Redirect guest from protected page,Unauthenticated user,admin route,Run M1 auth regression,Redirect to login,M1AuthRoleSmokeTest passed,PASS,High,Codex,2026-10-03,Automated
+AUTH-04,AUTH,Reject stale logout token,Expired CSRF-like flow,POST logout,Run M1 auth regression,Redirect no 419,M1AuthRoleSmokeTest passed,PASS,Medium,Codex,2026-10-03,Automated
+AUTH-05,AUTH,Locked user cannot login,Locked user fixture,credentials,Manual login attempt,Reject login,Not executed in browser,NOT EXECUTED,High,Codex,,Needs manual/browser
+AUTH-06,AUTH,Wrong password rejected,Existing user,bad password,Manual login attempt,Reject login,Not executed in browser,NOT EXECUTED,High,Codex,,Needs manual/browser
+AUTH-07,AUTH,CSRF required for forms,Web form,no token,Source review,CSRF middleware enabled,VerifyCsrfToken present,PASS,High,Codex,2026-10-03,Source review
+AUTH-08,AUTH,Password hash storage,Seed/user create,password,Run auth tests and source review,No plaintext password,Hash usage retained,PASS,Critical,Codex,2026-10-03,Automated/source
+AUTH-09,AUTH,Session cookie config inspectable,Laravel config,config/session.php,Source review,Config available,Reviewed config file presence,PASS,Low,Codex,2026-10-03,Source review
+PERM-01,PERM,Admin can access homestay admin,Admin user,/quan-tri/homestays,Run M1 regression,HTTP 200,M1AuthRoleSmokeTest passed,PASS,High,Codex,2026-10-03,Automated
+PERM-02,PERM,Host denied admin route,Host user,/quan-tri/homestays,Run M1 regression,HTTP 403,M1AuthRoleSmokeTest passed,PASS,High,Codex,2026-10-03,Automated
+PERM-03,PERM,Seller denied host dashboard,Seller user,/chu-homestay/bang-dieu-khien,Run M1 regression,HTTP 403,M1AuthRoleSmokeTest passed,PASS,High,Codex,2026-10-03,Automated
+PERM-04,PERM,Host cannot edit other host homestay,Two hosts,edit route,Run M1 regression,HTTP 403,M1AuthRoleSmokeTest passed,PASS,High,Codex,2026-10-03,Automated
+PERM-05,PERM,Host cannot update other room availability,Two hosts,availability route,Run Week8 tests,HTTP 403,Week8AvailabilityPricingTest passed,PASS,High,Codex,2026-10-03,Automated
+PERM-06,PERM,Seller cannot update other seller product,Two sellers,product update,Run Week8 tests,HTTP 403,Week8OrderPaymentReviewTest passed,PASS,High,Codex,2026-10-03,Automated
+PERM-07,PERM,Guest cannot cancel other booking,Two guests,cancel route,Run Week8 tests,HTTP 403,Week8OrderPaymentReviewTest passed,PASS,High,Codex,2026-10-03,Automated
+CATL-01,CATL,Search available room,Seed room availability,valid dates,Run M2 regression,Room returned,M2BookingFlowTest passed,PASS,Medium,Codex,2026-10-03,Automated
+CATL-02,CATL,Product listing filter,Published products,query filters,Run M3/full suite,List renders,Full suite passed route coverage indirect,PASS,Medium,Codex,2026-10-03,Automated indirect
+CATL-03,CATL,Product detail recommendations,Published product,product id,Run M3 regression,Recommendations render,M3PythonIntegrationTest passed,PASS,Medium,Codex,2026-10-03,Automated
+CATL-04,CATL,Experience listing,Seed experiences,/trai-nghiem,Run full suite route smoke,Page renders,Full suite basic smoke only,PASS,Medium,Codex,2026-10-03,Automated indirect
+CATL-05,CATL,Search invalid date rejected,Invalid date range,checkout before checkin,Run M2 regression,422,M2BookingFlowTest passed,PASS,Medium,Codex,2026-10-03,Automated
+CATL-06,CATL,Product hidden not public,Hidden product,detail route,Manual/browser,404,Not executed,NOT EXECUTED,Medium,Codex,,Needs direct case
+CATL-07,CATL,Pagination links preserve filters,Paginated data,query string,Manual/browser,Filters preserved,Not executed,NOT EXECUTED,Low,Codex,,Needs browser
+CATL-08,CATL,Min price boundary zero,Products,min_price 0,Source/query review,No validation error,Query supports min price,PASS,Low,Codex,2026-10-03,Source review
+CATL-09,CATL,Guest count max boundary,Room max guests,guests over max,Run M2 regression,422,M2BookingFlowTest passed,PASS,Medium,Codex,2026-10-03,Automated
+CATL-10,CATL,Empty result renders,No matching filter,rare query,Manual/browser,Empty state,Not executed,NOT EXECUTED,Low,Codex,,Needs browser
+BOOK-01,BOOK,Create valid room booking,Guest and room available,valid payload,Run M2 regression,201 confirmed,M2BookingFlowTest passed,PASS,High,Codex,2026-10-03,Automated
+BOOK-02,BOOK,Booking decrements availability,Booking success,valid payload,Run M2 regression,units_sold increment,M2BookingFlowTest passed,PASS,High,Codex,2026-10-03,Automated
+BOOK-03,BOOK,Book available experience,Guest and capacity,people count,Run M3 regression,confirmed,M3PythonIntegrationTest passed,PASS,High,Codex,2026-10-03,Automated
+BOOK-04,BOOK,Room conflict returns 409,No availability,booking payload,Run M2 regression,409,M2BookingFlowTest passed,PASS,High,Codex,2026-10-03,Automated
+BOOK-05,BOOK,Experience capacity conflict returns 409,Full experience,people count,Run M3 regression,409,M3PythonIntegrationTest passed,PASS,High,Codex,2026-10-03,Automated
+BOOK-06,BOOK,Host cannot mutate other host room,Two hosts,room update,Run M2 regression,403,M2BookingFlowTest passed,PASS,High,Codex,2026-10-03,Automated
+BOOK-07,BOOK,Cancel own booking rolls back sold count,Guest booking,cancel route,Run Week8 tests,Booking cancelled,Week8OrderPaymentReviewTest passed,PASS,High,Codex,2026-10-03,Automated
+BOOK-08,BOOK,Last unit double booking conflict,One unit,two create attempts,Run M2 regression,Only one booking,M2BookingFlowTest passed,PASS,Critical,Codex,2026-10-03,Automated
+BOOK-09,BOOK,Checkout date exclusive,Multi-night booking,dates,Run M2 price tests,Nights count correct,M2BookingFlowTest passed,PASS,Medium,Codex,2026-10-03,Automated
+BOOK-10,BOOK,Invalid guest count boundary rejected,Guest count too high,payload,Run M2 regression,422,M2BookingFlowTest passed,PASS,Medium,Codex,2026-10-03,Automated
+PAY-01,PAY,Mock payment success,Guest owns booking,result success,Run Week8 tests,Payment paid,Week8OrderPaymentReviewTest passed,PASS,High,Codex,2026-10-03,Automated
+PAY-02,PAY,Mock payment failure,Guest owns booking,result fail,Run Week8 tests,Payment failed,Week8OrderPaymentReviewTest passed,PASS,Medium,Codex,2026-10-03,Automated
+PAY-03,PAY,Duplicate paid payment blocked,Already paid booking,result success again,Run Week8 tests,422,Week8OrderPaymentReviewTest passed,PASS,High,Codex,2026-10-03,Automated
+PAY-04,PAY,Other guest payment blocked,Other guest booking,result success,Manual/API,403 or 422,Not executed,NOT EXECUTED,High,Codex,,Needs direct case
+PAY-05,PAY,No card data stored,Mock payment,no card fields,Source review,No card data,PaymentService stores mock fields only,PASS,Critical,Codex,2026-10-03,Source review
+PAY-06,PAY,Invalid payment result rejected,Guest booking,result bad,Manual/API,422,Not executed,NOT EXECUTED,Medium,Codex,,Needs direct case
+ORDR-01,ORDR,Guest creates product order,Published product,quantity 2,Run Week8 tests,201 order,Week8OrderPaymentReviewTest passed,PASS,High,Codex,2026-10-03,Automated
+ORDR-02,ORDR,Server computes total from DB,Client sends fake price,Run Week8 tests,DB price used,Week8OrderPaymentReviewTest passed,PASS,High,Codex,2026-10-03,Automated
+ORDR-03,ORDR,Insufficient stock conflict,Low stock,quantity over stock,Run Week8 tests,409,Week8OrderPaymentReviewTest passed,PASS,High,Codex,2026-10-03,Automated
+ORDR-04,ORDR,Invalid state transition blocked,Pending order,delivered status,Run Week8 tests,422,Week8OrderPaymentReviewTest passed,PASS,High,Codex,2026-10-03,Automated
+ORDR-05,ORDR,Seller valid transition accepted,Pending order,confirmed status,Run Week8 tests,200,Week8OrderPaymentReviewTest passed,PASS,Medium,Codex,2026-10-03,Automated
+ORDR-06,ORDR,Quantity lower boundary one,Published product,quantity 1,Run Week8 tests,Order created,Week8OrderPaymentReviewTest passed,PASS,Medium,Codex,2026-10-03,Automated
+ADMN-01,ADMN,Admin dashboard renders analytics,Admin user,dashboard route,Run M3 regression,200 no 500,M3PythonIntegrationTest passed,PASS,Medium,Codex,2026-10-03,Automated
+ADMN-02,ADMN,Python down dashboard fallback,Python URL invalid,dashboard route,Run M3 regression,No 500,M3PythonIntegrationTest passed,PASS,Medium,Codex,2026-10-03,Automated
+ADMN-03,ADMN,Admin homestay CRUD index,Admin user,index route,Run M1 regression,200,M1AuthRoleSmokeTest passed,PASS,Medium,Codex,2026-10-03,Automated
+ADMN-04,ADMN,Pending homestay count shown,Seed homestays,dashboard route,Manual/browser,Count visible,Not executed,NOT EXECUTED,Low,Codex,,Needs browser
+ADMN-05,ADMN,Admin export/reporting,Admin user,export action,Review routes,No export route,NOT EXECUTED,Low,Codex,,Feature not implemented
+ADMN-06,ADMN,Analytics top limit boundary,Python service,limit 3,Run Python tests,JSON valid,python pytest passed,PASS,Low,Codex,2026-10-03,Automated
+PYMD-01,PYMD,Python recommendation success,Python service mocked,product id,Run M3 regression,Python source,M3PythonIntegrationTest passed,PASS,Medium,Codex,2026-10-03,Automated
+PYMD-02,PYMD,Python down fallback,Invalid service URL,product id,Run M3 regression,Laravel fallback,M3PythonIntegrationTest passed,PASS,Medium,Codex,2026-10-03,Automated
+PYMD-03,PYMD,ETL/API unit tests,Python tests,test suite,Run pytest,5 passed,python pytest passed,PASS,Medium,Codex,2026-10-03,Automated
+VALD-01,VALD,Availability total guard,Existing sold rows,total below sold,Run Week8 tests,Session error,Week8AvailabilityPricingTest passed,PASS,High,Codex,2026-10-03,Automated
+VALD-02,VALD,Seasonal end before start rejected,Invalid date range,store seasonal,Run Week8 tests,Validation error,Week8AvailabilityPricingTest passed,PASS,Medium,Codex,2026-10-03,Automated
+VALD-03,VALD,Review rating max boundary,Completed booking,rating 6,Run Week8 tests,422,Week8OrderPaymentReviewTest passed,PASS,Medium,Codex,2026-10-03,Automated

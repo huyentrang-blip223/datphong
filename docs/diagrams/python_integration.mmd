@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant B as Blade Page
+    participant L as Laravel PythonDataService
+    participant P as FastAPI
+    participant D as MySQL
+    B->>L: request recommendations or analytics
+    L->>P: HTTP with X-Service-Token
+    P->>D: read products/bookings/availability
+    P-->>L: JSON result
+    L-->>B: cached result
+    L-->>B: fallback when timeout/error

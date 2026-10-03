@@ -14,7 +14,7 @@ class UpdateRoomRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'homestay_id' => ['required', 'integer', 'exists:homestays,id'],
+            'homestay_id' => ['required', 'integer', Rule::exists('homestays', 'id')->where('owner_id', $this->user()?->id)],
             'name' => ['required', 'string', 'max:160'],
             'room_type' => ['required', Rule::in(['private_room', 'family_room', 'dorm', 'bungalow', 'whole_house'])],
             'max_guests' => ['required', 'integer', 'min:1', 'max:20'],

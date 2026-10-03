@@ -4,11 +4,25 @@ namespace App\Http\Controllers;
 use App\Exceptions\AvailabilityConflictException;
 use App\Http\Requests\StoreBookingRequest;
 use App\Models\Room;
+use App\Models\Booking;
+use App\Models\BookingStatusLog;
+use App\Models\RoomAvailability;
 use App\Services\BookingService;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class BookingController extends Controller
 {
+    public function index()
+    {
+        $bookings = Booking::with('room.homestay', 'payments', 'reviews')
+            ->where('guest_id', request()->user()->id)
+            ->orderByDesc('id')
+            ->paginate(10);
+
+        return view('bookings.index', compact('bookings'));
+    }
+
     public function store(StoreBookingRequest $request, BookingService $bookingService)
     {
         $data = $request->validated();
@@ -41,5 +55,45 @@ class BookingController extends Controller
         }
 
         return redirect()->route('search.index')->with('status', 'Đặt phòng thành công: ' . $booking->code);
+    }
+
+    public function cancel(Booking $booking)
+    {
+        abort_unless((int) $booking->guest_id === (int) request()->user()->id, 403);
+
+        if (!in_array($booking->status, ['holding', 'pending_payment', 'confirmed'], true)) {
+            return back()->withErrors(['booking' => 'Trạng thái booking không cho phép hủy.']);
+        }
+
+        DB::transaction(function () use ($booking) {
+            $locked = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
+            $from = $locked->status;
+            $locked->update(['status' => 'cancelled', 'cancel_reason' => 'guest_cancelled']);
+
+            $dates = [];
+            for ($date = $locked->checkin_date->copy(); $date->lt($locked->checkout_date); $date->addDay()) {
+                $dates[] = $date->toDateString();
+            }
+
+            RoomAvailability::where('room_id', $locked->room_id)
+                ->whereIn('stay_date', $dates)
+                ->lockForUpdate()
+                ->get()
+                ->each(function (RoomAvailability $row) {
+                    if ($row->units_sold > 0) {
+                        $row->decrement('units_sold');
+                    }
+                });
+
+            BookingStatusLog::create([
+                'booking_id' => $locked->id,
+                'from_status' => $from,
+                'to_status' => 'cancelled',
+                'actor_id' => request()->user()->id,
+                'reason' => 'guest_cancelled',
+            ]);
+        });
+
+        return back()->with('status', 'Đã hủy booking.');
     }
 }

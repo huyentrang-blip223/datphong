@@ -176,3 +176,48 @@ M3 extends the project with the second core business module and an integrated Py
 - Python tests, Laravel M1/M2/M3 tests, and the full Laravel suite were executed successfully on 2026-10-02
 
 Known limitation: the runtime dataset is deterministic synthetic/project-seed data, not the previously documented 3,850-record target dataset. Seller CRUD for products remains outside this M3 implementation; browsing/recommendation/product data integration were prioritized.
+
+## 13. Week 8 implementation status
+Week 8 Round 1 extends M3 without upgrading Laravel:
+- host availability/calendar UI and service at `/chu-homestay/availability`;
+- host seasonal pricing UI and service at `/chu-homestay/seasonal-prices`;
+- seller local product CRUD at `/nguoi-ban/products` with seller ownership checks;
+- guest product order creation at `/tai-khoan/orders`, server-side DB pricing, stock check and transaction;
+- seller order state transition guard for valid product-order states;
+- mock/test booking payment with success/fail and duplicate-paid guard;
+- guest booking history and cancel flow with availability rollback;
+- guest review creation limited to completed own bookings;
+- `/healthz` application/database/Python status endpoint without secrets;
+- two UI themes (`light`, `forest`) with CSS variables, `data-theme`, toggle and `localStorage` persistence;
+- shared academic footer and responsive CSS for 390/768/1440 targets.
+
+Week 8 documentation added:
+- `docs/WEEK8_FUNCTION_GAP_MATRIX.md`;
+- `docs/RESPONSIVE_THEME_WEEK8.md`;
+- `docs/TEST_ROUND1_WEEK8.csv`;
+- `docs/TEST_ROUND1_WEEK8_SUMMARY.md`;
+- `docs/BUG_LOG_WEEK8.csv`;
+- `docs/BUG_SUMMARY_WEEK8.md`;
+- `docs/BROWSER_MATRIX_WEEK8.csv`;
+- `docs/PERFORMANCE_WEEK8.csv`;
+- `docs/OWASP_TOP10_WEEK8.md`;
+- `docs/CHUONG_3_TUAN8_NHAP.md`;
+- Mermaid diagram sources in `docs/diagrams/`.
+
+Executed regression evidence on 2026-10-03:
+- M1: 6 passed.
+- M2: 9 passed.
+- M3: 6 passed.
+- Week8: 13 passed.
+- Full Laravel suite after Week8: see `CODE_STATUS.md`.
+- Python: 5 passed, 2 warnings.
+
+Round 1 test matrix status:
+- 60 cases designed.
+- 51 marked PASS based on executed automated tests/source review.
+- 9 marked NOT EXECUTED because browser/manual direct checks were not executed.
+
+Known Week 8 limitations:
+- Node/npm/npx are unavailable in PATH, so Playwright browser matrix and Lighthouse could not be executed; docs mark these as BLOCKED/NOT EXECUTED.
+- Notifications and loyalty UI remain not implemented after Must features.
+- Diagram PNG/SVG rendering was not executed; Mermaid source files are present only.

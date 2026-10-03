@@ -3,9 +3,11 @@
 Updated at the end of this coding session: 2026-10-02.
 
 ## Current milestone
-Week 7 / M3.
+Week 8 / Round 1 Review.
 
-## What was implemented
+Baseline: `682aed4` — `Implement M3 Python recommendations and analytics`.
+
+## What was implemented before Week 8
 - Kept the running backend on Laravel 9; no framework upgrade.
 - Preserved M1/M2 booking flow and added a scoped logout stale-token fix so POST `/dang-xuat` does not show 419 Page Expired for expired CSRF tokens.
 - Added local product browsing/filter/detail pages.
@@ -20,7 +22,21 @@ Week 7 / M3.
 - Added Chapter 1 and Chapter 2 technical draft Markdown files grounded in actual runtime/code.
 - Confirmed runtime data count is >=300.
 
-## Files changed
+## Week 8 features completed
+- Host availability/calendar management with range update, ownership checks, `units_total >= units_held + units_sold` guard and tests.
+- Host seasonal pricing create/delete with date validation and ownership checks.
+- Seller local product CRUD with validation and seller-only ownership.
+- Guest product order creation with DB-computed totals, stock check, transaction and item persistence.
+- Seller order state transitions with invalid transition blocking.
+- Mock/test payment for bookings with success/fail and duplicate-paid guard; no card data is stored.
+- Guest booking history and cancel with status rule and availability rollback.
+- Guest review creation limited to completed own bookings and rating validation.
+- `/healthz` endpoint for application/database/Python degraded status without secrets.
+- Two themes: `light` and `forest`, implemented with CSS custom properties, `data-theme`, theme toggle, `localStorage` persistence and `prefers-color-scheme` fallback.
+- Responsive CSS for 390/768/1440 targets: wrapped nav, form grids, focus state, responsive images and horizontally scrollable tables.
+- Shared academic footer noting course, topic, project-seed data and Week 8 version.
+
+## Files changed before Week 8
 - `backend/.env` local only: added `PY_SERVICE_URL`, `PY_SERVICE_TOKEN`, `PY_SERVICE_TIMEOUT` for runtime verification; this file is not tracked by Git.
 - `backend/.env.example`
 - `backend/app/Exceptions/Handler.php`
@@ -62,6 +78,25 @@ Week 7 / M3.
 - `python-service/requirements.txt`
 - `python-service/tests/test_api.py`
 - `python-service/tests/test_etl.py`
+
+## Week 8 files changed/added
+- `backend/routes/web.php`
+- `backend/public/css/app.css`
+- `backend/public/js/theme.js`
+- `backend/resources/views/layouts/app.blade.php`
+- `backend/resources/views/host/availability/index.blade.php`
+- `backend/resources/views/host/seasonal_prices/index.blade.php`
+- `backend/resources/views/seller/products/*`
+- `backend/resources/views/orders/index.blade.php`
+- `backend/resources/views/bookings/index.blade.php`
+- `backend/resources/views/products/show.blade.php`
+- `backend/resources/views/host/rooms/index.blade.php`
+- `backend/resources/views/dashboard/host.blade.php`
+- Week 8 controllers, services, requests and models for availability, seasonal prices, seller products, product orders, payments, reviews and health.
+- `backend/tests/Feature/Week8AvailabilityPricingTest.php`
+- `backend/tests/Feature/Week8OrderPaymentReviewTest.php`
+- Week 8 docs under `docs/` and `docs/diagrams/`.
+- `e2e/README.md`
 
 ## Database/schema changes
 - No migrations were added or run.
@@ -160,7 +195,7 @@ netstat -ano | Select-String ':8001|:8002|:8003'
 Stop-Process -Id 11556,7792,4796 -Force
 ```
 
-## Tests actually executed
+## Tests actually executed before Week 8
 | Test/command | Result |
 |---|---|
 | Initial Python import check | Failed before install: `ModuleNotFoundError: No module named 'fastapi'`. |
@@ -174,6 +209,36 @@ Stop-Process -Id 11556,7792,4796 -Force
 | `php artisan test --filter=M2BookingFlowTest` | Passed: 9 tests, 9 passed. |
 | `php artisan test --filter=M3PythonIntegrationTest` | Passed: 6 tests, 6 passed. |
 | `php artisan test` | Passed: 23 tests, 23 passed. |
+
+## Week 8 tests actually executed on 2026-10-03
+| Test/command | Result |
+|---|---|
+| Baseline `php artisan test --filter=M1AuthRoleSmokeTest` | Passed: 6 tests. |
+| Baseline `php artisan test --filter=M2BookingFlowTest` | Passed: 9 tests. |
+| Baseline `php artisan test --filter=M3PythonIntegrationTest` | Passed: 6 tests. |
+| Baseline `php artisan test` | Passed: 23 tests. |
+| Baseline `python -m pytest -q` | Passed: 5 tests, 2 warnings. |
+| PHP syntax check over `backend/app` and `backend/tests` | Passed: no syntax errors. |
+| `php artisan test --filter=Week8` | Passed: 13 tests. |
+| Final `php artisan test` | Passed: 36 tests. |
+| `php artisan route:list --path=healthz` | Passed: `GET|HEAD healthz` registered. |
+
+Round 1 functional matrix:
+- Designed: 60.
+- PASS: 51.
+- FAILED: 0.
+- BLOCKED: 0.
+- NOT EXECUTED: 9.
+- CSV: `docs/TEST_ROUND1_WEEK8.csv`.
+
+Browser matrix:
+- Attempted tool check: `node --version`, `npm --version`, `npx playwright --version`, `npx lighthouse --version`.
+- Result: all unavailable in PATH.
+- `docs/BROWSER_MATRIX_WEEK8.csv` records browser/viewport cases as BLOCKED.
+
+Lighthouse/performance:
+- NOT EXECUTED because `npx`/Lighthouse are unavailable.
+- Recorded in `docs/PERFORMANCE_WEEK8.csv`.
 
 ## Integration evidence
 - FastAPI up: `GET http://127.0.0.1:8001/healthz` returned `{"status":"ok"}`.
@@ -190,7 +255,11 @@ Stop-Process -Id 11556,7792,4796 -Force
 - `backend/.env` contains local runtime `PY_SERVICE_TOKEN=m3-local-token`; `.env` is untracked and should not be committed.
 - FastAPI was started as a background process for verification; stop it manually if no longer needed.
 - No screenshots were captured by Codex.
-- Current M3 changes are not committed or pushed at this handoff.
+- Week 8 browser matrix could not run because Node/npm/npx are unavailable in PATH.
+- Week 8 Lighthouse could not run because npx/Lighthouse are unavailable.
+- Diagram sources were created but not rendered to PNG/SVG.
+- 9 of 60 functional round 1 cases are NOT EXECUTED and documented as such.
+- Notifications and loyalty UI remain outside this Week 8 implementation.
 
 ## Screenshot list
 - FastAPI `/healthz` returning `{"status":"ok"}`.
@@ -205,7 +274,22 @@ Stop-Process -Id 11556,7792,4796 -Force
 - Database COUNT query showing `tourism_total main = 583`.
 - Git status/diff/commit evidence after user chooses to commit.
 
+## Screenshot list Week 8
+- Light theme desktop.
+- Forest theme desktop.
+- Mobile 390 search.
+- Tablet 768 product/experience.
+- Desktop 1440 admin dashboard.
+- Theme switch after reload.
+- Host availability/calendar.
+- Host seasonal pricing.
+- Seller product CRUD.
+- Product order/payment test mode.
+- Review valid and blocked.
+- Week8 test output.
+- Bug log round 1.
+- `/healthz`.
+
 ## Git evidence
-- M3 changes are not committed in this handoff.
-- Previous local M2 data seeder commit existed as `5995ca3 Add M2 demo tourism dataset seeder`.
-- Run `git status --short` and commit the M3 changes only after reviewing local `.env` is not staged.
+- Baseline before Week 8: `682aed4`.
+- Week 8 commit/push status must be checked with `git status --short` after final tests.

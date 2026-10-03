@@ -1,0 +1,5 @@
+flowchart LR
+    SellerDash[Seller nav] --> Products[Product CRUD]
+    Products --> Publish[Draft Published Hidden]
+    SellerDash --> Orders[Related orders]
+    Orders --> State[Valid state transition]
