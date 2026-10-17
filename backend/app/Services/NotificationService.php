@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Mail\BusinessNotificationMail;
@@ -30,23 +31,24 @@ class NotificationService
 
     private function sendMailIfRelevant(?User $recipient, string $type, string $title, string $message, ?string $referenceType, ?int $referenceId): void
     {
-        if (!config('mail.notifications_enabled') || !$recipient?->email || !$this->shouldEmail($type, $referenceType)) {
+        if (! config('mail.notifications_enabled') || ! $recipient?->email || ! $this->shouldEmail($type, $referenceType)) {
             return;
         }
 
-        if (!config('mail.mailers.smtp.username') || !config('mail.mailers.smtp.password')) {
+        if (config('mail.default') === 'smtp' && (! config('mail.mailers.smtp.username') || ! config('mail.mailers.smtp.password'))) {
             Log::warning('Skipped notification email because SMTP username/password is not configured.', [
                 'notification_type' => $type,
                 'reference_type' => $referenceType,
                 'reference_id' => $referenceId,
             ]);
+
             return;
         }
 
         $body = implode("\n\n", [
             $message,
-            'Loại thông báo: ' . $type,
-            $referenceType ? ('Tham chiếu: ' . $referenceType . ' #' . $referenceId) : null,
+            'Loại thông báo: '.$type,
+            $referenceType ? ('Tham chiếu: '.$referenceType.' #'.$referenceId) : null,
             'Đây là email tự động từ ĐT-07 Homestay Cộng Đồng.',
         ]);
 

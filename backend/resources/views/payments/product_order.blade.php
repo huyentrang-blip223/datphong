@@ -14,6 +14,7 @@
     </a>
     <span class="eyebrow">Thanh toán sản phẩm địa phương</span>
     <h1>Thanh toán đơn {{ $order->code }}</h1>
+    <p>Tạm tính: {{ number_format($order->subtotal) }} đ · Dùng {{ $order->points_redeemed }} điểm, giảm {{ number_format($order->discount_amount) }} đ · Còn thanh toán: {{ number_format($order->total_amount) }} đ</p>
     <p>Kiểm tra sản phẩm OCOP/nông sản đã đặt và ghi nhận thanh toán mô phỏng.</p>
 </div>
 

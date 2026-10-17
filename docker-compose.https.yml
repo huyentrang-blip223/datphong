@@ -1,0 +1,27 @@
+services:
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DT07_DOMAIN: ${DT07_DOMAIN:?Set DT07_DOMAIN to a public DNS hostname}
+      ACME_EMAIL: ${ACME_EMAIL:?Set ACME_EMAIL for certificate issuance}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - nginx
+    restart: unless-stopped
+  app:
+    environment:
+      TRUSTED_PROXIES: "*"
+      SESSION_SECURE_COOKIE: "true"
+  scheduler:
+    environment:
+      SESSION_SECURE_COOKIE: "true"
+volumes:
+  caddy_data:
+  caddy_config:

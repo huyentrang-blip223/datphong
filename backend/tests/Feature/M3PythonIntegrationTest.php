@@ -1,9 +1,10 @@
 <?php
+
 namespace Tests\Feature;
 
-use App\Models\Homestay;
 use App\Models\Experience;
 use App\Models\ExperienceBooking;
+use App\Models\Homestay;
 use App\Models\LocalProduct;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -100,7 +101,7 @@ class M3PythonIntegrationTest extends TestCase
         $this->actingAs($guest)
             ->postJson(route('experiences.book', $experience), ['people_count' => 2])
             ->assertCreated()
-            ->assertJsonPath('data.status', 'confirmed');
+            ->assertJsonPath('data.status', 'pending');
 
         $this->assertSame(3, (int) $experience->fresh()->booked_count);
     }
@@ -121,7 +122,7 @@ class M3PythonIntegrationTest extends TestCase
         $this->actingAs($guest)
             ->get(route('guest.experience-payments.show', $booking))
             ->assertOk()
-            ->assertSee('Thanh toán đặt chỗ #' . $booking->id)
+            ->assertSee('Thanh toán đặt chỗ #'.$booking->id)
             ->assertSee('Thanh toán thành công');
 
         $this->actingAs($guest)
@@ -152,7 +153,7 @@ class M3PythonIntegrationTest extends TestCase
         $homestay = Homestay::create([
             'owner_id' => $host->id,
             'name' => 'M3 Homestay',
-            'slug' => 'm3-homestay-' . uniqid(),
+            'slug' => 'm3-homestay-'.uniqid(),
             'province' => 'Lam Dong',
             'district' => 'Da Lat',
             'address_line' => '1 M3 Street',
@@ -191,11 +192,11 @@ class M3PythonIntegrationTest extends TestCase
 
     private function makeExperience(array $overrides = []): Experience
     {
-        $host = $this->makeUser('m3-experience-host-' . uniqid() . '@dt07.test', 'host');
+        $host = $this->makeUser('m3-experience-host-'.uniqid().'@dt07.test', 'host');
         $homestay = Homestay::create([
             'owner_id' => $host->id,
             'name' => 'M3 Experience Homestay',
-            'slug' => 'm3-experience-homestay-' . uniqid(),
+            'slug' => 'm3-experience-homestay-'.uniqid(),
             'province' => 'Lam Dong',
             'district' => 'Da Lat',
             'address_line' => '2 M3 Street',
@@ -225,7 +226,7 @@ class M3PythonIntegrationTest extends TestCase
             'email' => $email,
             'password_hash' => Hash::make('Dt07@2026!'),
             'role' => $role,
-            'full_name' => ucfirst($role) . ' M3',
+            'full_name' => ucfirst($role).' M3',
             'status' => 'active',
         ]);
     }

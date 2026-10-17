@@ -22,10 +22,12 @@
         <label>Trạng thái duyệt
             <select name="status">
                 @foreach(['pending','approved','rejected','suspended'] as $s)
+                    @if($s === 'approved' && ($homestay->status ?? null) !== 'approved') @continue @endif
                     <option value="{{ $s }}" @selected(old('status', $homestay->status ?? 'pending') === $s)>{{ $s }}</option>
                 @endforeach
             </select>
         </label>
+        <p>Chấp thuận cơ sở mới tại <a href="{{ route('admin.verifications.index') }}">Hồ sơ xác minh</a>.</p>
     </div>
     <div>
         <label>Tỉnh/TP

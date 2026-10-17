@@ -21,6 +21,8 @@
     <span class="eyebrow">Thanh toán lưu trú</span>
     <h1>Thanh toán booking {{ $booking->code }}</h1>
     <p>Kiểm tra thông tin đặt phòng và ghi nhận thanh toán mô phỏng cho demo học thuật.</p>
+    <p>Phòng được giữ 15 phút. Chỉ xác nhận sau thanh toán. Booking đã trả tiền được hủy trước ngày nhận phòng ít nhất 24 giờ. Hoàn 100%: giao dịch VNPay gọi sandbox và chờ xác nhận; giao dịch test được mô phỏng. Không sử dụng tiền thật.</p>
+    @if($booking->hold_expires_at)<p role="status">Hạn thanh toán: <strong>{{ $booking->hold_expires_at->format('H:i:s d/m/Y') }}</strong></p>@endif
 </div>
 
 <div class="form-grid" style="grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr); gap: 20px; align-items: start;">

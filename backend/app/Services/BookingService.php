@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Exceptions\AvailabilityConflictException;
@@ -32,12 +33,13 @@ class BookingService
         $availability = RoomAvailability::where('room_id', $room->id)
             ->whereIn('stay_date', $dates)
             ->get()
-            ->keyBy(fn($row) => $row->stay_date->toDateString());
+            ->keyBy(fn ($row) => $row->stay_date->toDateString());
 
         $seasonalPrices = SeasonalPrice::where('room_id', $room->id)
             ->where('start_date', '<=', end($dates))
             ->where('end_date', '>=', reset($dates))
             ->orderByDesc('priority')
+            ->orderByDesc('id')
             ->get();
 
         $nights = [];
@@ -71,8 +73,14 @@ class BookingService
             throw new InvalidArgumentException('Chỉ tài khoản guest được tạo booking.');
         }
 
+        app(BookingLifecycleService::class)->expireDue($room->id);
+
         return DB::transaction(function () use ($guest, $room, $checkin, $checkout, $guests) {
             $dates = $this->nightDates($checkin, $checkout);
+
+            if (! $room->fresh()->active || $room->homestay->status !== 'approved' || $guests < 1 || $guests > 20 || CarbonImmutable::parse($checkin)->startOfDay()->lt(today())) {
+                throw new InvalidArgumentException('Phòng không mở bán hoặc ngày/số khách không hợp lệ.');
+            }
 
             if ($guests > (int) $room->max_guests) {
                 throw new InvalidArgumentException('Số khách vượt quá sức chứa phòng.');
@@ -83,13 +91,13 @@ class BookingService
                 ->orderBy('stay_date')
                 ->lockForUpdate()
                 ->get()
-                ->keyBy(fn($row) => $row->stay_date->toDateString());
+                ->keyBy(fn ($row) => $row->stay_date->toDateString());
 
             foreach ($dates as $date) {
                 $row = $lockedRows->get($date);
                 $availableUnits = $row ? (int) $row->units_total - (int) $row->units_held - (int) $row->units_sold : 0;
 
-                if (!$row || $row->status !== 'open' || $availableUnits < 1) {
+                if (! $row || $row->status !== 'open' || $availableUnits < 1) {
                     throw new AvailabilityConflictException('Phòng không còn đủ tồn cho ngày đã chọn.');
                 }
             }
@@ -105,23 +113,24 @@ class BookingService
                 'unit_price' => $quote['average_unit_price'],
                 'nights' => $quote['nights'],
                 'total_amount' => $quote['total_amount'],
-                'status' => 'confirmed',
+                'status' => 'holding',
+                'hold_expires_at' => now()->addMinutes(15),
             ]);
 
             foreach ($lockedRows as $row) {
-                $row->increment('units_sold');
+                $row->increment('units_held');
             }
 
             BookingStatusLog::create([
                 'booking_id' => $booking->id,
                 'from_status' => null,
-                'to_status' => 'confirmed',
+                'to_status' => 'holding',
                 'actor_id' => $guest->id,
                 'reason' => 'guest_booking_created',
             ]);
 
-            $this->notificationService->send($guest, 'booking_created', 'Đặt phòng thành công', 'Booking ' . $booking->code . ' đã được tạo.', 'booking', $booking->id);
-            $this->notificationService->send((int) $room->homestay->owner_id, 'booking_created', 'Có booking mới', 'Phòng ' . $room->name . ' có booking ' . $booking->code . '.', 'booking', $booking->id);
+            $this->notificationService->send($guest, 'booking_created', 'Đặt phòng thành công', 'Booking '.$booking->code.' đã được tạo.', 'booking', $booking->id);
+            $this->notificationService->send((int) $room->homestay->owner_id, 'booking_created', 'Có booking mới', 'Phòng '.$room->name.' có booking '.$booking->code.'.', 'booking', $booking->id);
             $this->auditLogService->record($guest, 'booking_created', 'bookings', $booking->id, null, [
                 'room_id' => $room->id,
                 'checkin_date' => $checkin,
@@ -153,6 +162,9 @@ class BookingService
 
         if ($end->lessThanOrEqualTo($start)) {
             throw new InvalidArgumentException('Ngày check-out phải sau ngày check-in.');
+        }
+        if ($start->diffInDays($end) > 90) {
+            throw new InvalidArgumentException('Mỗi booking tối đa 90 đêm.');
         }
 
         $dates = [];

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -24,7 +25,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'full_name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:180', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:30'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'string', 'min:8', 'max:128', 'confirmed'],
         ]);
 
@@ -39,6 +40,8 @@ class AuthController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
+        $request->session()->put('account_fingerprint', hash('sha256', $user->password_hash));
+        $request->session()->put('account_fingerprint_user', $user->id);
 
         return redirect($this->redirectPathFor($user->role))->with('status', 'Đăng ký tài khoản thành công.');
     }
@@ -46,21 +49,24 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $data = $request->validate([
-            'email' => ['required','email','max:180'],
-            'password' => ['required','string','min:8','max:128'],
+            'email' => ['required', 'email', 'max:180'],
+            'password' => ['required', 'string', 'min:8', 'max:128'],
         ]);
 
         $user = User::where('email', $data['email'])->where('status', 'active')->first();
-        if (!$user || !Hash::check($data['password'], $user->password_hash)) {
+        if (! $user || ! Hash::check($data['password'], $user->password_hash)) {
             Log::warning('Login failed.', [
                 'email_hash' => hash('sha256', strtolower($data['email'])),
                 'ip' => $request->ip(),
             ]);
+
             return back()->withErrors(['email' => 'Thông tin đăng nhập không đúng.'])->onlyInput('email');
         }
 
         Auth::login($user);
         $request->session()->regenerate();
+        $request->session()->put('account_fingerprint', hash('sha256', $user->password_hash));
+        $request->session()->put('account_fingerprint_user', $user->id);
 
         return redirect($this->redirectPathFor($user->role));
     }
@@ -70,6 +76,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login')->with('status', 'Đã đăng xuất.');
     }
 

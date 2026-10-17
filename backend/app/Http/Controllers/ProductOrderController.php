@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Exceptions\AvailabilityConflictException;
@@ -14,8 +15,8 @@ class ProductOrderController extends Controller
     {
         $user = request()->user();
         $orders = ProductOrder::with('items.product')
-            ->when($user->role === 'guest', fn($q) => $q->where('buyer_id', $user->id))
-            ->when($user->role === 'seller', fn($q) => $q->whereHas('items.product', fn($p) => $p->where('seller_id', $user->id)))
+            ->when($user->role === 'guest', fn ($q) => $q->where('buyer_id', $user->id))
+            ->when($user->role === 'seller', fn ($q) => $q->whereHas('items.product', fn ($p) => $p->where('seller_id', $user->id)))
             ->orderByDesc('id')
             ->paginate(10);
 
@@ -26,7 +27,7 @@ class ProductOrderController extends Controller
     {
         try {
             $validated = $request->validated();
-            $order = $service->createOrder($request->user(), $validated['items']);
+            $order = $service->createOrder($request->user(), $validated['items'], (int) ($validated['points'] ?? 0));
         } catch (AvailabilityConflictException $exception) {
             return $request->expectsJson()
                 ? response()->json(['message' => $exception->getMessage()], 409)
@@ -39,7 +40,7 @@ class ProductOrderController extends Controller
 
         return $request->expectsJson()
             ? response()->json(['data' => $order], 201)
-            : redirect()->route('guest.order-payments.show', $order)->with('status', 'Đã tạo đơn hàng: ' . $order->code . '. Vui lòng kiểm tra và thanh toán.');
+            : redirect()->route('guest.order-payments.show', $order)->with('status', 'Đã tạo đơn hàng: '.$order->code.'. Vui lòng kiểm tra và thanh toán.');
     }
 
     public function updateStatus(UpdateProductOrderStatusRequest $request, ProductOrder $order, ProductOrderService $service)

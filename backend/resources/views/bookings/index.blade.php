@@ -50,12 +50,16 @@
                             };
                         @endphp
                         <span class="badge {{ $badgeClass }}">{{ $booking->status }}</span>
+                        @if($booking->hold_expires_at)<p>Giữ đến {{ $booking->hold_expires_at->format('H:i:s d/m/Y') }}</p>@endif
                     </td>
                     <td style="font-weight: 750; color: var(--text);">
                         {{ number_format($booking->total_amount) }} đ
                     </td>
                     <td>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
+                            @if(in_array($booking->status,['cancelled','expired'],true) && $booking->payments->contains('status', 'paid'))
+                            <form method="post" action="{{ route('guest.bookings.refund', $booking) }}">@csrf<button class="btn btn-small">Hoàn tiền 100% (test/sandbox)</button></form>
+                            @endif
                             @if(in_array($booking->status, ['holding','pending_payment','confirmed'], true))
                                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                                     <form method="post" action="{{ route('guest.bookings.cancel', $booking) }}" style="display: inline;">

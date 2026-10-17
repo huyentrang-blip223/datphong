@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MockPaymentRequest;
@@ -10,13 +11,30 @@ use InvalidArgumentException;
 
 class PaymentController extends Controller
 {
+    public function vnPayIpn(Request $request, VnPayPaymentService $service)
+    {
+        try {
+            $result = $service->handleReturn($request->query());
+
+            return response()->json(['RspCode' => ($result['duplicate'] ?? false) ? '02' : '00', 'Message' => 'Confirm Success']);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['RspCode' => '01', 'Message' => 'Order not found']);
+        } catch (InvalidArgumentException $e) {
+            return response()->json(['RspCode' => in_array($e->getCode(), [4, 97], true) ? str_pad((string) $e->getCode(), 2, '0', STR_PAD_LEFT) : '99', 'Message' => 'Invalid signature, amount or state']);
+        } catch (\Throwable $e) {
+            return response()->json(['RspCode' => '99', 'Message' => 'Retry later']);
+        }
+    }
+
     public function show(Booking $booking)
     {
         abort_unless((int) $booking->guest_id === (int) request()->user()->id, 403);
+        app(\App\Services\BookingLifecycleService::class)->expireDue($booking->room_id);
+        $booking->refresh();
 
         $booking->load([
             'room.homestay',
-            'payments' => fn($query) => $query->latest('id'),
+            'payments' => fn ($query) => $query->latest('id'),
         ]);
 
         return view('payments.show', compact('booking'));

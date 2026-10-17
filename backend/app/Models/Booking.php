@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Booking extends Model
 {
     protected $table = 'bookings';
+
     const UPDATED_AT = null;
 
     protected $fillable = [
@@ -26,6 +28,7 @@ class Booking extends Model
     ];
 
     protected $casts = [
+        'hold_expires_at' => 'datetime',
         'checkin_date' => 'date',
         'checkout_date' => 'date',
         'unit_price' => 'decimal:2',

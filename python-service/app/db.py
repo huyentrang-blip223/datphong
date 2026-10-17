@@ -1,6 +1,7 @@
 import os
+import ssl
 from functools import lru_cache
-from urllib.parse import quote_plus, urlparse
+from urllib.parse import quote_plus, urlparse, unquote
 
 from dotenv import load_dotenv
 import pymysql
@@ -15,14 +16,17 @@ def get_database_url() -> str:
 
 def get_connection():
     parsed = urlparse(get_database_url())
+    ca_path = os.getenv("MYSQL_SSL_CA")
+    tls = ssl.create_default_context(cafile=ca_path) if ca_path else None
     return pymysql.connect(
         host=parsed.hostname or "127.0.0.1",
         port=parsed.port or 3306,
-        user=parsed.username or "root",
-        password=parsed.password or "",
+        user=unquote(parsed.username or "root"),
+        password=unquote(parsed.password or ""),
         database=(parsed.path or "/dt07_homestay").lstrip("/"),
         charset="utf8mb4",
         cursorclass=pymysql.cursors.DictCursor,
+        ssl=tls,
     )
 
 

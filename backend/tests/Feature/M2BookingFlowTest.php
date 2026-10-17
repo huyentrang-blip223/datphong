@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Feature;
 
 use App\Exceptions\AvailabilityConflictException;
@@ -83,12 +84,12 @@ class M2BookingFlowTest extends TestCase
             'checkout' => '2026-12-11',
             'guests' => 2,
         ])->assertCreated()
-            ->assertJsonPath('data.status', 'confirmed');
+            ->assertJsonPath('data.status', 'holding');
 
         $this->assertDatabaseHas('bookings', [
             'guest_id' => $guest->id,
             'room_id' => $room->id,
-            'status' => 'confirmed',
+            'status' => 'holding',
         ]);
     }
 
@@ -99,8 +100,8 @@ class M2BookingFlowTest extends TestCase
 
         app(BookingService::class)->createBooking($guest, $room, '2026-12-10', '2026-12-12', 2);
 
-        $this->assertSame(1, RoomAvailability::where('room_id', $room->id)->where('stay_date', '2026-12-10')->value('units_sold'));
-        $this->assertSame(1, RoomAvailability::where('room_id', $room->id)->where('stay_date', '2026-12-11')->value('units_sold'));
+        $this->assertSame(1, RoomAvailability::where('room_id', $room->id)->where('stay_date', '2026-12-10')->value('units_held'));
+        $this->assertSame(1, RoomAvailability::where('room_id', $room->id)->where('stay_date', '2026-12-11')->value('units_held'));
     }
 
     public function test_insufficient_availability_is_rejected(): void
@@ -161,7 +162,7 @@ class M2BookingFlowTest extends TestCase
 
         $booking = app(BookingService::class)->createBooking($guest, $room, '2026-12-10', '2026-12-11', 2);
 
-        $this->assertSame(1, BookingStatusLog::where('booking_id', $booking->id)->where('to_status', 'confirmed')->count());
+        $this->assertSame(1, BookingStatusLog::where('booking_id', $booking->id)->where('to_status', 'holding')->count());
     }
 
     private function makeUser(string $email, string $role): User
@@ -170,18 +171,18 @@ class M2BookingFlowTest extends TestCase
             'email' => $email,
             'password_hash' => Hash::make('Dt07@2026!'),
             'role' => $role,
-            'full_name' => ucfirst($role) . ' M2',
+            'full_name' => ucfirst($role).' M2',
             'status' => 'active',
         ]);
     }
 
     private function makeRoomWithAvailability(array $roomOverrides = [], array $availabilityOverrides = [], ?User $host = null): Room
     {
-        $host ??= $this->makeUser('m2-host-' . uniqid() . '@dt07.test', 'host');
+        $host ??= $this->makeUser('m2-host-'.uniqid().'@dt07.test', 'host');
         $homestay = Homestay::create([
             'owner_id' => $host->id,
-            'name' => 'M2 Homestay ' . uniqid(),
-            'slug' => 'm2-homestay-' . uniqid(),
+            'name' => 'M2 Homestay '.uniqid(),
+            'slug' => 'm2-homestay-'.uniqid(),
             'province' => 'Lam Dong',
             'district' => 'Da Lat',
             'address_line' => '1 M2 Street',
@@ -194,7 +195,7 @@ class M2BookingFlowTest extends TestCase
 
         $room = Room::create(array_merge([
             'homestay_id' => $homestay->id,
-            'name' => 'M2 Room ' . uniqid(),
+            'name' => 'M2 Room '.uniqid(),
             'room_type' => 'private_room',
             'max_guests' => 4,
             'bed_count' => 2,

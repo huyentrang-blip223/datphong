@@ -87,4 +87,15 @@
     {{ $orders->links() }}
 </div>
 
+@if(auth()->user()->role === 'guest')
+<p>Hủy trước khi đóng gói: trả lại hàng vào kho và hoàn tiền mô phỏng nếu đã thanh toán.</p>
+@foreach($orders as $order)
+@if(in_array($order->status, ['pending', 'confirmed']))
+<form method="post" action="{{ route('guest.orders.status', $order) }}">@csrf
+<input type="hidden" name="status" value="cancelled">
+<button class="btn btn-small btn-secondary">Hủy đơn {{ $order->code }}</button>
+</form>
+@endif
+@endforeach
+@endif
 @endsection

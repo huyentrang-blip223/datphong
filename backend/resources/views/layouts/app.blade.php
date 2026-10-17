@@ -31,6 +31,8 @@
                 @if($role === 'admin')
                     <a href="{{ route('admin.dashboard') }}">Dashboard admin</a>
                     <a href="{{ route('admin.homestays.index') }}">Duyệt homestay</a>
+                    <a href="{{ route('admin.verifications.index') }}">Hồ sơ xác minh</a>
+                    <a href="{{ route('admin.users.index') }}">Người dùng</a>
                     <a href="{{ route('admin.rooms.index') }}">Phòng</a>
                     <a href="{{ route('admin.products.index') }}">Sản phẩm</a>
                     <a href="{{ route('admin.payments.index') }}">Thanh toán</a>
@@ -59,11 +61,14 @@
                     <a href="{{ route('products.index') }}">Sản phẩm</a>
                     <a href="{{ route('experiences.index') }}">Trải nghiệm</a>
                     <a href="{{ route('guest.bookings.index') }}">Booking của tôi</a>
+                    <a href="{{ route('guest.experience-bookings.index') }}">Trải nghiệm đã đặt</a>
                     <a href="{{ route('guest.orders.index') }}">Đơn hàng</a>
+                    <a href="{{ route('guest.cart.index') }}">Giỏ hàng</a>
                     <a href="{{ route('account.loyalty.index') }}">Điểm</a>
                     <a href="{{ route('account.notifications.index') }}">Thông báo</a>
                 @endif
 
+                <a href="{{ route('account.profile.edit') }}">Hồ sơ cá nhân</a>
                 <form action="{{ route('logout') }}" method="post" class="inline-form">
                     @csrf
                     <button class="link-button" type="submit">Đăng xuất</button>

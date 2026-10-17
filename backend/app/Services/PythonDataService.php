@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\LocalProduct;
@@ -37,6 +38,7 @@ class PythonDataService
 
                 if ($response->successful()) {
                     $data = $response->json();
+
                     return [
                         'source' => 'python',
                         'items' => $data['items'] ?? [],
@@ -99,7 +101,21 @@ class PythonDataService
             ]);
         }
 
-        return ['source' => 'fallback', 'items' => []];
+        if ($key === 'seasonality') {
+            $items = \App\Models\RoomAvailability::selectRaw("DATE_FORMAT(stay_date, '%Y-%m') as month, SUM(units_total) as units_total, SUM(units_sold) as units_sold")
+                ->groupByRaw("DATE_FORMAT(stay_date, '%Y-%m')")->orderBy('month')->get()
+                ->map(fn ($row) => ['month' => $row->month, 'units_total' => (int) $row->units_total,
+                    'units_sold' => (int) $row->units_sold, 'occupancy_rate' => $row->units_total ? $row->units_sold / $row->units_total : 0])->all();
+        } else {
+            $items = \App\Models\Homestay::select('homestays.id', 'homestays.name as homestay_name', 'homestays.province')
+                ->join('rooms', 'rooms.homestay_id', '=', 'homestays.id')
+                ->join('bookings', 'bookings.room_id', '=', 'rooms.id')->whereIn('bookings.status', ['confirmed', 'completed'])
+                ->selectRaw('COUNT(bookings.id) as booking_count, SUM(bookings.total_amount) as revenue')
+                ->groupBy('homestays.id', 'homestays.name', 'homestays.province')->orderByDesc('booking_count')
+                ->limit($query['limit'] ?? 10)->get()->toArray();
+        }
+
+        return ['source' => 'fallback', 'items' => $items];
     }
 
     private function client()
@@ -127,12 +143,12 @@ class PythonDataService
             ->select(['local_products.id as product_id', 'local_products.name', 'local_products.price', 'local_products.origin_place'])
             ->where('local_products.status', 'published')
             ->where('local_products.id', '<>', $product->id)
-            ->when($homestayIds, fn($q) => $q->whereHas('homestays', fn($h) => $h->whereIn('homestays.id', $homestayIds)))
+            ->when($homestayIds, fn ($q) => $q->whereHas('homestays', fn ($h) => $h->whereIn('homestays.id', $homestayIds)))
             ->whereBetween('local_products.price', [$minPrice, $maxPrice])
             ->orderBy('local_products.price')
             ->limit($limit)
             ->get()
-            ->map(fn($item) => [
+            ->map(fn ($item) => [
                 'product_id' => (int) $item->product_id,
                 'name' => $item->name,
                 'price' => (float) $item->price,

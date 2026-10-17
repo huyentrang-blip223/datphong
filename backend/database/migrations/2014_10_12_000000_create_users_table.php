@@ -13,6 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('users')) {
+            return;
+        }
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -31,6 +34,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        // The users table belongs to the imported DT07 foundation schema.
+        // Preserve accounts when rolling back framework support migrations.
     }
 };

@@ -1,5 +1,19 @@
 # CODE_STATUS.md — Handoff from Codex to ChatGPT
 
+## Latest delivery — accounts/cart/Render, 2026-10-18
+
+Final verification: **91 Laravel tests passed**, **6 Python tests passed (2 deprecation warnings)**, **153 PHP files passed syntax**, **30 Chrome UI checks passed at three widths**. Account recovery/profile/admin management, cart/redemption, VNPay sandbox refund/query/IPN and operational scripts were added. Windows scheduler ran with exit 0; MySQL backup and isolated restore matched 29 tables/views. New deployment initialization (30 objects/two triggers), demo future inventory (3,240 rows) and repeat startup were verified on disposable databases.
+
+Render assets are prepared, not deployed. Account connection and an external MySQL connection are still required. The existing VNPay merchant probe returned **Website này chưa được phê duyệt**; external payment/refund success is not claimed. Docker Desktop could not start. See `ACCOUNTS_CART_OPERATIONS_2026-10-18.md` and `RENDER_DEPLOYMENT.md`. Older status sections below are historical.
+
+## Current update — 2026-10-18
+
+Missing booking, verification, experience-management, search-pagination and reporting flows were completed. Current evidence: **73 Laravel tests passed**, **5 Python tests passed (2 deprecation warnings)**, **123 PHP files passed syntax checks**, and **18 Chrome UI checks passed across six pages at 390/768/1440 px**. The expiry command is registered every minute in `schedule:list`.
+
+See `COMPLETED_FLOWS_2026-10-18.md` for the exact changed-file inventory, commands and manual checks, and `PROJECT_CONTEXT.md` section 16 for business rules. Refunds are explicitly academic ledger simulations. Hosting, real VNPay sandbox merchant verification, Docker runtime, three-engine testing and usability evidence are not claimed complete.
+
+The following sections are historical snapshots; statements that seller CRUD, notifications or loyalty are missing have been superseded.
+
 Updated at the end of this coding session: 2026-10-02.
 
 ## Current milestone

@@ -1,17 +1,25 @@
 <?php
+
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
     use Notifiable;
 
     protected $table = 'users';
+
     protected $fillable = ['email', 'password_hash', 'role', 'full_name', 'phone', 'status'];
+
     protected $hidden = ['password_hash'];
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetAccountPassword($token));
+    }
 
     public function getAuthPassword(): string
     {

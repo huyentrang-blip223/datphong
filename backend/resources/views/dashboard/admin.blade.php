@@ -53,6 +53,7 @@
     <h2>Phân tích công suất theo tháng</h2>
     <p>Nguồn: {{ $seasonality['source'] === 'python' ? 'Python service' : 'Fallback/empty state' }}</p>
 </div>
+<div data-analytics-chart="monthly" data-title="Biểu đồ công suất theo tháng" data-rows='@json($seasonality["items"])'><p>Bảng dữ liệu bên dưới cung cấp nội dung của biểu đồ.</p></div>
 
 <div class="card" style="padding: 0; overflow: hidden; border-radius: var(--radius-md); margin-bottom: 36px;">
     <div class="table-wrap" style="border: 0;">
@@ -89,6 +90,7 @@
     <h2>Top homestay theo booking</h2>
     <p>Nguồn: {{ $topHomestays['source'] === 'python' ? 'Python service' : 'Fallback/empty state' }}</p>
 </div>
+<div data-analytics-chart="top" data-title="Biểu đồ top homestay" data-rows='@json($topHomestays["items"])'><p>Bảng dữ liệu bên dưới cung cấp nội dung của biểu đồ.</p></div>
 
 <div class="card" style="padding: 0; overflow: hidden; border-radius: var(--radius-md);">
     <div class="table-wrap" style="border: 0;">
@@ -117,4 +119,12 @@
     </div>
 </div>
 
+<section class="card">
+<h2>Xuất báo cáo booking</h2>
+<form action="{{ route('admin.reports.bookings') }}" method="get" class="form-grid">
+<label>Nhận phòng từ<input type="date" name="from"></label><label>Đến<input type="date" name="to"></label>
+<button class="btn">Tải CSV</button>
+</form>
+</section>
+<script type="module" src="{{ asset('js/admin-charts.js') }}"></script>
 @endsection

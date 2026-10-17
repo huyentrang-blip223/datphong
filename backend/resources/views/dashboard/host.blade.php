@@ -3,6 +3,8 @@
 @section('content')
 
 <section class="page-heading">
+    <a class="btn" href="{{ route('host.homestays.index') }}">Homestay / Hồ sơ của tôi</a>
+    <a class="btn btn-secondary" href="{{ route('host.experience-bookings.index') }}">Khách đăng ký trải nghiệm</a>
     <span class="eyebrow">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
         Khu vực chủ homestay

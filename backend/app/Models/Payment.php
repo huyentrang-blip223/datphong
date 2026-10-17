@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Payment extends Model
 {
     protected $table = 'payments';
+
     const UPDATED_AT = null;
 
     protected $fillable = [
@@ -16,6 +18,7 @@ class Payment extends Model
         'amount',
         'status',
         'paid_at',
+        'gateway_created_at', 'gateway_transaction_no', 'refund_request_id', 'refund_state', 'gateway_response_code',
     ];
 
     protected $casts = [

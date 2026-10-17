@@ -8,6 +8,7 @@
         Chương trình khách hàng thân thiết
     </span>
     <h1>Điểm thành viên</h1>
+    <p>Dùng điểm khi tạo đơn tại <a href="{{ route('guest.cart.index') }}">giỏ hàng</a> (tài khoản guest). 1 điểm = 1.000 đ, tối đa 50% giá trị từng đơn. Điểm đã dùng được trả lại nếu hủy đơn; điểm được thưởng sẽ bị thu hồi khi hoàn tiền.</p>
     <p>Tích lũy điểm thưởng từ các chuyến lưu trú và đơn hàng đặc sản để nhận ưu đãi hấp dẫn.</p>
 </div>
 

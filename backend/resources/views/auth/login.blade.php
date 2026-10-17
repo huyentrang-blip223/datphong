@@ -33,6 +33,7 @@
             Đăng nhập
         </button>
     </form>
+    <p><a href="{{ route('password.request') }}">Quên mật khẩu?</a></p>
 
     <div style="text-align: center; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border-light);">
         <p class="muted auth-switch" style="margin: 0; font-size: 0.92rem;">

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ProductOrder extends Model
 {
     protected $table = 'product_orders';
+
     const UPDATED_AT = null;
 
     protected $fillable = [
@@ -17,6 +19,8 @@ class ProductOrder extends Model
         'status',
         'subtotal',
         'total_amount',
+        'points_redeemed',
+        'discount_amount',
     ];
 
     protected $casts = [

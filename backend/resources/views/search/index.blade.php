@@ -50,6 +50,16 @@
                 <label>Giá tối đa (VNĐ)</label>
                 <input type="number" min="0" placeholder="Không giới hạn" name="max_price" value="{{ old('max_price', $filters['max_price'] ?? '') }}">
             </div>
+            <label>Sắp xếp<select name="sort">
+                @foreach(['price_asc'=>'Giá tăng dần','price_desc'=>'Giá giảm dần','newest'=>'Mới nhất'] as $value=>$label)
+                <option value="{{ $value }}" @selected(($filters['sort'] ?? 'price_asc') === $value)>{{ $label }}</option>
+                @endforeach
+            </select></label>
+            <label>Loại phòng<select name="room_type"><option value="">Tất cả</option>
+                @foreach(['private_room'=>'Phòng riêng','family_room'=>'Phòng gia đình','dorm'=>'Giường tập thể','bungalow'=>'Bungalow','whole_house'=>'Nguyên căn'] as $value=>$label)
+                <option value="{{ $value }}" @selected(($filters['room_type'] ?? '') === $value)>{{ $label }}</option>
+                @endforeach
+            </select></label>
         </div>
         <div style="display: flex; justify-content: flex-end;">
             <button class="btn" type="submit">
@@ -64,7 +74,7 @@
     <div class="section-heading">
         <span class="eyebrow">Kết quả tìm kiếm</span>
         <h2>Kết quả phù hợp</h2>
-        <p>Tìm thấy {{ $rooms->count() }} phòng còn trống phù hợp tiêu chí của bạn.</p>
+        <p>Tìm thấy {{ $rooms->total() }} phòng còn trống phù hợp tiêu chí của bạn.</p>
     </div>
 
     <div class="cards-grid" style="margin-top: 16px;">
@@ -122,6 +132,7 @@
             </div>
         @endforeach
     </div>
+    {{ $rooms->links() }}
 @elseif(!empty($filters))
     <div class="card" style="text-align: center; padding: 48px 24px; color: var(--muted);">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 12px; color: var(--muted);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>

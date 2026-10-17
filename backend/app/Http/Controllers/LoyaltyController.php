@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\LoyaltyTransaction;
@@ -10,7 +11,7 @@ class LoyaltyController extends Controller
         $transactions = LoyaltyTransaction::where('user_id', request()->user()->id)
             ->orderByDesc('id')
             ->paginate(15);
-        $balance = (int) ($transactions->first()?->balance_after ?? LoyaltyTransaction::where('user_id', request()->user()->id)->latest('id')->value('balance_after'));
+        $balance = app(\App\Services\LoyaltyService::class)->balance(request()->user()->id);
 
         return view('loyalty.index', compact('transactions', 'balance'));
     }

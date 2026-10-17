@@ -66,7 +66,12 @@
         @auth
             @if(auth()->user()->role === 'guest' && $product->stock_qty > 0)
                 <div class="card" style="padding: 24px; margin: 0; border-color: var(--primary);">
-                    <h2 style="font-size: 1.25rem; margin-bottom: 12px;">Đặt mua test</h2>
+                    <h2 style="font-size: 1.25rem; margin-bottom: 12px;">Mua sản phẩm</h2>
+                    <form method="post" action="{{ route('guest.cart.store') }}">@csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <label>Số lượng thêm vào giỏ<input type="number" name="quantity" min="1" max="{{ min(1000,$product->stock_qty) }}" value="1" required></label>
+                    <button class="btn" type="submit">Thêm vào giỏ hàng</button></form>
+                    <p><a href="{{ route('guest.cart.index') }}">Xem giỏ / sử dụng điểm</a></p>
                     <form method="post" action="{{ route('guest.orders.store') }}">
                         @csrf
                         <input type="hidden" name="items[0][product_id]" value="{{ $product->id }}">

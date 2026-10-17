@@ -2,6 +2,9 @@
 -- San luu tru cong dong homestay gan voi san pham dia phuong
 -- Thiet ke CSDL logic + vat ly - Tuan/Buoi 4 (Project week 4 / Tuan 09)
 -- MySQL 8.0+, utf8mb4
+-- Runtime extensions: apply backend/database/migrations after importing this baseline.
+-- 2026_10_18 migrations add password recovery, cart checkout tracking,
+-- product-order redemption fields and VNPay refund tracking.
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;

@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class TrustProxies extends Middleware
 {
+    public function __construct()
+    {
+        $configured = env('TRUSTED_PROXIES', '');
+        $this->proxies = $configured === '*' ? '*' : array_values(array_filter(explode(',', $configured)));
+    }
+
     /**
      * The trusted proxies for this application.
      *

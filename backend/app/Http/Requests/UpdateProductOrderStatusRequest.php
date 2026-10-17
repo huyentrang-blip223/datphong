@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -8,7 +9,7 @@ class UpdateProductOrderStatusRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return in_array($this->user()?->role, ['seller', 'admin'], true);
+        return in_array($this->user()?->role, ['seller', 'admin', 'guest'], true);
     }
 
     public function rules(): array
