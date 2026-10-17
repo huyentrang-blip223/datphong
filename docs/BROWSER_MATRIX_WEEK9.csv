@@ -1,0 +1,10 @@
+browser,viewport,route_or_flow,result,screenshot_path,notes
+Chromium,390x844,login/search/booking,BLOCKED,,node/npm/npx unavailable
+Chromium,768x1024,products/experiences,BLOCKED,,node/npm/npx unavailable
+Chromium,1440x900,admin/host dashboard,BLOCKED,,node/npm/npx unavailable
+Firefox,390x844,login/search/booking,BLOCKED,,node/npm/npx unavailable
+Firefox,768x1024,products/experiences,BLOCKED,,node/npm/npx unavailable
+Firefox,1440x900,admin/host dashboard,BLOCKED,,node/npm/npx unavailable
+WebKit,390x844,login/search/booking,BLOCKED,,node/npm/npx unavailable
+WebKit,768x1024,products/experiences,BLOCKED,,node/npm/npx unavailable
+WebKit,1440x900,admin/host dashboard,BLOCKED,,node/npm/npx unavailable

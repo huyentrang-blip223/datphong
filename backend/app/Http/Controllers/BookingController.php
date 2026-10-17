@@ -8,6 +8,7 @@ use App\Models\Booking;
 use App\Models\BookingStatusLog;
 use App\Models\RoomAvailability;
 use App\Services\BookingService;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -54,10 +55,12 @@ class BookingController extends Controller
             return response()->json(['data' => $booking->fresh('statusLogs')], 201);
         }
 
-        return redirect()->route('search.index')->with('status', 'Đặt phòng thành công: ' . $booking->code);
+        return redirect()
+            ->route('guest.payments.show', $booking)
+            ->with('status', 'Đặt phòng thành công: ' . $booking->code . '. Vui lòng kiểm tra và thanh toán.');
     }
 
-    public function cancel(Booking $booking)
+    public function cancel(Booking $booking, NotificationService $notificationService)
     {
         abort_unless((int) $booking->guest_id === (int) request()->user()->id, 403);
 
@@ -65,7 +68,7 @@ class BookingController extends Controller
             return back()->withErrors(['booking' => 'Trạng thái booking không cho phép hủy.']);
         }
 
-        DB::transaction(function () use ($booking) {
+        DB::transaction(function () use ($booking, $notificationService) {
             $locked = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
             $from = $locked->status;
             $locked->update(['status' => 'cancelled', 'cancel_reason' => 'guest_cancelled']);
@@ -92,6 +95,13 @@ class BookingController extends Controller
                 'actor_id' => request()->user()->id,
                 'reason' => 'guest_cancelled',
             ]);
+
+            $locked->load('room.homestay', 'guest');
+            $notificationService->send($locked->guest, 'booking_cancelled', 'Đã hủy booking', 'Booking ' . $locked->code . ' đã được hủy.', 'booking', $locked->id);
+
+            if ($locked->room?->homestay?->owner_id) {
+                $notificationService->send((int) $locked->room->homestay->owner_id, 'booking_cancelled', 'Khách đã hủy booking', 'Booking ' . $locked->code . ' của phòng ' . $locked->room->name . ' đã được khách hủy.', 'booking', $locked->id);
+            }
         });
 
         return back()->with('status', 'Đã hủy booking.');

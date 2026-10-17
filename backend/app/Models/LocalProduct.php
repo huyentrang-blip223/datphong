@@ -20,6 +20,7 @@ class LocalProduct extends Model
         'price',
         'stock_qty',
         'status',
+        'image_path',
     ];
 
     protected $casts = [
@@ -40,5 +41,14 @@ class LocalProduct extends Model
     public function orderItems(): HasMany
     {
         return $this->hasMany(ProductOrderItem::class, 'product_id');
+    }
+
+    public function getImageUrlAttribute(): string
+    {
+        if (!empty($this->image_path)) {
+            return asset('storage/' . $this->image_path);
+        }
+
+        return asset('images/banners/ocop-products.jpg');
     }
 }

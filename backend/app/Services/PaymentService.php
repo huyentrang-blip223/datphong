@@ -11,6 +11,13 @@ use InvalidArgumentException;
 
 class PaymentService
 {
+    public function __construct(
+        private LoyaltyService $loyaltyService,
+        private NotificationService $notificationService,
+        private AuditLogService $auditLogService
+    ) {
+    }
+
     public function payTest(Booking $booking, User $guest, string $result): Payment
     {
         if ((int) $booking->guest_id !== (int) $guest->id) {
@@ -45,7 +52,20 @@ class PaymentService
                     'actor_id' => $guest->id,
                     'reason' => 'mock_payment_success',
                 ]);
+
+                $this->loyaltyService->award($guest, (int) floor((float) $locked->total_amount / 10000), 'mock_payment_booking', $locked->id);
+                $this->notificationService->send($guest, 'payment_paid', 'Thanh toán test thành công', 'Booking ' . $locked->code . ' đã được ghi nhận thanh toán test.', 'booking', $locked->id);
             }
+
+            if ($status === 'failed') {
+                $this->notificationService->send($guest, 'payment_failed', 'Thanh toán test thất bại', 'Booking ' . $locked->code . ' chưa được thanh toán.', 'booking', $locked->id);
+            }
+
+            $this->auditLogService->record($guest, 'mock_payment_' . $status, 'payments', $payment->id, null, [
+                'booking_id' => $locked->id,
+                'status' => $status,
+                'gateway' => 'mock_test',
+            ]);
 
             return $payment;
         });

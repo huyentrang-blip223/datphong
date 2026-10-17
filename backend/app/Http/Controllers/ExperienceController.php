@@ -56,6 +56,6 @@ class ExperienceController extends Controller
             return response()->json(['data' => $booking], 201);
         }
 
-        return redirect()->route('experiences.show', $experience)->with('status', 'Đã đặt trải nghiệm thành công.');
+        return redirect()->route('guest.experience-payments.show', $booking)->with('status', 'Đã đặt trải nghiệm thành công. Vui lòng kiểm tra và thanh toán.');
     }
 }

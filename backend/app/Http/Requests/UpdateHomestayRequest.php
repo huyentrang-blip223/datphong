@@ -19,6 +19,7 @@ class UpdateHomestayRequest extends FormRequest
             'district' => ['nullable','string','max:100'],
             'address_line' => ['required','string','max:255'],
             'description' => ['nullable','string','max:3000'],
+            'cover_image' => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
             'checkin_time' => ['required','date_format:H:i'],
             'checkout_time' => ['required','date_format:H:i'],
             'status' => ['required',Rule::in(['pending','approved','rejected','suspended'])],

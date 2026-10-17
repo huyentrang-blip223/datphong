@@ -1,132 +1,501 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
+@section('title', 'ĐT-07 — Sàn Homestay Cộng Đồng & Đặc Sản Bản Địa')
+@section('content')
 
-        <title>Laravel</title>
+{{-- 1. HERO SECTION & FAST SEARCH --}}
+<div class="hero-wrapper">
+    <div class="hero-banner" style="background-image: linear-gradient(135deg, rgba(8, 28, 24, 0.88) 0%, rgba(12, 42, 36, 0.76) 50%, rgba(10, 32, 28, 0.65) 100%), url('{{ asset('images/banners/hero-banner.jpg') }}');">
+        <div class="hero-content">
+            <div class="hero-badge-row">
+                <span class="hero-chip">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6.4-4.8-6.4 4.8 2.4-7.2-6-4.8h7.6z"/></svg>
+                    Sàn Du Lịch Cộng Đồng ĐT-07
+                </span>
+                <span class="hero-chip hero-chip-ghost">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    100% Xác thực thực địa
+                </span>
+            </div>
 
-        <!-- Fonts -->
-        <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+            <h1>Homestay Bản Địa, Đặc Sản OCOP & Trải Nghiệm Văn Hóa</h1>
+            <p class="hero-desc">
+                Khám phá không gian lưu trú mộc mạc giữa thiên nhiên hùng vĩ, kết nối trực tiếp với người nông dân địa phương, thưởng thức đặc sản OCOP và trải nghiệm văn hóa truyền thống độc bản.
+            </p>
 
-        <!-- Styles -->
-        <style>
-            /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}a{background-color:transparent}[hidden]{display:none}html{font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;line-height:1.5}*,:after,:before{box-sizing:border-box;border:0 solid #e2e8f0}a{color:inherit;text-decoration:inherit}svg,video{display:block;vertical-align:middle}video{max-width:100%;height:auto}.bg-white{--tw-bg-opacity: 1;background-color:rgb(255 255 255 / var(--tw-bg-opacity))}.bg-gray-100{--tw-bg-opacity: 1;background-color:rgb(243 244 246 / var(--tw-bg-opacity))}.border-gray-200{--tw-border-opacity: 1;border-color:rgb(229 231 235 / var(--tw-border-opacity))}.border-t{border-top-width:1px}.flex{display:flex}.grid{display:grid}.hidden{display:none}.items-center{align-items:center}.justify-center{justify-content:center}.font-semibold{font-weight:600}.h-5{height:1.25rem}.h-8{height:2rem}.h-16{height:4rem}.text-sm{font-size:.875rem}.text-lg{font-size:1.125rem}.leading-7{line-height:1.75rem}.mx-auto{margin-left:auto;margin-right:auto}.ml-1{margin-left:.25rem}.mt-2{margin-top:.5rem}.mr-2{margin-right:.5rem}.ml-2{margin-left:.5rem}.mt-4{margin-top:1rem}.ml-4{margin-left:1rem}.mt-8{margin-top:2rem}.ml-12{margin-left:3rem}.-mt-px{margin-top:-1px}.max-w-6xl{max-width:72rem}.min-h-screen{min-height:100vh}.overflow-hidden{overflow:hidden}.p-6{padding:1.5rem}.py-4{padding-top:1rem;padding-bottom:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.pt-8{padding-top:2rem}.fixed{position:fixed}.relative{position:relative}.top-0{top:0}.right-0{right:0}.shadow{--tw-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);--tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}.text-center{text-align:center}.text-gray-200{--tw-text-opacity: 1;color:rgb(229 231 235 / var(--tw-text-opacity))}.text-gray-300{--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity))}.text-gray-400{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity))}.text-gray-500{--tw-text-opacity: 1;color:rgb(107 114 128 / var(--tw-text-opacity))}.text-gray-600{--tw-text-opacity: 1;color:rgb(75 85 99 / var(--tw-text-opacity))}.text-gray-700{--tw-text-opacity: 1;color:rgb(55 65 81 / var(--tw-text-opacity))}.text-gray-900{--tw-text-opacity: 1;color:rgb(17 24 39 / var(--tw-text-opacity))}.underline{text-decoration:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.w-5{width:1.25rem}.w-8{width:2rem}.w-auto{width:auto}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}@media (min-width:640px){.sm\:rounded-lg{border-radius:.5rem}.sm\:block{display:block}.sm\:items-center{align-items:center}.sm\:justify-start{justify-content:flex-start}.sm\:justify-between{justify-content:space-between}.sm\:h-20{height:5rem}.sm\:ml-0{margin-left:0}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:pt-0{padding-top:0}.sm\:text-left{text-align:left}.sm\:text-right{text-align:right}}@media (min-width:768px){.md\:border-t-0{border-top-width:0}.md\:border-l{border-left-width:1px}.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (min-width:1024px){.lg\:px-8{padding-left:2rem;padding-right:2rem}}@media (prefers-color-scheme:dark){.dark\:bg-gray-800{--tw-bg-opacity: 1;background-color:rgb(31 41 55 / var(--tw-bg-opacity))}.dark\:bg-gray-900{--tw-bg-opacity: 1;background-color:rgb(17 24 39 / var(--tw-bg-opacity))}.dark\:border-gray-700{--tw-border-opacity: 1;border-color:rgb(55 65 81 / var(--tw-border-opacity))}.dark\:text-white{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity))}.dark\:text-gray-400{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity))}.dark\:text-gray-500{--tw-text-opacity: 1;color:rgb(107 114 128 / var(--tw-text-opacity))}}
-        </style>
-
-        <style>
-            body {
-                font-family: 'Nunito', sans-serif;
-            }
-        </style>
-    </head>
-    <body class="antialiased">
-        <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
-            @if (Route::has('login'))
-                <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
-                    @auth
-                        <a href="{{ url('/home') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Home</a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Log in</a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 underline">Register</a>
-                        @endif
-                    @endauth
-                </div>
-            @endif
-
-            <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-                <div class="flex justify-center pt-8 sm:justify-start sm:pt-0">
-                    <svg viewBox="0 0 651 192" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-16 w-auto text-gray-700 sm:h-20">
-                        <g clip-path="url(#clip0)" fill="#EF3B2D">
-                            <path d="M248.032 44.676h-16.466v100.23h47.394v-14.748h-30.928V44.676zM337.091 87.202c-2.101-3.341-5.083-5.965-8.949-7.875-3.865-1.909-7.756-2.864-11.669-2.864-5.062 0-9.69.931-13.89 2.792-4.201 1.861-7.804 4.417-10.811 7.661-3.007 3.246-5.347 6.993-7.016 11.239-1.672 4.249-2.506 8.713-2.506 13.389 0 4.774.834 9.26 2.506 13.459 1.669 4.202 4.009 7.925 7.016 11.169 3.007 3.246 6.609 5.799 10.811 7.66 4.199 1.861 8.828 2.792 13.89 2.792 3.913 0 7.804-.955 11.669-2.863 3.866-1.908 6.849-4.533 8.949-7.875v9.021h15.607V78.182h-15.607v9.02zm-1.431 32.503c-.955 2.578-2.291 4.821-4.009 6.73-1.719 1.91-3.795 3.437-6.229 4.582-2.435 1.146-5.133 1.718-8.091 1.718-2.96 0-5.633-.572-8.019-1.718-2.387-1.146-4.438-2.672-6.156-4.582-1.719-1.909-3.032-4.152-3.938-6.73-.909-2.577-1.36-5.298-1.36-8.161 0-2.864.451-5.585 1.36-8.162.905-2.577 2.219-4.819 3.938-6.729 1.718-1.908 3.77-3.437 6.156-4.582 2.386-1.146 5.059-1.718 8.019-1.718 2.958 0 5.656.572 8.091 1.718 2.434 1.146 4.51 2.674 6.229 4.582 1.718 1.91 3.054 4.152 4.009 6.729.953 2.577 1.432 5.298 1.432 8.162-.001 2.863-.479 5.584-1.432 8.161zM463.954 87.202c-2.101-3.341-5.083-5.965-8.949-7.875-3.865-1.909-7.756-2.864-11.669-2.864-5.062 0-9.69.931-13.89 2.792-4.201 1.861-7.804 4.417-10.811 7.661-3.007 3.246-5.347 6.993-7.016 11.239-1.672 4.249-2.506 8.713-2.506 13.389 0 4.774.834 9.26 2.506 13.459 1.669 4.202 4.009 7.925 7.016 11.169 3.007 3.246 6.609 5.799 10.811 7.66 4.199 1.861 8.828 2.792 13.89 2.792 3.913 0 7.804-.955 11.669-2.863 3.866-1.908 6.849-4.533 8.949-7.875v9.021h15.607V78.182h-15.607v9.02zm-1.432 32.503c-.955 2.578-2.291 4.821-4.009 6.73-1.719 1.91-3.795 3.437-6.229 4.582-2.435 1.146-5.133 1.718-8.091 1.718-2.96 0-5.633-.572-8.019-1.718-2.387-1.146-4.438-2.672-6.156-4.582-1.719-1.909-3.032-4.152-3.938-6.73-.909-2.577-1.36-5.298-1.36-8.161 0-2.864.451-5.585 1.36-8.162.905-2.577 2.219-4.819 3.938-6.729 1.718-1.908 3.77-3.437 6.156-4.582 2.386-1.146 5.059-1.718 8.019-1.718 2.958 0 5.656.572 8.091 1.718 2.434 1.146 4.51 2.674 6.229 4.582 1.718 1.91 3.054 4.152 4.009 6.729.953 2.577 1.432 5.298 1.432 8.162 0 2.863-.479 5.584-1.432 8.161zM650.772 44.676h-15.606v100.23h15.606V44.676zM365.013 144.906h15.607V93.538h26.776V78.182h-42.383v66.724zM542.133 78.182l-19.616 51.096-19.616-51.096h-15.808l25.617 66.724h19.614l25.617-66.724h-15.808zM591.98 76.466c-19.112 0-34.239 15.706-34.239 35.079 0 21.416 14.641 35.079 36.239 35.079 12.088 0 19.806-4.622 29.234-14.688l-10.544-8.158c-.006.008-7.958 10.449-19.832 10.449-13.802 0-19.612-11.127-19.612-16.884h51.777c2.72-22.043-11.772-40.877-33.023-40.877zm-18.713 29.28c.12-1.284 1.917-16.884 18.589-16.884 16.671 0 18.697 15.598 18.813 16.884h-37.402zM184.068 43.892c-.024-.088-.073-.165-.104-.25-.058-.157-.108-.316-.191-.46-.056-.097-.137-.176-.203-.265-.087-.117-.161-.242-.265-.345-.085-.086-.194-.148-.29-.223-.109-.085-.206-.182-.327-.252l-.002-.001-.002-.002-35.648-20.524a2.971 2.971 0 00-2.964 0l-35.647 20.522-.002.002-.002.001c-.121.07-.219.167-.327.252-.096.075-.205.138-.29.223-.103.103-.178.228-.265.345-.066.089-.147.169-.203.265-.083.144-.133.304-.191.46-.031.085-.08.162-.104.25-.067.249-.103.51-.103.776v38.979l-29.706 17.103V24.493a3 3 0 00-.103-.776c-.024-.088-.073-.165-.104-.25-.058-.157-.108-.316-.191-.46-.056-.097-.137-.176-.203-.265-.087-.117-.161-.242-.265-.345-.085-.086-.194-.148-.29-.223-.109-.085-.206-.182-.327-.252l-.002-.001-.002-.002L40.098 1.396a2.971 2.971 0 00-2.964 0L1.487 21.919l-.002.002-.002.001c-.121.07-.219.167-.327.252-.096.075-.205.138-.29.223-.103.103-.178.228-.265.345-.066.089-.147.169-.203.265-.083.144-.133.304-.191.46-.031.085-.08.162-.104.25-.067.249-.103.51-.103.776v122.09c0 1.063.568 2.044 1.489 2.575l71.293 41.045c.156.089.324.143.49.202.078.028.15.074.23.095a2.98 2.98 0 001.524 0c.069-.018.132-.059.2-.083.176-.061.354-.119.519-.214l71.293-41.045a2.971 2.971 0 001.489-2.575v-38.979l34.158-19.666a2.971 2.971 0 001.489-2.575V44.666a3.075 3.075 0 00-.106-.774zM74.255 143.167l-29.648-16.779 31.136-17.926.001-.001 34.164-19.669 29.674 17.084-21.772 12.428-43.555 24.863zm68.329-76.259v33.841l-12.475-7.182-17.231-9.92V49.806l12.475 7.182 17.231 9.92zm2.97-39.335l29.693 17.095-29.693 17.095-29.693-17.095 29.693-17.095zM54.06 114.089l-12.475 7.182V46.733l17.231-9.92 12.475-7.182v74.537l-17.231 9.921zM38.614 7.398l29.693 17.095-29.693 17.095L8.921 24.493 38.614 7.398zM5.938 29.632l12.475 7.182 17.231 9.92v79.676l.001.005-.001.006c0 .114.032.221.045.333.017.146.021.294.059.434l.002.007c.032.117.094.222.14.334.051.124.088.255.156.371a.036.036 0 00.004.009c.061.105.149.191.222.288.081.105.149.22.244.314l.008.01c.084.083.19.142.284.215.106.083.202.178.32.247l.013.005.011.008 34.139 19.321v34.175L5.939 144.867V29.632h-.001zm136.646 115.235l-65.352 37.625V148.31l48.399-27.628 16.953-9.677v33.862zm35.646-61.22l-29.706 17.102V66.908l17.231-9.92 12.475-7.182v33.841z"/>
-                        </g>
-                    </svg>
-                </div>
-
-                <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow sm:rounded-lg">
-                    <div class="grid grid-cols-1 md:grid-cols-2">
-                        <div class="p-6">
-                            <div class="flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="https://laravel.com/docs" class="underline text-gray-900 dark:text-white">Documentation</a></div>
-                            </div>
-
-                            <div class="ml-12">
-                                <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                    Laravel has wonderful, thorough documentation covering every aspect of the framework. Whether you are new to the framework or have previous experience with Laravel, we recommend reading all of the documentation from beginning to end.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-t-0 md:border-l">
-                            <div class="flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-gray-500"><path stroke-linecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>
-                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="https://laracasts.com" class="underline text-gray-900 dark:text-white">Laracasts</a></div>
-                            </div>
-
-                            <div class="ml-12">
-                                <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                    Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript development. Check them out, see for yourself, and massively level up your development skills in the process.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-6 border-t border-gray-200 dark:border-gray-700">
-                            <div class="flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
-                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="https://laravel-news.com/" class="underline text-gray-900 dark:text-white">Laravel News</a></div>
-                            </div>
-
-                            <div class="ml-12">
-                                <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                    Laravel News is a community driven portal and newsletter aggregating all of the latest and most important news in the Laravel ecosystem, including new package releases and tutorials.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
-                            <div class="flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M6.115 5.19l.319 1.913A6 6 0 008.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 002.288-4.042 1.087 1.087 0 00-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 01-.98-.314l-.295-.295a1.125 1.125 0 010-1.591l.13-.132a1.125 1.125 0 011.3-.21l.603.302a.809.809 0 001.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 001.528-1.732l.146-.292M6.115 5.19A9 9 0 1017.18 4.64M6.115 5.19A8.965 8.965 0 0112 3c1.929 0 3.716.607 5.18 1.64" /></svg>
-                                <div class="ml-4 text-lg leading-7 font-semibold text-gray-900 dark:text-white">Vibrant Ecosystem</div>
-                            </div>
-
-                            <div class="ml-12">
-                                <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                    Laravel's robust library of first-party tools and libraries, such as <a href="https://forge.laravel.com" class="underline">Forge</a>, <a href="https://vapor.laravel.com" class="underline">Vapor</a>, <a href="https://nova.laravel.com" class="underline">Nova</a>, and <a href="https://envoyer.io" class="underline">Envoyer</a> help you take your projects to the next level. Pair them with powerful open source libraries like <a href="https://laravel.com/docs/billing" class="underline">Cashier</a>, <a href="https://laravel.com/docs/dusk" class="underline">Dusk</a>, <a href="https://laravel.com/docs/broadcasting" class="underline">Echo</a>, <a href="https://laravel.com/docs/horizon" class="underline">Horizon</a>, <a href="https://laravel.com/docs/sanctum" class="underline">Sanctum</a>, <a href="https://laravel.com/docs/telescope" class="underline">Telescope</a>, and more.
-                                </div>
-                            </div>
-                        </div>
+            <div class="hero-trust-row">
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
+                    <span>Kiểm định an toàn</span>
                 </div>
-
-                <div class="flex justify-center mt-4 sm:items-center sm:justify-between">
-                    <div class="text-center text-sm text-gray-500 sm:text-left">
-                        <div class="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="-mt-px w-5 h-5 text-gray-400">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                            </svg>
-
-                            <a href="https://laravel.bigcartel.com" class="ml-1 underline">
-                                Shop
-                            </a>
-
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ml-4 -mt-px w-5 h-5 text-gray-400">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                            </svg>
-
-                            <a href="https://github.com/sponsors/taylorotwell" class="ml-1 underline">
-                                Sponsor
-                            </a>
-                        </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     </div>
-
-                    <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
-                        Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+                    <span>Khóa phòng Real-time</span>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
                     </div>
+                    <span>OCOP trực tiếp từ nhà nông</span>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <span>Tích điểm Loyalty</span>
                 </div>
             </div>
         </div>
-    </body>
-</html>
+
+        {{-- HERO SEARCH FORM --}}
+        <div class="hero-search-card">
+            <form method="get" action="{{ route('search.results') }}" class="hero-search-form">
+                <div class="search-field">
+                    <label>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Điểm đến (Tỉnh / Huyện)
+                    </label>
+                    <input type="text" name="location" placeholder="Đà Lạt, Sa Pa, Ninh Bình, Hội An..." value="{{ request('location') }}">
+                </div>
+                <div class="search-field">
+                    <label>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Ngày nhận phòng
+                    </label>
+                    <input type="date" name="checkin" value="{{ request('checkin', date('Y-m-d', strtotime('+1 day'))) }}" required>
+                </div>
+                <div class="search-field">
+                    <label>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Ngày trả phòng
+                    </label>
+                    <input type="date" name="checkout" value="{{ request('checkout', date('Y-m-d', strtotime('+2 days'))) }}" required>
+                </div>
+                <div class="search-field">
+                    <label>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Số khách
+                    </label>
+                    <input type="number" name="guests" min="1" max="20" value="{{ request('guests', 2) }}" required>
+                </div>
+                <button type="submit" class="btn hero-search-submit">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Tìm phòng
+                </button>
+            </form>
+
+            <div class="quick-tags">
+                <span class="quick-tags-title">Gợi ý tìm nhanh:</span>
+                @foreach($popularDestinations ?? [] as $dest)
+                    <a href="{{ route('search.results', ['location' => $dest['keyword'], 'checkin' => date('Y-m-d', strtotime('+1 day')), 'checkout' => date('Y-m-d', strtotime('+2 days')), 'guests' => 2]) }}" class="tag-pill">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.6; margin-right: 2px;"><circle cx="12" cy="12" r="10"/></svg>
+                        {{ $dest['name'] }}
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- 2. STATS BANNER --}}
+<div class="stats-banner">
+    <div class="stat-box">
+        <div class="stat-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+        </div>
+        <div class="stat-info">
+            <strong>{{ $stats['homestays_count'] ?? '12+' }}</strong>
+            <span>Homestay cộng đồng</span>
+        </div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>
+            </svg>
+        </div>
+        <div class="stat-info">
+            <strong>{{ $stats['rooms_count'] ?? '36+' }}</strong>
+            <span>Phòng có lịch trực tuyến</span>
+        </div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M12 8v4M12 16h.01"/>
+            </svg>
+        </div>
+        <div class="stat-info">
+            <strong>{{ $stats['products_count'] ?? '24+' }}</strong>
+            <span>Đặc sản OCOP bản địa</span>
+        </div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+            </svg>
+        </div>
+        <div class="stat-info">
+            <strong>{{ $stats['experiences_count'] ?? '24+' }}</strong>
+            <span>Trải nghiệm văn hóa</span>
+        </div>
+    </div>
+</div>
+
+{{-- 3. ROLE WORKSPACE PANEL (KHI ĐÃ ĐĂNG NHẬP) --}}
+@auth
+    @php
+        $role = auth()->user()->role;
+    @endphp
+    <section class="role-panel">
+        <div class="role-panel-info">
+            <span class="role-badge-pill">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Tài khoản: {{ strtoupper($role) }}
+            </span>
+            <h2>Xin chào, {{ auth()->user()->full_name ?? auth()->user()->email }}!</h2>
+            <p>Khu vực làm việc nhanh phù hợp với quyền hạn của bạn. Hệ thống đảm bảo phân quyền chặt chẽ từ Server-side Policy và Middleware.</p>
+        </div>
+        <div class="action-strip">
+            @if($role === 'admin')
+                <a class="btn" href="{{ route('admin.dashboard') }}">Dashboard admin</a>
+                <a class="btn btn-secondary" href="{{ route('admin.homestays.index') }}">Duyệt homestay</a>
+                <a class="btn btn-secondary" href="{{ route('admin.rooms.index') }}">Quản lý phòng</a>
+                <a class="btn btn-secondary" href="{{ route('admin.products.index') }}">Quản lý sản phẩm</a>
+            @elseif($role === 'host')
+                <a class="btn" href="{{ route('host.dashboard') }}">Dashboard host</a>
+                <a class="btn btn-secondary" href="{{ route('host.availability.index') }}">Lịch phòng</a>
+                <a class="btn btn-secondary" href="{{ route('host.rooms.index') }}">Quản lý phòng</a>
+            @elseif($role === 'seller')
+                <a class="btn" href="{{ route('seller.dashboard') }}">Dashboard seller</a>
+                <a class="btn btn-secondary" href="{{ route('seller.products.index') }}">Sản phẩm của tôi</a>
+                <a class="btn btn-secondary" href="{{ route('seller.orders.index') }}">Đơn hàng</a>
+            @elseif($role === 'guest')
+                <a class="btn" href="{{ route('guest.bookings.index') }}">Booking của tôi</a>
+                <a class="btn btn-secondary" href="{{ route('account.loyalty.index') }}">Điểm thưởng</a>
+                <a class="btn btn-secondary" href="{{ route('guest.orders.index') }}">Đơn hàng đã đặt</a>
+            @endif
+        </div>
+    </section>
+@endauth
+
+{{-- 4. POPULAR DESTINATIONS --}}
+<section class="home-section">
+    <div class="section-header">
+        <div class="section-header-left">
+            <span class="eyebrow">Vùng đất di sản</span>
+            <h2>Điểm đến du lịch cộng đồng nổi bật</h2>
+            <p>Khám phá văn hóa bản địa, danh lam thắng cảnh và làng nghề truyền thống</p>
+        </div>
+        <a href="{{ route('search.index') }}" class="section-link">
+            Xem tất cả điểm đến
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+    </div>
+
+    <div class="dest-grid">
+        @foreach($popularDestinations ?? [] as $destination)
+            <a href="{{ route('search.results', ['location' => $destination['keyword'], 'checkin' => date('Y-m-d', strtotime('+1 day')), 'checkout' => date('Y-m-d', strtotime('+2 days')), 'guests' => 2]) }}"
+               class="dest-card" style="background-image: linear-gradient(180deg, rgba(12, 28, 24, 0.25) 0%, rgba(10, 25, 21, 0.9) 100%), url('{{ $destination['image'] ?? '' }}');">
+                <div class="dest-card-header">
+                    <span class="dest-badge">{{ $destination['badge'] }}</span>
+                    <div class="dest-icon-bubble">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                </div>
+                <div class="dest-card-content">
+                    <h3>{{ $destination['name'] }}</h3>
+                    <p>{{ $destination['tagline'] }}</p>
+                    <span class="dest-card-action">
+                        Khám phá
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                    </span>
+                </div>
+            </a>
+        @endforeach
+    </div>
+</section>
+
+{{-- 5. FEATURED HOMESTAYS --}}
+<section class="home-section">
+    <div class="section-header">
+        <div class="section-header-left">
+            <span class="eyebrow">Lưu trú chất lượng</span>
+            <h2>Homestay cộng đồng tiêu biểu</h2>
+            <p>Cơ sở lưu trú đã được duyệt xác thực, bảo đảm tiện nghi và bản sắc văn hóa</p>
+        </div>
+        <a href="{{ route('search.index') }}" class="section-link">
+            Tìm tất cả homestay
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+    </div>
+
+    <div class="cards-grid">
+@forelse(($featuredHomestays ?? []) as $homestay)
+    @php
+        $featuredRoom = $homestay->rooms->first();
+        $cardImageUrl = $homestay->cover_image_url;
+        $detailUrl = $featuredRoom ? route('rooms.show', $featuredRoom) : route('search.results', ['location' => $homestay->province, 'checkin' => date('Y-m-d', strtotime('+1 day')), 'checkout' => date('Y-m-d', strtotime('+2 days')), 'guests' => 2]);
+    @endphp
+    <article class="homestay-card">
+                <div style="height: 200px; position: relative; overflow: hidden; background: var(--surface-alt);">
+                    <a href="{{ $detailUrl }}" style="display: block; width: 100%; height: 100%;">
+                        <img src="{{ $cardImageUrl }}" alt="Ảnh homestay {{ $homestay->name }}"
+                             onerror="this.onerror=null;this.src='{{ asset('images/homestays/default.svg') }}';"
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease;"
+                             onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    </a>
+                    <div style="position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: none;">
+                        <span class="badge badge-success" style="box-shadow: 0 2px 8px rgba(0,0,0,0.25);">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                            Đã xác thực
+                        </span>
+                        <span class="rating-pill" style="box-shadow: 0 2px 8px rgba(0,0,0,0.25);">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6.4-4.8-6.4 4.8 2.4-7.2-6-4.8h7.6z"/></svg>
+                            {{ number_format($homestay->avg_rating, 1) }}
+                        </span>
+                    </div>
+                    @if($featuredRoom)
+                        <span class="badge" style="position: absolute; bottom: 10px; left: 12px; background: rgba(0,0,0,0.7); color: #ffffff; font-size: 0.78rem; backdrop-filter: blur(4px);">
+                            {{ $featuredRoom->name }}
+                        </span>
+                    @endif
+                </div>
+                <div class="homestay-card-body">
+                    <h3><a href="{{ $detailUrl }}" style="color: var(--text);">{{ $homestay->name }}</a></h3>
+                    <div class="homestay-location">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        {{ $homestay->province }} @if($homestay->district) — {{ $homestay->district }} @endif
+                    </div>
+                    <p class="homestay-desc">{{ $homestay->description ?? 'Homestay cộng đồng mộc mạc, đậm đà bản sắc địa phương.' }}</p>
+                    
+                    <div class="homestay-rooms-summary">
+                        <span>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 3px;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                            {{ $homestay->rooms->count() }} loại phòng
+                        </span>
+                        <span>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 3px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                            Tối đa {{ $homestay->rooms->max('max_guests') ?? 4 }} khách/phòng
+                        </span>
+                    </div>
+
+                    <div class="homestay-card-footer">
+                        <div class="price-tag">
+                            Từ <strong>{{ number_format($homestay->rooms->min('base_price') ?? 250000) }} đ</strong><small>/đêm</small>
+                        </div>
+                        <a href="{{ $detailUrl }}" class="btn btn-small">
+                            Xem phòng
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        @empty
+            <p>Đang cập nhật danh sách homestay...</p>
+        @endforelse
+    </div>
+</section>
+
+{{-- 6. LOCAL PRODUCTS / OCOP --}}
+<section class="home-section">
+    <div class="section-header">
+        <div class="section-header-left">
+            <span class="eyebrow">Sản vật bản địa</span>
+            <h2>Đặc sản OCOP & Nông sản địa phương</h2>
+            <p>Gắn kết trực tiếp từ các hợp tác xã, nghệ nhân và gắn liền với từng homestay bản địa</p>
+        </div>
+        <a href="{{ route('products.index') }}" class="section-link">
+            Vào chợ địa phương
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+    </div>
+
+    <div class="products-grid">
+        @forelse($featuredProducts ?? [] as $product)
+            <article class="product-card">
+                <div class="product-card-top">
+                    <a href="{{ route('products.show', $product) }}" style="display: block; width: 100%; height: 100%;">
+                        <img src="{{ $product->image_url }}" alt="Ảnh {{ $product->name }}"
+                             onerror="this.onerror=null;this.src='{{ asset('images/products/default.svg') }}';"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    </a>
+                </div>
+                <div class="product-card-body">
+                    <h3>
+                        <a href="{{ route('products.show', $product) }}">{{ $product->name }}</a>
+                    </h3>
+                    <div class="product-origin">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Xuất xứ: {{ $product->origin_place ?? 'Bản địa' }}
+                    </div>
+
+                    @if($product->homestays->isNotEmpty())
+                        <div class="product-homestay-link">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 3px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                            Tại: {{ $product->homestays->first()->name }}
+                        </div>
+                    @endif
+
+                    <div class="product-card-footer">
+                        <div class="product-price">
+                            {{ number_format($product->price) }} đ <small>/{{ $product->unit ?? 'món' }}</small>
+                        </div>
+                        <a href="{{ route('products.show', $product) }}" class="btn btn-small btn-secondary">
+                            Chi tiết
+                        </a>
+                    </div>
+                </div>
+            </article>
+        @empty
+            <p>Đang cập nhật sản phẩm...</p>
+        @endforelse
+    </div>
+</section>
+
+{{-- 7. CULTURAL EXPERIENCES --}}
+<section class="home-section">
+    <div class="section-header">
+        <div class="section-header-left">
+            <span class="eyebrow">Hành trình độc đáo</span>
+            <h2>Trải nghiệm văn hóa cùng người bản xứ</h2>
+            <p>Tham gia dệt thổ cẩm, hái chè cổ thụ, làm nông nghiệp sạch và tìm hiểu phong tục truyền thống</p>
+        </div>
+        <a href="{{ route('experiences.index') }}" class="section-link">
+            Xem tất cả trải nghiệm
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+    </div>
+
+    <div class="exp-grid">
+        @forelse($featuredExperiences ?? [] as $exp)
+            <article class="exp-card">
+                <div class="exp-card-header" style="background-image: linear-gradient(180deg, rgba(14, 38, 34, 0.3) 0%, rgba(10, 26, 22, 0.88) 100%), url('{{ $exp->image_url }}');">
+                    <span class="badge badge-accent" style="box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 3px;"><circle cx="12" cy="12" r="10"/></svg>
+                        {{ $exp->status === 'open' ? 'Đang mở đăng ký' : 'Đã đủ chỗ' }}
+                    </span>
+                    <div class="exp-header-icon" style="box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                    </div>
+                </div>
+                <div class="exp-card-body">
+                    <h3>
+                        <a href="{{ route('experiences.show', $exp) }}">{{ $exp->title }}</a>
+                    </h3>
+                    <div class="homestay-location">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                        {{ $exp->homestay->name ?? 'Homestay cộng đồng' }} ({{ $exp->homestay->province ?? '' }})
+                    </div>
+                    
+                    <div class="exp-meta-row">
+                        <span class="exp-meta-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            {{ $exp->duration_minutes }} phút
+                        </span>
+                        <span class="exp-meta-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            {{ $exp->booked_count }}/{{ $exp->capacity }} người
+                        </span>
+                    </div>
+
+                    <div class="exp-card-footer">
+                        <div class="price-tag">
+                            <strong>{{ number_format($exp->price) }} đ</strong><small>/người</small>
+                        </div>
+                        <a href="{{ route('experiences.show', $exp) }}" class="btn btn-small">
+                            Đặt chỗ
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        @empty
+            <p>Đang cập nhật trải nghiệm...</p>
+        @endforelse
+    </div>
+</section>
+
+{{-- 8. CORE VALUES / WHY CHOOSE US --}}
+<section class="features-container">
+    <div class="section-header-left">
+        <span class="eyebrow">Giá trị cốt lõi</span>
+        <h2>Vì sao nên chọn Sàn Homestay Cộng Đồng ĐT-07?</h2>
+        <p>Hệ sinh thái du lịch bền vững kết nối trực tiếp du khách với cộng đồng địa phương</p>
+    </div>
+
+    <div class="features-grid-custom">
+        <div class="feature-item">
+            <div class="feature-icon-wrapper">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <polyline points="9 12 11 14 15 10"/>
+                </svg>
+            </div>
+            <h3>100% Homestay Xác Thực</h3>
+            <p>Tất cả cơ sở lưu trú được kiểm duyệt thông tin, vị trí và hồ sơ người đại diện uy tín trước khi mở bán.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon-wrapper">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+            </div>
+            <h3>Chống Trùng Phòng Real-time</h3>
+            <p>Xử lý đặt phòng với giao dịch cơ sở dữ liệu khóa dòng nghiêm ngặt, đảm bảo số phòng trống chuẩn xác 100%.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon-wrapper">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                </svg>
+            </div>
+            <h3>Kinh Tế Bản Địa Bền Vững</h3>
+            <p>Doanh thu từ lưu trú, nông sản OCOP và trải nghiệm được chuyển trực tiếp tới các hộ gia đình bản địa.</p>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon-wrapper">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                    <path d="M4 22h16"/>
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"/>
+                    <path d="M18 17c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-2.34"/>
+                    <path d="M12 2v20"/>
+                    <circle cx="12" cy="7" r="5"/>
+                </svg>
+            </div>
+            <h3>Tích Lũy Điểm Thưởng</h3>
+            <p>Chương trình điểm thưởng Loyalty cho du khách sau mỗi chuyến đi, đổi quà đặc sản và ưu đãi lần sau.</p>
+        </div>
+    </div>
+</section>
+
+{{-- 9. CALL TO ACTION --}}
+<div class="cta-banner">
+    <div>
+        <h2>Đồng hành cùng Du lịch Cộng đồng</h2>
+        <p>Bạn là chủ homestay hoặc nhà sản xuất đặc sản địa phương? Hãy tham gia mạng lưới của chúng tôi để tiếp cận du khách trong và ngoài nước.</p>
+    </div>
+    <div class="cta-actions">
+        <a href="{{ route('register') }}" class="btn cta-btn-light">
+            Đăng ký tham gia ngay
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="{{ route('products.index') }}" class="btn btn-secondary" style="border-color: rgba(255,255,255,0.6); color: #ffffff !important; background: transparent !important;">
+            Khám phá chợ OCOP
+        </a>
+    </div>
+</div>
+
+@endsection

@@ -8,6 +8,12 @@ use InvalidArgumentException;
 
 class ReviewService
 {
+    public function __construct(
+        private NotificationService $notificationService,
+        private AuditLogService $auditLogService
+    ) {
+    }
+
     public function guestToHost(Booking $booking, User $guest, int $rating, ?string $content): Review
     {
         $booking->load('room.homestay');
@@ -19,7 +25,7 @@ class ReviewService
             throw new InvalidArgumentException('Chỉ booking completed được đánh giá.');
         }
 
-        return Review::create([
+        $review = Review::create([
             'booking_id' => $booking->id,
             'from_user_id' => $guest->id,
             'to_user_id' => $booking->room->homestay->owner_id,
@@ -28,5 +34,13 @@ class ReviewService
             'content' => $content,
             'visible' => true,
         ]);
+
+        $this->notificationService->send((int) $booking->room->homestay->owner_id, 'review_created', 'Có đánh giá mới', 'Booking ' . $booking->code . ' đã có đánh giá ' . $rating . ' sao.', 'review', $review->id);
+        $this->auditLogService->record($guest, 'review_created', 'reviews', $review->id, null, [
+            'booking_id' => $booking->id,
+            'rating' => $rating,
+        ]);
+
+        return $review;
     }
 }

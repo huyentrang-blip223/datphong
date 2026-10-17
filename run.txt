@@ -1,0 +1,13 @@
+runweb
+cd C:\xampp\htdocs\source_m1\backend
+C:\xampp\php\php.exe artisan serve --port=8000
+
+đừng đụng lệnh này
+C:\xampp\php\php.exe artisan optimize:clear
+C:\xampp\php\php.exe artisan db:seed --class=DemoAccountSeeder --force
+C:\xampp\php\php.exe artisan serve --host=127.0.0.1 --port=8000
+
+lệnh chạy py
+cd C:\xampp\htdocs\source_m1\python-service
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8001

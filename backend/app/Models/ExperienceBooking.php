@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ExperienceBooking extends Model
 {
@@ -29,5 +30,10 @@ class ExperienceBooking extends Model
     public function guest(): BelongsTo
     {
         return $this->belongsTo(User::class, 'guest_id');
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(ExperienceBookingPayment::class, 'experience_booking_id');
     }
 }

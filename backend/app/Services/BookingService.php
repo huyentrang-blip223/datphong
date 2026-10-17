@@ -15,6 +15,12 @@ use InvalidArgumentException;
 
 class BookingService
 {
+    public function __construct(
+        private NotificationService $notificationService,
+        private AuditLogService $auditLogService
+    ) {
+    }
+
     public function quote(Room $room, string $checkin, string $checkout, int $guests): array
     {
         $dates = $this->nightDates($checkin, $checkout);
@@ -112,6 +118,15 @@ class BookingService
                 'to_status' => 'confirmed',
                 'actor_id' => $guest->id,
                 'reason' => 'guest_booking_created',
+            ]);
+
+            $this->notificationService->send($guest, 'booking_created', 'Đặt phòng thành công', 'Booking ' . $booking->code . ' đã được tạo.', 'booking', $booking->id);
+            $this->notificationService->send((int) $room->homestay->owner_id, 'booking_created', 'Có booking mới', 'Phòng ' . $room->name . ' có booking ' . $booking->code . '.', 'booking', $booking->id);
+            $this->auditLogService->record($guest, 'booking_created', 'bookings', $booking->id, null, [
+                'room_id' => $room->id,
+                'checkin_date' => $checkin,
+                'checkout_date' => $checkout,
+                'total_amount' => $booking->total_amount,
             ]);
 
             return $booking;

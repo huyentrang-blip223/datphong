@@ -96,6 +96,8 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'notifications_enabled' => env('MAIL_NOTIFICATIONS_ENABLED', false),
+
     /*
     |--------------------------------------------------------------------------
     | Markdown Mail Settings

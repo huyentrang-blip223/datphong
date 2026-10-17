@@ -6,6 +6,7 @@ use App\Http\Requests\StoreRoomRequest;
 use App\Http\Requests\UpdateRoomRequest;
 use App\Models\Homestay;
 use App\Models\Room;
+use Illuminate\Support\Facades\Storage;
 
 class RoomController extends Controller
 {
@@ -23,14 +24,22 @@ class RoomController extends Controller
 
     public function create()
     {
+        $room = new Room();
         $homestays = Homestay::where('owner_id', request()->user()->id)->orderBy('name')->get();
 
-        return view('host.rooms.create', compact('homestays'));
+        return view('host.rooms.create', compact('room', 'homestays'));
     }
 
     public function store(StoreRoomRequest $request)
     {
-        Room::create($request->validated());
+        $data = $request->validated();
+        unset($data['image']);
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('rooms', 'public');
+        }
+
+        Room::create($data);
 
         return redirect()->route('host.rooms.index')->with('status', 'Đã tạo phòng.');
     }
@@ -47,7 +56,18 @@ class RoomController extends Controller
     public function update(UpdateRoomRequest $request, Room $room)
     {
         $this->authorize('update', $room);
-        $room->update($request->validated());
+        $data = $request->validated();
+        unset($data['image']);
+
+        if ($request->hasFile('image')) {
+            if ($room->image_path) {
+                Storage::disk('public')->delete($room->image_path);
+            }
+
+            $data['image_path'] = $request->file('image')->store('rooms', 'public');
+        }
+
+        $room->update($data);
 
         return redirect()->route('host.rooms.index')->with('status', 'Đã cập nhật phòng.');
     }

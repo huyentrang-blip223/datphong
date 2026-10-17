@@ -1,0 +1,6 @@
+page,performance_score,lcp,cls,tbt,tool,result,notes
+home,,,,,Lighthouse,NOT EXECUTED,npx unavailable
+search,,,,,Lighthouse,NOT EXECUTED,npx unavailable
+product detail,,,,,Lighthouse,NOT EXECUTED,npx unavailable
+experience detail,,,,,Lighthouse,NOT EXECUTED,npx unavailable
+admin/host dashboard,,,,,Lighthouse,NOT EXECUTED,npx unavailable

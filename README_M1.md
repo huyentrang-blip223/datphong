@@ -27,3 +27,5 @@ Tài khoản demo: mật khẩu chung `Dt07@2026!` (chỉ dùng local/dev, đổ
 - Git log/commit của tuần 5.
 
 Không dùng ảnh mockup làm bằng chứng runtime; ảnh cần lấy từ bản chạy thật.
+cd C:\xamppp\htdocs\source_m1\backend
+C:\xamppp\php\php.exe artisan db:seed --class=DemoAccountSeeder --force

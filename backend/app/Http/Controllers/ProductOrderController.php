@@ -39,7 +39,7 @@ class ProductOrderController extends Controller
 
         return $request->expectsJson()
             ? response()->json(['data' => $order], 201)
-            : redirect()->route('guest.orders.index')->with('status', 'Đã tạo đơn hàng: ' . $order->code);
+            : redirect()->route('guest.order-payments.show', $order)->with('status', 'Đã tạo đơn hàng: ' . $order->code . '. Vui lòng kiểm tra và thanh toán.');
     }
 
     public function updateStatus(UpdateProductOrderStatusRequest $request, ProductOrder $order, ProductOrderService $service)

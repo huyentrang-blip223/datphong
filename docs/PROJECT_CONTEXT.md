@@ -181,12 +181,19 @@ Known limitation: the runtime dataset is deterministic synthetic/project-seed da
 Week 8 Round 1 extends M3 without upgrading Laravel:
 - host availability/calendar UI and service at `/chu-homestay/availability`;
 - host seasonal pricing UI and service at `/chu-homestay/seasonal-prices`;
+- host cultural experience CRUD at `/chu-homestay/experiences` with ownership checks;
 - seller local product CRUD at `/nguoi-ban/products` with seller ownership checks;
 - guest product order creation at `/tai-khoan/orders`, server-side DB pricing, stock check and transaction;
 - seller order state transition guard for valid product-order states;
 - mock/test booking payment with success/fail and duplicate-paid guard;
 - guest booking history and cancel flow with availability rollback;
 - guest review creation limited to completed own bookings;
+- booking payment checkout page under `/tai-khoan/bookings/{booking}/payment`, linked after booking creation and from booking history;
+- product order payment checkout page under `/tai-khoan/orders/{order}/payment`, with separate `product_order_payments` records;
+- experience booking payment checkout page under `/tai-khoan/experience-bookings/{experienceBooking}/payment`, with separate `experience_booking_payments` records;
+- VNPay sandbox payment initiation for room bookings from booking checkout, with callback at `/api/v1/payment/vn-pay-callback`;
+- admin payment overview at `/quan-tri/payments` and audit-log browser at `/quan-tri/audit-logs`;
+- email notifications for business events related to room bookings, booking payments/cancellations, product orders, product-order payment/status changes, and experience payments when SMTP is configured;
 - `/healthz` application/database/Python status endpoint without secrets;
 - two UI themes (`light`, `forest`) with CSS variables, `data-theme`, toggle and `localStorage` persistence;
 - shared academic footer and responsive CSS for 390/768/1440 targets.
@@ -221,3 +228,57 @@ Known Week 8 limitations:
 - Node/npm/npx are unavailable in PATH, so Playwright browser matrix and Lighthouse could not be executed; docs mark these as BLOCKED/NOT EXECUTED.
 - Notifications and loyalty UI remain not implemented after Must features.
 - Diagram PNG/SVG rendering was not executed; Mermaid source files are present only.
+
+## 14. Week 9 / Code Freeze status
+Week 9 completed additional code-critical carry-over from Week 8:
+- notification model/service/pages under `/tai-khoan/notifications`;
+- loyalty transaction model/service/page under `/tai-khoan/loyalty`;
+- audit log service writes for booking, payment, order status and review events;
+- host related-booking page under `/chu-homestay/bookings`;
+- login rate limiting using Laravel RateLimiter;
+- public guest-only registration with hashed passwords; elevated roles are not self-selectable;
+- homestay cover image upload from local computer for admin homestay create/update, stored on Laravel public disk;
+- security headers middleware and matching Nginx headers;
+- friendly `403`, `404`, `419`, `500` Blade error pages;
+- Laravel `/healthz` now returns `application`, `database`, `python`, and `timestamp`.
+
+Deployment readiness package prepared:
+- production env examples for Laravel and Python;
+- Docker Compose with `nginx`, `app`, `mysql`, `python`;
+- Nginx production-ready front-controller config;
+- PowerShell Docker helper scripts;
+- database backup and restore-test scripts;
+- README, deployment options, monitoring runbook, demo flow, SUS/usability templates, and test account template.
+
+Round 2 verification on 2026-10-03:
+- M1: 10 passed.
+- M2: 9 passed.
+- M3: 6 passed.
+- Week8: 15 passed.
+- Week9: 8 passed.
+- Full Laravel suite: 50 passed.
+- Python: 5 passed, 2 warnings.
+
+Code freeze status: **NOT READY**.
+Reasons:
+- `composer audit` found 16 advisories affecting 7 packages, including High advisories in Laravel/Symfony dependencies. Laravel major upgrade is out of scope by task instruction, so this remains a documented blocker.
+- Docker is not available in PATH, so Docker build/up/health were not executed.
+- `mysql` and `mysqldump` are not available in PATH, so backup/restore scripts were prepared but not executed.
+- Node/npm/npx are unavailable, so browser matrix and Lighthouse remain blocked/not executed.
+- No hosting/domain credentials are provided, so go-live is blocked and not deployed.
+
+## 15. Admin media management update
+Admin navigation now exposes management links for rooms and local products:
+- `/quan-tri/rooms` supports admin create/update/delete for rooms across all homestays.
+- `/quan-tri/products` supports admin create/update/delete for local products across all sellers.
+- Room and local product forms support image upload through Laravel public disk storage.
+- Uploaded room images are shown on the homepage featured room cards, room search/listing cards, and room detail gallery.
+- Uploaded product images are shown on the homepage product cards, product listing/category page, product detail page, and room detail related-product cards.
+
+Schema extension:
+- `rooms.image_path` nullable string.
+- `local_products.image_path` nullable string.
+- `product_order_payments` stores product-order payment attempts separately from room-booking payments.
+- `experience_booking_payments` stores experience-booking payment attempts separately from room-booking payments.
+
+Deletion is intentionally guarded by database constraints: records with related bookings, availability, orders, or other linked data should be hidden/deactivated instead of force-deleted.

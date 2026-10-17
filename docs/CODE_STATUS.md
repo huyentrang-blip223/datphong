@@ -3,9 +3,16 @@
 Updated at the end of this coding session: 2026-10-02.
 
 ## Current milestone
-Week 8 / Round 1 Review.
+Week 9 / Code Freeze & Deployment.
 
 Baseline: `682aed4` — `Implement M3 Python recommendations and analytics`.
+
+Current local baseline before Week 9 work: `95cfceb` — `Implement Week 8 review features`.
+
+## Code freeze
+Status: NOT READY.
+
+Reason: application regression tests pass, but `composer audit` found High dependency advisories and Docker/backup/restore/browser/performance checks could not be executed in this environment.
 
 ## What was implemented before Week 8
 - Kept the running backend on Laravel 9; no framework upgrade.
@@ -25,6 +32,7 @@ Baseline: `682aed4` — `Implement M3 Python recommendations and analytics`.
 ## Week 8 features completed
 - Host availability/calendar management with range update, ownership checks, `units_total >= units_held + units_sold` guard and tests.
 - Host seasonal pricing create/delete with date validation and ownership checks.
+- Host cultural experience CRUD with ownership checks and deletion guard for experiences that already have bookings.
 - Seller local product CRUD with validation and seller-only ownership.
 - Guest product order creation with DB-computed totals, stock check, transaction and item persistence.
 - Seller order state transitions with invalid transition blocking.
@@ -35,6 +43,19 @@ Baseline: `682aed4` — `Implement M3 Python recommendations and analytics`.
 - Two themes: `light` and `forest`, implemented with CSS custom properties, `data-theme`, theme toggle, `localStorage` persistence and `prefers-color-scheme` fallback.
 - Responsive CSS for 390/768/1440 targets: wrapped nav, form grids, focus state, responsive images and horizontally scrollable tables.
 - Shared academic footer noting course, topic, project-seed data and Week 8 version.
+
+## Week 9 features completed
+- Notifications model/service/pages and mark-read route.
+- Loyalty transaction model/service/page and point awards on mock paid booking and delivered product orders.
+- AuditLog model/service and audit writes for booking, payment, order transition and review.
+- Host related-bookings page scoped by homestay ownership.
+- Login rate limiting with `throttle:login`; Week9 test confirms 429 after repeated failures.
+- Public guest-only registration with password hashing and immediate login; host/seller/admin roles are not self-selectable.
+- Homestay cover image upload for admin create/update, with JPG/PNG/WebP validation and public disk storage.
+- Security headers middleware: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, CSP, and conditional HSTS on HTTPS.
+- Friendly Blade error pages for 403/404/419/500.
+- `/healthz` returns application/database/python/timestamp and does not expose secrets or exception details.
+- Deployment package: Docker Compose, Nginx config, PHP/Python Dockerfiles, production env examples, backup/restore scripts, README, deployment/runbook/testing docs.
 
 ## Files changed before Week 8
 - `backend/.env` local only: added `PY_SERVICE_URL`, `PY_SERVICE_TOKEN`, `PY_SERVICE_TIMEOUT` for runtime verification; this file is not tracked by Git.
@@ -97,6 +118,20 @@ Baseline: `682aed4` — `Implement M3 Python recommendations and analytics`.
 - `backend/tests/Feature/Week8OrderPaymentReviewTest.php`
 - Week 8 docs under `docs/` and `docs/diagrams/`.
 - `e2e/README.md`
+
+## Week 9 files changed/added
+- `backend/app/Models/Notification.php`
+- `backend/app/Models/LoyaltyTransaction.php`
+- `backend/app/Models/AuditLog.php`
+- `backend/app/Services/NotificationService.php`
+- `backend/app/Services/LoyaltyService.php`
+- `backend/app/Services/AuditLogService.php`
+- `backend/app/Http/Controllers/NotificationController.php`
+- `backend/app/Http/Controllers/LoyaltyController.php`
+- `backend/app/Http/Controllers/Host/BookingController.php`
+- `backend/app/Http/Middleware/SecurityHeaders.php`
+- `backend/tests/Feature/Week9FreezeReadinessTest.php`
+- deployment files under `docker/`, `scripts/`, production env examples, and Week9 docs.
 
 ## Database/schema changes
 - No migrations were added or run.
@@ -223,6 +258,25 @@ Stop-Process -Id 11556,7792,4796 -Force
 | Final `php artisan test` | Passed: 36 tests. |
 | `php artisan route:list --path=healthz` | Passed: `GET|HEAD healthz` registered. |
 
+## Week 9 tests/checks actually executed on 2026-10-03
+| Test/command | Result |
+|---|---|
+| PHP syntax check over `backend/app` and `backend/tests` | Passed: no syntax errors after PHP 8.0 compatibility fix. |
+| `php artisan test --filter=M1AuthRoleSmokeTest` | Passed: 10 tests. |
+| `php artisan test --filter=M2BookingFlowTest` | Passed: 9 tests. |
+| `php artisan test --filter=M3PythonIntegrationTest` | Passed: 6 tests. |
+| `php artisan test --filter=Week8` | Passed: 15 tests. |
+| `php artisan test --filter=Week9` | Passed: 8 tests. |
+| `php artisan test` | Passed: 50 tests. |
+| `python -m pytest -q` | Passed: 5 tests, 2 warnings. |
+| `composer audit` | Failed/blocker: 16 advisories affecting 7 packages, includes High advisories. |
+| `python -m pip list --outdated` | Executed; multiple outdated packages listed. |
+| `docker --version` / `docker compose version` | NOT EXECUTED/BLOCKED: `docker` unavailable in PATH. |
+| `mysql --version` / `mysqldump --version` | NOT EXECUTED/BLOCKED: commands unavailable in PATH. |
+| `node --version`, `npm --version`, `npx playwright --version`, `npx lighthouse --version` | BLOCKED: commands unavailable in PATH. |
+| Secret scan `git grep -n "m3-local-token"` | Passed after cleanup: no matches. |
+| Git history `.env` scan | Passed: no committed `.env` paths returned. |
+
 Round 1 functional matrix:
 - Designed: 60.
 - PASS: 51.
@@ -231,14 +285,32 @@ Round 1 functional matrix:
 - NOT EXECUTED: 9.
 - CSV: `docs/TEST_ROUND1_WEEK8.csv`.
 
+Round 2 functional matrix:
+- Designed: 60.
+- PASS: 52.
+- FAILED: 0.
+- BLOCKED: 0.
+- NOT EXECUTED: 8.
+- CSV: `docs/TEST_ROUND2_WEEK9.csv`.
+
 Browser matrix:
 - Attempted tool check: `node --version`, `npm --version`, `npx playwright --version`, `npx lighthouse --version`.
 - Result: all unavailable in PATH.
 - `docs/BROWSER_MATRIX_WEEK8.csv` records browser/viewport cases as BLOCKED.
+- Week9 browser retest remains BLOCKED for the same reason; see `docs/BROWSER_MATRIX_WEEK9.csv`.
 
 Lighthouse/performance:
 - NOT EXECUTED because `npx`/Lighthouse are unavailable.
 - Recorded in `docs/PERFORMANCE_WEEK8.csv`.
+- Week9 performance remains NOT EXECUTED; see `docs/PERFORMANCE_WEEK9.csv`.
+
+## Deployment readiness Week 9
+- Docker package: PREPARED, NOT EXECUTED because Docker is unavailable.
+- Nginx config: PREPARED.
+- Production env examples: PREPARED.
+- Health endpoint: PASS in Week9 test.
+- Backup/restore scripts: PREPARED, NOT EXECUTED because MySQL CLI tools are unavailable.
+- Go-live: BLOCKED — hosting/domain credentials not provided.
 
 ## Integration evidence
 - FastAPI up: `GET http://127.0.0.1:8001/healthz` returned `{"status":"ok"}`.
@@ -252,7 +324,7 @@ Lighthouse/performance:
 - The full 3,850-record target dataset is not present in this repo snapshot; runtime proof uses the 583-record deterministic demo dataset.
 - Seller CRUD for local products was not added. Schema supports seller ownership, but M3 prioritized browsing, recommendation, experience booking, ETL and dashboard analytics.
 - SQLAlchemy is installed but not used at runtime because importing its C-extension was blocked by local Windows Application Control.
-- `backend/.env` contains local runtime `PY_SERVICE_TOKEN=m3-local-token`; `.env` is untracked and should not be committed.
+- `backend/.env` contains a local runtime `PY_SERVICE_TOKEN`; `.env` is untracked and should not be committed.
 - FastAPI was started as a background process for verification; stop it manually if no longer needed.
 - No screenshots were captured by Codex.
 - Week 8 browser matrix could not run because Node/npm/npx are unavailable in PATH.
@@ -260,6 +332,11 @@ Lighthouse/performance:
 - Diagram sources were created but not rendered to PNG/SVG.
 - 9 of 60 functional round 1 cases are NOT EXECUTED and documented as such.
 - Notifications and loyalty UI remain outside this Week 8 implementation.
+- Composer audit High advisories remain open because Laravel major upgrade is disallowed by the task.
+- Docker build/up was not executed because Docker is unavailable in PATH.
+- Backup/restore was not executed because `mysql` and `mysqldump` are unavailable in PATH.
+- Browser and Lighthouse checks remain blocked because Node/npm/npx are unavailable.
+- `README_M1.md` is locally modified outside this Week9 work and was left untouched.
 
 ## Screenshot list
 - FastAPI `/healthz` returning `{"status":"ok"}`.
@@ -290,6 +367,19 @@ Lighthouse/performance:
 - Bug log round 1.
 - `/healthz`.
 
+## Screenshot list Week 9
+- `/healthz` JSON with application/database/python/timestamp.
+- Security headers from browser/devtools or curl equivalent.
+- Guest notifications page.
+- Guest loyalty points page.
+- Host related bookings page.
+- Docker files in repo/package.
+- Full Laravel test output showing 50 passed.
+- Python pytest output showing 5 passed.
+- Composer audit blocker output.
+- Code freeze checklist showing NOT READY blockers.
+
 ## Git evidence
 - Baseline before Week 8: `682aed4`.
-- Week 8 commit/push status must be checked with `git status --short` after final tests.
+- Week 8 local commit: `95cfceb`.
+- Week 9 changes are not committed unless the user explicitly requests commit/push.

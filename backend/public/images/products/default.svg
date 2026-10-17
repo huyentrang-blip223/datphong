@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520" role="img" aria-label="Ảnh sản phẩm mặc định">
+  <rect width="800" height="520" fill="#f5f0e6"/>
+  <rect x="68" y="64" width="664" height="392" rx="28" fill="#fffaf0" stroke="#d3b88c" stroke-width="4"/>
+  <path d="M400 135 235 218l165 83 165-83-165-83Z" fill="#2f7d6d" opacity=".92"/>
+  <path d="M235 267 400 350l165-83" fill="none" stroke="#c56a2c" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M235 323 400 406l165-83" fill="none" stroke="#2f7d6d" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="596" cy="155" r="44" fill="#e6a94f" opacity=".9"/>
+  <text x="400" y="475" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#3f3324">Sản phẩm địa phương</text>
+</svg>

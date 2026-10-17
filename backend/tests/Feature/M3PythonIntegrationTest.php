@@ -3,6 +3,7 @@ namespace Tests\Feature;
 
 use App\Models\Homestay;
 use App\Models\Experience;
+use App\Models\ExperienceBooking;
 use App\Models\LocalProduct;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -102,6 +103,36 @@ class M3PythonIntegrationTest extends TestCase
             ->assertJsonPath('data.status', 'confirmed');
 
         $this->assertSame(3, (int) $experience->fresh()->booked_count);
+    }
+
+    public function test_web_experience_booking_redirects_to_payment_and_can_be_paid(): void
+    {
+        $guest = $this->makeUser('m3-experience-payment-guest@dt07.test', 'guest');
+        $other = $this->makeUser('m3-experience-payment-other@dt07.test', 'guest');
+        $experience = $this->makeExperience(['price' => 180000]);
+
+        $this->actingAs($guest)->post(route('experiences.book', $experience), [
+            'people_count' => 2,
+        ])->assertRedirect(route('guest.experience-payments.show', ExperienceBooking::latest('id')->first()));
+
+        $booking = ExperienceBooking::latest('id')->firstOrFail();
+
+        $this->actingAs($other)->get(route('guest.experience-payments.show', $booking))->assertForbidden();
+        $this->actingAs($guest)
+            ->get(route('guest.experience-payments.show', $booking))
+            ->assertOk()
+            ->assertSee('Thanh toán đặt chỗ #' . $booking->id)
+            ->assertSee('Thanh toán thành công');
+
+        $this->actingAs($guest)
+            ->postJson(route('guest.experience-payments.mock', $booking), ['result' => 'success'])
+            ->assertCreated()
+            ->assertJsonPath('data.status', 'paid');
+
+        $this->assertDatabaseHas('experience_booking_payments', [
+            'experience_booking_id' => $booking->id,
+            'status' => 'paid',
+        ]);
     }
 
     public function test_experience_capacity_conflict_returns_409(): void

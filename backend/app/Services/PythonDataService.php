@@ -9,6 +9,21 @@ use Throwable;
 
 class PythonDataService
 {
+    public function health(): string
+    {
+        try {
+            $response = $this->client()->get('/healthz');
+
+            return $response->successful() ? 'ok' : 'unavailable';
+        } catch (Throwable $exception) {
+            Log::warning('Python health check unavailable.', [
+                'error' => $exception->getMessage(),
+            ]);
+
+            return 'unavailable';
+        }
+    }
+
     public function localProductRecommendations(LocalProduct $product, int $limit = 6): array
     {
         $limit = max(1, min($limit, 12));

@@ -2,6 +2,7 @@
 namespace Tests\Feature;
 
 use App\Models\Homestay;
+use App\Models\Experience;
 use App\Models\Room;
 use App\Models\RoomAvailability;
 use App\Models\SeasonalPrice;
@@ -103,6 +104,71 @@ class Week8AvailabilityPricingTest extends TestCase
             'price_per_night' => 350000,
             'priority' => 20,
         ])->assertSessionHasErrors('end_date');
+    }
+
+    public function test_host_can_manage_owned_experiences(): void
+    {
+        [$host, $room] = $this->roomForHost('w8-exp-host@dt07.test');
+        $homestay = $room->homestay;
+
+        $this->actingAs($host)->post(route('host.experiences.store'), [
+            'homestay_id' => $homestay->id,
+            'title' => 'Lam banh truyen thong',
+            'description' => 'Trai nghiem lam banh cung nguoi dan dia phuong.',
+            'start_at' => '2027-03-01 09:00:00',
+            'duration_minutes' => 120,
+            'capacity' => 12,
+            'price' => 150000,
+            'status' => 'open',
+        ])->assertRedirect(route('host.experiences.index'));
+
+        $experience = Experience::where('title', 'Lam banh truyen thong')->firstOrFail();
+
+        $this->actingAs($host)->put(route('host.experiences.update', $experience), [
+            'homestay_id' => $homestay->id,
+            'title' => 'Lam banh va thuong tra',
+            'description' => 'Cap nhat noi dung trai nghiem.',
+            'start_at' => '2027-03-02 09:00:00',
+            'duration_minutes' => 150,
+            'capacity' => 15,
+            'price' => 180000,
+            'status' => 'open',
+        ])->assertRedirect(route('host.experiences.index'));
+
+        $this->assertDatabaseHas('experiences', [
+            'id' => $experience->id,
+            'title' => 'Lam banh va thuong tra',
+            'capacity' => 15,
+            'price' => 180000,
+        ]);
+    }
+
+    public function test_host_cannot_manage_another_hosts_experience(): void
+    {
+        $hostA = $this->user('w8-exp-a@dt07.test', 'host');
+        [, $roomB] = $this->roomForHost('w8-exp-b@dt07.test');
+        $experience = Experience::create([
+            'homestay_id' => $roomB->homestay_id,
+            'title' => 'Other host experience',
+            'description' => 'Private',
+            'start_at' => '2027-03-03 09:00:00',
+            'duration_minutes' => 120,
+            'capacity' => 10,
+            'booked_count' => 0,
+            'price' => 100000,
+            'status' => 'open',
+        ]);
+
+        $this->actingAs($hostA)->get(route('host.experiences.edit', $experience))->assertForbidden();
+        $this->actingAs($hostA)->put(route('host.experiences.update', $experience), [
+            'homestay_id' => $roomB->homestay_id,
+            'title' => 'Bad update',
+            'start_at' => '2027-03-03 09:00:00',
+            'duration_minutes' => 120,
+            'capacity' => 10,
+            'price' => 100000,
+            'status' => 'open',
+        ])->assertForbidden();
     }
 
     private function roomForHost(string $email): array

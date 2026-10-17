@@ -36,4 +36,13 @@ class Experience extends Model
     {
         return $this->hasMany(ExperienceBooking::class, 'experience_id');
     }
+
+    public function getImageUrlAttribute(): string
+    {
+        if ($this->homestay && !empty($this->homestay->cover_image_url)) {
+            return $this->homestay->cover_image_url;
+        }
+
+        return asset('images/banners/hero-banner.jpg');
+    }
 }

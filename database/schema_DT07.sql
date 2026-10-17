@@ -36,6 +36,7 @@ CREATE TABLE homestays (
   lat DECIMAL(10,7) NULL,
   lng DECIMAL(10,7) NULL,
   description TEXT NULL,
+  cover_image_path VARCHAR(255) NULL,
   checkin_time TIME NOT NULL DEFAULT '14:00:00',
   checkout_time TIME NOT NULL DEFAULT '12:00:00',
   status ENUM('pending','approved','rejected','suspended') NOT NULL DEFAULT 'pending',
@@ -78,6 +79,7 @@ CREATE TABLE rooms (
   base_price DECIMAL(12,2) NOT NULL,
   quantity SMALLINT UNSIGNED NOT NULL DEFAULT 1,
   active BOOLEAN NOT NULL DEFAULT TRUE,
+  image_path VARCHAR(255) NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT ck_rooms_guests CHECK (max_guests BETWEEN 1 AND 20),
   CONSTRAINT ck_rooms_beds CHECK (bed_count >= 1),
@@ -215,6 +217,7 @@ CREATE TABLE local_products (
   price DECIMAL(12,2) NOT NULL,
   stock_qty INT UNSIGNED NOT NULL DEFAULT 0,
   status ENUM('draft','published','hidden') NOT NULL DEFAULT 'draft',
+  image_path VARCHAR(255) NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT ck_lp_price CHECK (price >= 0),
   CONSTRAINT fk_lp_seller FOREIGN KEY (seller_id) REFERENCES users(id)
@@ -273,6 +276,22 @@ CREATE TABLE product_order_items (
   INDEX idx_poi_product (product_id, order_id)
 ) ENGINE=InnoDB;
 
+CREATE TABLE product_order_payments (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL,
+  gateway VARCHAR(40) NOT NULL,
+  txn_ref VARCHAR(80) NOT NULL,
+  amount DECIMAL(14,2) NOT NULL,
+  status ENUM('initiated','paid','failed','refunded') NOT NULL DEFAULT 'initiated',
+  paid_at DATETIME NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT uq_product_order_payments_txn UNIQUE (txn_ref),
+  CONSTRAINT ck_product_order_payments_amount CHECK (amount >= 0),
+  CONSTRAINT fk_product_order_payments_order FOREIGN KEY (order_id) REFERENCES product_orders(id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX idx_product_order_payments_order (order_id, status)
+) ENGINE=InnoDB;
+
 CREATE TABLE experiences (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   homestay_id BIGINT UNSIGNED NOT NULL,
@@ -308,6 +327,22 @@ CREATE TABLE experience_bookings (
     ON UPDATE CASCADE ON DELETE RESTRICT,
   INDEX idx_eb_experience (experience_id, status),
   INDEX idx_eb_guest (guest_id, created_at)
+) ENGINE=InnoDB;
+
+CREATE TABLE experience_booking_payments (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  experience_booking_id BIGINT UNSIGNED NOT NULL,
+  gateway VARCHAR(40) NOT NULL,
+  txn_ref VARCHAR(80) NOT NULL,
+  amount DECIMAL(14,2) NOT NULL,
+  status ENUM('initiated','paid','failed','refunded') NOT NULL DEFAULT 'initiated',
+  paid_at DATETIME NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT uq_experience_booking_payments_txn UNIQUE (txn_ref),
+  CONSTRAINT ck_experience_booking_payments_amount CHECK (amount >= 0),
+  CONSTRAINT fk_experience_booking_payments_booking FOREIGN KEY (experience_booking_id) REFERENCES experience_bookings(id)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  INDEX idx_experience_booking_payments_booking (experience_booking_id, status)
 ) ENGINE=InnoDB;
 
 CREATE TABLE reviews (
