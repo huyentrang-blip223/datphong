@@ -55,6 +55,9 @@
                     </td>
                     <td>
                         @if(auth()->user()->role !== 'guest')
+                            @include('payments.cash_receipt', ['subject' => $order,
+                                'collectRoute' => route('seller.orders.cash-received', $order),
+                                'refundRoute' => route('seller.orders.cash-refunded', $order)])
                             <form method="post" action="{{ route(auth()->user()->role === 'seller' ? 'seller.orders.status' : 'seller.orders.status', $order) }}" style="display: flex; gap: 6px; align-items: center;">
                                 @csrf
                                 <select name="status" style="width: auto; padding: 6px 10px; margin: 0;">
@@ -88,7 +91,7 @@
 </div>
 
 @if(auth()->user()->role === 'guest')
-<p>Hủy trước khi đóng gói: trả lại hàng vào kho và hoàn tiền mô phỏng nếu đã thanh toán.</p>
+<p>Bạn có thể hủy trước khi đóng gói. Nếu đã trả tiền mặt, vui lòng liên hệ người bán để nhận lại tiền.</p>
 @foreach($orders as $order)
 @if(in_array($order->status, ['pending', 'confirmed']))
 <form method="post" action="{{ route('guest.orders.status', $order) }}">@csrf

@@ -71,17 +71,17 @@ Route::middleware(['auth', 'role:guest'])->prefix('tai-khoan')->name('guest.')->
     Route::post('/bookings/{booking}/refund', [\App\Http\Controllers\BookingLifecycleController::class, 'refund'])->name('bookings.refund');
     Route::get('/bookings/{booking}/payment', [PaymentController::class, 'show'])->name('payments.show');
     Route::post('/bookings/{booking}/payments/vnpay', [PaymentController::class, 'createVnPay'])->name('payments.vnpay');
-    Route::post('/bookings/{booking}/payments/mock', [PaymentController::class, 'store'])->name('payments.mock');
+    Route::post('/bookings/{booking}/payments/cash', [PaymentController::class, 'store'])->name('payments.cash');
     Route::post('/bookings/{booking}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::post('/orders/{order}/status', [ProductOrderController::class, 'updateStatus'])->name('orders.status');
     Route::get('/orders', [ProductOrderController::class, 'index'])->name('orders.index');
     Route::post('/orders', [ProductOrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{order}/payment', [ProductOrderPaymentController::class, 'show'])->name('order-payments.show');
-    Route::post('/orders/{order}/payments/mock', [ProductOrderPaymentController::class, 'store'])->name('order-payments.mock');
+    Route::post('/orders/{order}/payments/cash', [ProductOrderPaymentController::class, 'store'])->name('order-payments.cash');
     Route::get('/experience-bookings', [\App\Http\Controllers\ExperienceBookingController::class, 'index'])->name('experience-bookings.index');
     Route::post('/experience-bookings/{experienceBooking}/cancel', [\App\Http\Controllers\ExperienceBookingController::class, 'cancel'])->name('experience-bookings.cancel');
     Route::get('/experience-bookings/{experienceBooking}/payment', [ExperienceBookingPaymentController::class, 'show'])->name('experience-payments.show');
-    Route::post('/experience-bookings/{experienceBooking}/payments/mock', [ExperienceBookingPaymentController::class, 'store'])->name('experience-payments.mock');
+    Route::post('/experience-bookings/{experienceBooking}/payments/cash', [ExperienceBookingPaymentController::class, 'store'])->name('experience-payments.cash');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('quan-tri')->name('admin.')->group(function () {
@@ -105,6 +105,10 @@ Route::middleware(['auth', 'role:host'])->prefix('chu-homestay')->name('host.')-
     Route::resource('rooms', RoomController::class)->except(['show', 'destroy']);
     Route::post('/bookings/{booking}/complete', [\App\Http\Controllers\BookingLifecycleController::class, 'complete'])->name('bookings.complete');
     Route::get('/bookings', [HostBookingController::class, 'index'])->name('bookings.index');
+    Route::post('/bookings/{booking}/cash/received', [\App\Http\Controllers\CashReceiptController::class, 'booking'])->name('bookings.cash-received');
+    Route::post('/bookings/{booking}/cash/refunded', [\App\Http\Controllers\CashReceiptController::class, 'refundBooking'])->name('bookings.cash-refunded');
+    Route::post('/experience-bookings/{experienceBooking}/cash/received', [\App\Http\Controllers\CashReceiptController::class, 'experience'])->name('experience-bookings.cash-received');
+    Route::post('/experience-bookings/{experienceBooking}/cash/refunded', [\App\Http\Controllers\CashReceiptController::class, 'refundExperience'])->name('experience-bookings.cash-refunded');
     Route::get('/experience-bookings', [\App\Http\Controllers\ExperienceBookingController::class, 'index'])->name('experience-bookings.index');
     Route::post('/experience-bookings/{experienceBooking}/complete', [\App\Http\Controllers\ExperienceBookingController::class, 'complete'])->name('experience-bookings.complete');
     Route::resource('experiences', HostExperienceController::class)->except(['show']);
@@ -117,6 +121,8 @@ Route::middleware(['auth', 'role:host'])->prefix('chu-homestay')->name('host.')-
 
 Route::middleware(['auth', 'role:seller'])->prefix('nguoi-ban')->name('seller.')->group(function () {
     Route::get('/bang-dieu-khien', [DashboardController::class, 'seller'])->name('dashboard');
+    Route::post('/orders/{order}/cash/received', [\App\Http\Controllers\CashReceiptController::class, 'order'])->name('orders.cash-received');
+    Route::post('/orders/{order}/cash/refunded', [\App\Http\Controllers\CashReceiptController::class, 'refundOrder'])->name('orders.cash-refunded');
     Route::get('/orders', [ProductOrderController::class, 'index'])->name('orders.index');
     Route::post('/orders/{order}/status', [ProductOrderController::class, 'updateStatus'])->name('orders.status');
     Route::resource('products', SellerProductController::class)->except(['show', 'destroy']);

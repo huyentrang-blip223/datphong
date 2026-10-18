@@ -20,6 +20,9 @@ class VnPayPaymentService
 
     public function createPaymentUrl(Booking $booking, User $guest, string $ipAddress): string
     {
+        if (! config('services.vnpay.enabled')) {
+            throw new InvalidArgumentException('VNPay hiện chưa khả dụng. Vui lòng chọn thanh toán tiền mặt.');
+        }
         if ((int) $booking->guest_id !== (int) $guest->id || $guest->role !== 'guest') {
             throw new InvalidArgumentException('Không có quyền thanh toán booking này.');
         }
@@ -33,6 +36,10 @@ class VnPayPaymentService
         $payment = DB::transaction(function () use ($booking) {
             $locked = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
             app(BookingLifecycleService::class)->assertPayable($locked);
+
+            if ($locked->payments()->where('gateway', 'cash')->where('status', 'initiated')->exists()) {
+                throw new InvalidArgumentException('Booking đã chọn thanh toán tiền mặt.');
+            }
 
             if ($locked->payments()->where('status', 'paid')->exists()) {
                 throw new InvalidArgumentException('Booking đã được thanh toán.');

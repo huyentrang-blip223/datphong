@@ -12,7 +12,7 @@ use App\Models\Room;
 use App\Models\RoomAvailability;
 use App\Models\User;
 use App\Services\BookingService;
-use App\Services\CommercePaymentService;
+use App\Services\CashPaymentService;
 use App\Services\ExperienceBookingService;
 use App\Services\ProductOrderService;
 use App\Services\VnPayPaymentService;
@@ -61,16 +61,16 @@ class CompletedFlowsTest extends TestCase
     {
         [$guest, $room] = $this->fixture();
         $booking = $this->hold($guest, $room);
-        $this->actingAs($guest)->postJson(route('guest.payments.mock', $booking), ['result' => 'fail'])->assertOk();
+        $this->actingAs($guest)->postJson(route('guest.payments.cash', $booking), ['result' => 'fail'])->assertStatus(422);
         $this->assertSame(1, (int) $room->availability()->first()->units_held);
         $this->pay($guest, $booking);
         $this->assertSame(0, (int) $room->availability()->first()->units_held);
         $this->assertSame(1, (int) $room->availability()->first()->units_sold);
-        $this->actingAs($guest)->postJson(route('guest.payments.mock', $booking), ['result' => 'success'])->assertStatus(422);
+        $this->actingAs($guest)->postJson(route('guest.payments.cash', $booking))->assertStatus(422);
         [$other, $otherRoom] = $this->fixture();
         $expired = $this->hold($other, $otherRoom);
         Carbon::setTestNow(now()->addMinutes(16));
-        $this->actingAs($other)->postJson(route('guest.payments.mock', $expired), ['result' => 'success'])->assertStatus(422);
+        $this->actingAs($other)->postJson(route('guest.payments.cash', $expired))->assertStatus(422);
         $this->assertSame(0, $expired->payments()->count());
     }
 
@@ -82,12 +82,14 @@ class CompletedFlowsTest extends TestCase
         $this->actingAs($guest)->postJson(route('guest.bookings.cancel', $booking))->assertOk();
         $this->actingAs($guest)->postJson(route('guest.bookings.cancel', $booking))->assertOk();
         $this->assertSame(0, (int) $room->availability()->first()->units_sold);
-        $this->actingAs($guest)->postJson(route('guest.bookings.refund', $booking))->assertOk();
-        $this->actingAs($guest)->postJson(route('guest.bookings.refund', $booking))->assertOk();
+        $this->actingAs($guest)->postJson(route('guest.bookings.refund', $booking))->assertStatus(422);
+        $host = $room->homestay->owner;
+        $this->actingAs($host)->postJson(route('host.bookings.cash-refunded', $booking), ['confirmed' => true])->assertOk();
+        $this->postJson(route('host.bookings.cash-refunded', $booking), ['confirmed' => true])->assertOk();
         $this->assertSame('refunded', $booking->fresh()->status);
         $this->assertSame(0, (int) LoyaltyTransaction::where('user_id', $guest->id)->sum('points_delta'));
         $this->assertSame(1, $booking->payments()->where('status', 'refunded')->count());
-        $this->actingAs($guest)->postJson(route('guest.payments.mock', $booking), ['result' => 'success'])->assertStatus(422);
+        $this->actingAs($guest)->postJson(route('guest.payments.cash', $booking))->assertStatus(422);
     }
 
     public function test_refund_unpaid_and_late_paid_cancel_are_rejected(): void
@@ -205,12 +207,15 @@ class CompletedFlowsTest extends TestCase
     {
         [$guest, $seller, $product] = $this->product();
         $order = app(ProductOrderService::class)->createOrder($guest, [['product_id' => $product->id, 'quantity' => 2]]);
-        app(CommercePaymentService::class)->payProductOrder($order, $guest, 'success');
+        app(CashPaymentService::class)->select($order, $guest);
+        app(CashPaymentService::class)->collect($order, $seller);
         $this->actingAs($guest)->postJson(route('guest.orders.status', $order), ['status' => 'cancelled'])->assertOk();
         $this->postJson(route('guest.orders.status', $order), ['status' => 'cancelled'])->assertStatus(422);
         $this->assertSame(10, (int) $product->fresh()->stock_qty);
+        $this->assertSame(1, $order->payments()->where('status', 'paid')->count());
+        $this->actingAs($seller)->postJson(route('seller.orders.cash-refunded', $order), ['confirmed' => true])->assertOk();
         $this->assertSame(1, $order->payments()->where('status', 'refunded')->count());
-        $this->postJson(route('guest.order-payments.mock', $order), ['result' => 'success'])->assertStatus(422);
+        $this->actingAs($guest)->postJson(route('guest.order-payments.cash', $order))->assertStatus(422);
     }
 
     public function test_product_points_are_awarded_once_at_delivery(): void
@@ -218,7 +223,8 @@ class CompletedFlowsTest extends TestCase
         [$guest, $seller, $product] = $this->product();
         $service = app(ProductOrderService::class);
         $order = $service->createOrder($guest, [['product_id' => $product->id, 'quantity' => 2]]);
-        app(CommercePaymentService::class)->payProductOrder($order, $guest, 'success');
+        app(CashPaymentService::class)->select($order, $guest);
+        app(CashPaymentService::class)->collect($order, $seller);
         $this->assertSame(0, LoyaltyTransaction::where('order_id', $order->id)->count());
         $service->transition($order, $seller, 'packing');
         $service->transition($order, $seller, 'delivered');
@@ -231,7 +237,8 @@ class CompletedFlowsTest extends TestCase
         [$guest, $room, $host] = $this->fixture();
         $experience = Experience::create(['homestay_id' => $room->homestay_id, 'title' => 'Culture test', 'start_at' => '2026-12-12 09:00:00', 'duration_minutes' => 60, 'capacity' => 2, 'booked_count' => 0, 'price' => 50000, 'status' => 'open']);
         $booking = app(ExperienceBookingService::class)->createBooking($guest, $experience, 2);
-        app(CommercePaymentService::class)->payExperienceBooking($booking, $guest, 'success');
+        app(CashPaymentService::class)->select($booking, $guest);
+        app(CashPaymentService::class)->collect($booking, $host);
         $this->actingAs($guest)->get(route('guest.experience-bookings.index'))->assertOk()->assertSee('Culture test');
         $this->actingAs($host)->get(route('host.experience-bookings.index'))->assertOk()->assertSee($guest->full_name);
         $this->actingAs($this->user('guest'))->postJson(route('guest.experience-bookings.cancel', $booking))->assertForbidden();
@@ -239,8 +246,10 @@ class CompletedFlowsTest extends TestCase
         $this->postJson(route('guest.experience-bookings.cancel', $booking))->assertOk();
         $this->assertSame(0, (int) $experience->fresh()->booked_count);
         $this->assertSame('open', $experience->fresh()->status);
+        $this->assertSame(1, $booking->payments()->where('status', 'paid')->count());
+        $this->actingAs($host)->postJson(route('host.experience-bookings.cash-refunded', $booking), ['confirmed' => true])->assertOk();
         $this->assertSame(1, $booking->payments()->where('status', 'refunded')->count());
-        $this->postJson(route('guest.experience-payments.mock', $booking), ['result' => 'success'])->assertStatus(422);
+        $this->actingAs($guest)->postJson(route('guest.experience-payments.cash', $booking))->assertStatus(422);
     }
 
     public function test_csv_report_is_admin_only_filters_dates_and_escapes_formulas(): void
@@ -262,7 +271,8 @@ class CompletedFlowsTest extends TestCase
         [$guest, $room, $host] = $this->fixture();
         $experience = Experience::create(['homestay_id' => $room->homestay_id, 'title' => 'Finish culture', 'start_at' => '2026-12-12 09:00:00', 'duration_minutes' => 60, 'capacity' => 2, 'booked_count' => 0, 'price' => 50000, 'status' => 'open']);
         $booking = app(ExperienceBookingService::class)->createBooking($guest, $experience, 1);
-        app(CommercePaymentService::class)->payExperienceBooking($booking, $guest, 'success');
+        app(CashPaymentService::class)->select($booking, $guest);
+        app(CashPaymentService::class)->collect($booking, $host);
         $this->actingAs($this->user('host'))->postJson(route('host.experience-bookings.complete', $booking))->assertForbidden();
         $this->actingAs($host)->postJson(route('host.experience-bookings.complete', $booking))->assertStatus(422);
         Carbon::setTestNow('2026-12-12 10:01:00');
@@ -292,7 +302,10 @@ class CompletedFlowsTest extends TestCase
 
     private function pay($guest, $booking): void
     {
-        $this->actingAs($guest)->postJson(route('guest.payments.mock', $booking), ['result' => 'success'])->assertCreated();
+        $this->actingAs($guest)->postJson(route('guest.payments.cash', $booking))->assertCreated();
+        $host = $booking->room->homestay->owner;
+        $this->actingAs($host)->postJson(route('host.bookings.cash-received', $booking), ['confirmed' => true])->assertOk();
+        $this->actingAs($guest);
     }
 
     private function product(): array
@@ -306,7 +319,7 @@ class CompletedFlowsTest extends TestCase
 
     private function vnPayParams($guest, $booking): array
     {
-        config(['services.vnpay.tmn_code' => 'TEST', 'services.vnpay.secret_key' => 'SECRET', 'services.vnpay.return_url' => 'http://localhost/api/v1/payment/vn-pay-callback']);
+        config(['services.vnpay.enabled' => true, 'services.vnpay.tmn_code' => 'TEST', 'services.vnpay.secret_key' => 'SECRET', 'services.vnpay.return_url' => 'http://localhost/api/v1/payment/vn-pay-callback']);
         app(VnPayPaymentService::class)->createPaymentUrl($booking, $guest, '127.0.0.1');
         $params = ['vnp_TxnRef' => $booking->payments()->latest('id')->value('txn_ref'), 'vnp_Amount' => '10000000', 'vnp_ResponseCode' => '00', 'vnp_TransactionStatus' => '00'];
         ksort($params);

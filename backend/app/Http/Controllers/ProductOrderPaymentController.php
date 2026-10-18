@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests\MockPaymentRequest;
+use App\Http\Requests\CashPaymentRequest;
 use App\Models\ProductOrder;
-use App\Services\CommercePaymentService;
+use App\Services\CashPaymentService;
 use InvalidArgumentException;
 
 class ProductOrderPaymentController extends Controller
@@ -20,10 +20,10 @@ class ProductOrderPaymentController extends Controller
         return view('payments.product_order', compact('order'));
     }
 
-    public function store(MockPaymentRequest $request, ProductOrder $order, CommercePaymentService $service)
+    public function store(CashPaymentRequest $request, ProductOrder $order, CashPaymentService $service)
     {
         try {
-            $payment = $service->payProductOrder($order, $request->user(), $request->validated('result'));
+            $payment = $service->select($order, $request->user());
         } catch (InvalidArgumentException $exception) {
             return $request->expectsJson()
                 ? response()->json(['message' => $exception->getMessage()], 422)
@@ -31,7 +31,7 @@ class ProductOrderPaymentController extends Controller
         }
 
         return $request->expectsJson()
-            ? response()->json(['data' => $payment], $payment->status === 'paid' ? 201 : 200)
-            : back()->with('status', $payment->status === 'paid' ? 'Thanh toán đơn hàng thành công.' : 'Thanh toán đơn hàng thất bại.');
+            ? response()->json(['data' => $payment], 201)
+            : back()->with('status', 'Đã chọn thanh toán tiền mặt khi nhận hàng. Chưa ghi nhận đã thu tiền.');
     }
 }

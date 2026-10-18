@@ -320,3 +320,18 @@ This section supersedes the earlier blanket statement that every room refund is 
 - Render deployment remains pending account connection and external MySQL credentials. Free services sleep, do not persist uploads and block common SMTP ports. A paid persistent disk or another persistent storage solution is needed for durable uploads; an always-running service is needed for scheduler execution when idle. No paid service was created, no public deployment URL is claimed.
 
 Deployment instructions and external prerequisites: `docs/RENDER_DEPLOYMENT.md`.
+
+## 18. Cash and VNPay only — 2026-10-18
+
+This section supersedes every earlier description of mock/test payment and automatic simulated refund behavior. The user explicitly requested removal of simulated payments.
+
+- Removed all three `/payments/mock` web endpoints, their request validator and mock payment services. There is no guest endpoint that marks a payment paid based on a submitted success/failure value. Existing historical transactions are preserved.
+- Checkout for rooms, products and experiences offers cash and VNPay. Unavailable VNPay is disabled with a short message. `VNPAY_ENABLED` defaults to false and is false locally because the merchant was not approved. Enabling it permits the existing room VNPay initiation; signed callbacks/IPN still process outstanding transactions when initiation is disabled. Product/experience VNPay remains unavailable.
+- Cash selection is a guest-owned POST at the same checkout path ending `/payments/cash`. It creates one idempotent `gateway=cash`, `status=initiated` payment with no paid timestamp and no earned points. The amount comes from the locked booking/order, never from the client.
+- Room cash selection converts held inventory to sold and confirms the reservation inside the booking/inventory transaction. It clears the 15-minute hold; payment remains outstanding until the host receives cash. Product/experience cash selection confirms the pending reservation/order.
+- Only the owning host (rooms/experiences) or owning seller (products) can confirm actual cash receipt. POST `/chu-homestay/bookings/{booking}/cash/received`, `/chu-homestay/experience-bookings/{experienceBooking}/cash/received`, or `/nguoi-ban/orders/{order}/cash/received` requires `confirmed=1`. It locks the parent and payment, rejects repeats and any other paid attempt, then records the paid timestamp, audit actor and customer notification. Room points are earned on collection; product points require both delivery and collection, in either order.
+- Cash-on-delivery orders may be packed/delivered with an outstanding selected cash payment. Delivery alone does not mark paid or award points.
+- Cancellation releases inventory/capacity and restores applicable redeemed points, but does not automatically mark a paid transaction refunded. Owners confirm physical cash returns through matching `/cash/refunded` routes with `confirmed=1`. Guests cannot confirm cash refunds. The existing room VNPay refund API remains verified by gateway response. Legacy non-VNPay payments are not automatically refunded.
+- No schema reset or migration is needed: all payment tables already support the cash gateway and initiated/paid/refunded statuses.
+
+Current operation and validation: `docs/CASH_PAYMENTS.md`.

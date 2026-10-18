@@ -20,8 +20,8 @@
     </a>
     <span class="eyebrow">Thanh toán lưu trú</span>
     <h1>Thanh toán booking {{ $booking->code }}</h1>
-    <p>Kiểm tra thông tin đặt phòng và ghi nhận thanh toán mô phỏng cho demo học thuật.</p>
-    <p>Phòng được giữ 15 phút. Chỉ xác nhận sau thanh toán. Booking đã trả tiền được hủy trước ngày nhận phòng ít nhất 24 giờ. Hoàn 100%: giao dịch VNPay gọi sandbox và chờ xác nhận; giao dịch test được mô phỏng. Không sử dụng tiền thật.</p>
+    <p>Chọn thanh toán tiền mặt hoặc VNPay.</p>
+    <p>Chọn phương thức trong 15 phút để xác nhận đặt phòng. Với tiền mặt, bạn thanh toán trực tiếp khi nhận phòng. Đặt phòng đã trả tiền cần hủy trước ngày nhận phòng ít nhất 24 giờ; liên hệ chủ homestay để nhận lại tiền mặt.</p>
     @if($booking->hold_expires_at)<p role="status">Hạn thanh toán: <strong>{{ $booking->hold_expires_at->format('H:i:s d/m/Y') }}</strong></p>@endif
 </div>
 
@@ -71,41 +71,12 @@
         </div>
     </section>
 
-    <aside class="card" style="padding: 24px;">
-        <h2 style="margin-top: 0;">Cổng thanh toán demo</h2>
-        <p style="color: var(--muted); margin-bottom: 18px;">Mô phỏng gateway để chứng minh luồng thanh toán, ghi nhận payment, audit log, notification và điểm thưởng.</p>
-
-        @if($canPay)
-            <form method="post" action="{{ route('guest.payments.vnpay', $booking) }}" style="display: grid; gap: 10px; margin-bottom: 10px;">
-                @csrf
-                <button class="btn" type="submit">
-                    Thanh toán VNPay sandbox
-                </button>
-            </form>
-            <form method="post" action="{{ route('guest.payments.mock', $booking) }}" style="display: grid; gap: 10px;">
-                @csrf
-                <input type="hidden" name="result" value="success">
-                <button class="btn btn-accent" type="submit">
-                    Thanh toán thành công
-                </button>
-            </form>
-            <form method="post" action="{{ route('guest.payments.mock', $booking) }}" style="display: grid; gap: 10px; margin-top: 10px;">
-                @csrf
-                <input type="hidden" name="result" value="fail">
-                <button class="btn btn-secondary" type="submit">
-                    Mô phỏng thất bại
-                </button>
-            </form>
-        @elseif($paidPayment)
-            <div class="alert" role="status" style="margin: 0;">
-                Booking này đã thanh toán thành công lúc {{ optional($paidPayment->paid_at)->format('d/m/Y H:i') }}.
-            </div>
-        @else
-            <div class="alert alert-danger" role="status" style="margin: 0;">
-                Trạng thái booking hiện tại không cho phép thanh toán.
-            </div>
-        @endif
-    </aside>
+    @include('payments.options', [
+        'paymentSubject' => $booking,
+        'cashRoute' => route('guest.payments.cash', $booking),
+        'cashDescription' => __('payments.cash_booking', [], 'vi'),
+        'vnpayRoute' => route('guest.payments.vnpay', $booking),
+    ])
 </div>
 
 <section class="card" style="padding: 24px; margin-top: 20px;">
@@ -125,7 +96,7 @@
                 @forelse($booking->payments as $payment)
                     <tr>
                         <td style="font-family: monospace; font-weight: 700;">{{ $payment->txn_ref }}</td>
-                        <td>{{ $payment->gateway }}</td>
+                        <td>{{ match($payment->gateway) { 'cash' => 'Ti?n m?t', 'vnpay' => 'VNPay', default => 'Giao d?ch c?' } }}</td>
                         <td>{{ number_format($payment->amount) }} đ</td>
                         <td>
                             <span class="badge {{ $payment->status === 'paid' ? 'badge-success' : 'badge-warning' }}">

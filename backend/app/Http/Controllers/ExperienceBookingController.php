@@ -37,6 +37,6 @@ class ExperienceBookingController extends Controller
             return $request->expectsJson() ? response()->json(['message' => $e->getMessage()], 422) : back()->withErrors(['booking' => $e->getMessage()]);
         }
 
-        return $request->expectsJson() ? response()->json(['data' => $booking]) : back()->with('status', 'Đã cập nhật đặt chỗ. Hoàn tiền chỉ mô phỏng.');
+        return $request->expectsJson() ? response()->json(['data' => $booking]) : back()->with('status', 'Đã cập nhật đặt chỗ.');
     }
 }

@@ -45,7 +45,7 @@ class BookingLifecycleService
         }
     }
 
-    public function confirmLocked(Booking $booking, User $actor): void
+    public function confirmLocked(Booking $booking, User $actor, string $reason = 'payment_confirmed'): void
     {
         $this->assertPayable($booking);
         if (in_array($booking->status, ['holding', 'pending_payment'], true)) {
@@ -55,7 +55,7 @@ class BookingLifecycleService
                 }
                 $row->update(['units_held' => $row->units_held - 1, 'units_sold' => $row->units_sold + 1]);
             }
-            $this->change($booking, 'confirmed', $actor, 'payment_confirmed');
+            $this->change($booking, 'confirmed', $actor, $reason);
         }
     }
 
@@ -105,6 +105,9 @@ class BookingLifecycleService
         abort_unless($actor->role === 'admin' || ($actor->role === 'guest' && (int) $booking->guest_id === (int) $actor->id), 403);
 
         $payment = $booking->payments()->where('status', 'paid')->first();
+        if ($payment && $payment->gateway !== 'vnpay') {
+            throw new InvalidArgumentException('Vui lòng liên hệ đơn vị cung cấp để nhận lại tiền. Chỉ chủ homestay được xác nhận đã trả lại tiền mặt.');
+        }
         if ($payment?->gateway === 'vnpay') {
             // Persist request tracking outside the final DB transaction: an HTTP
             // timeout must not roll back evidence of a possibly accepted refund.
@@ -120,10 +123,12 @@ class BookingLifecycleService
             if (! in_array($locked->status, ['cancelled', 'expired'], true) || ! $payment) {
                 throw new InvalidArgumentException('Chỉ hoàn tiền booking đã thanh toán và đã hủy theo chính sách.');
             }
-            // mock_test remains a ledger simulation; VNPay requires verified sandbox success.
+            if ($payment->gateway !== 'vnpay') {
+                throw new InvalidArgumentException('Giao dịch này cần đơn vị cung cấp xác nhận hoàn tiền.');
+            }
             $payment->update(['status' => 'refunded']);
             app(LoyaltyService::class)->reverse((int) $locked->guest_id, $locked->id);
-            $this->change($locked, 'refunded', $actor, $payment->gateway === 'vnpay' ? 'vnpay_sandbox_refund_full' : 'sandbox_refund_full');
+            $this->change($locked, 'refunded', $actor, 'vnpay_refund_full');
 
             return $locked;
         }, 3);

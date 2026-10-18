@@ -39,6 +39,7 @@ return [
     ],
 
     'vnpay' => [
+        'enabled' => env('VNPAY_ENABLED', false),
         'url' => env('VNPAY_PAY_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'),
         'tmn_code' => env('VNPAY_TMN_CODE', ''),
         'secret_key' => env('VNPAY_SECRET_KEY', ''),

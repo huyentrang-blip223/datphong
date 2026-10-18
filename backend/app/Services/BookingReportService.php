@@ -9,7 +9,7 @@ class BookingReportService
     public function writeCsv($stream, array $filters): void
     {
         fwrite($stream, "\xEF\xBB\xBF");
-        fputcsv($stream, ['Mã booking', 'Homestay', 'Phòng', 'Nhận phòng', 'Trả phòng', 'Trạng thái', 'Tổng tiền', 'Đã thu', 'Đã hoàn (mô phỏng)']);
+        fputcsv($stream, ['Mã booking', 'Homestay', 'Phòng', 'Nhận phòng', 'Trả phòng', 'Trạng thái', 'Tổng tiền', 'Đã thu', 'Đã hoàn']);
         Booking::with('room.homestay')->withSum(['payments as collected' => fn ($q) => $q->where('status', 'paid')], 'amount')
             ->withSum(['payments as refunded_amount' => fn ($q) => $q->where('status', 'refunded')], 'amount')
             ->when($filters['from'] ?? null, fn ($q, $date) => $q->where('checkin_date', '>=', $date))

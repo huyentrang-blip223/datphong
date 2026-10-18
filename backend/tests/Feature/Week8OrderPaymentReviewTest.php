@@ -76,17 +76,17 @@ class Week8OrderPaymentReviewTest extends TestCase
             ->get(route('guest.order-payments.show', $order))
             ->assertOk()
             ->assertSee('Thanh toán đơn ' . $order->code)
-            ->assertSee('Thanh toán thành công');
+            ->assertSee('Thanh toán tiền mặt');
 
         $this->actingAs($guest)
-            ->postJson(route('guest.order-payments.mock', $order), ['result' => 'success'])
+            ->postJson(route('guest.order-payments.cash', $order))
             ->assertCreated()
-            ->assertJsonPath('data.status', 'paid');
+            ->assertJsonPath('data.status', 'initiated');
 
         $this->assertSame('confirmed', $order->fresh()->status);
         $this->assertDatabaseHas('product_order_payments', [
             'order_id' => $order->id,
-            'status' => 'paid',
+            'status' => 'initiated',
         ]);
     }
 
@@ -115,15 +115,16 @@ class Week8OrderPaymentReviewTest extends TestCase
         $this->assertSame('confirmed', $order->fresh()->status);
     }
 
-    public function test_mock_payment_success_failure_and_duplicate_guard(): void
+    public function test_cash_selection_does_not_mark_paid_and_is_idempotent(): void
     {
         [$guest, $booking] = $this->bookingForGuest('w8-pay-guest@dt07.test');
 
-        $this->actingAs($guest)->postJson(route('guest.payments.mock', $booking), ['result' => 'fail'])->assertOk()
-            ->assertJsonPath('data.status', 'failed');
-        $this->actingAs($guest)->postJson(route('guest.payments.mock', $booking), ['result' => 'success'])->assertCreated()
-            ->assertJsonPath('data.status', 'paid');
-        $this->actingAs($guest)->postJson(route('guest.payments.mock', $booking), ['result' => 'success'])->assertStatus(422);
+        $this->actingAs($guest)->postJson(route('guest.payments.cash', $booking), ['result' => 'success'])->assertStatus(422);
+        $this->actingAs($guest)->postJson(route('guest.payments.cash', $booking))->assertCreated()
+            ->assertJsonPath('data.status', 'initiated');
+        $this->actingAs($guest)->postJson(route('guest.payments.cash', $booking))->assertCreated();
+        $this->assertSame(1, $booking->payments()->count());
+        $this->assertNull($booking->payments()->first()->paid_at);
     }
 
     public function test_guest_can_open_payment_checkout_for_own_booking_only(): void
@@ -135,7 +136,7 @@ class Week8OrderPaymentReviewTest extends TestCase
             ->get(route('guest.payments.show', $booking))
             ->assertOk()
             ->assertSee('Thanh toán booking ' . $booking->code)
-            ->assertSee('Thanh toán thành công')
+            ->assertSee('Thanh toán tiền mặt')
             ->assertSee(number_format($booking->total_amount) . ' đ');
 
         $this->actingAs($other)
@@ -146,7 +147,7 @@ class Week8OrderPaymentReviewTest extends TestCase
     public function test_vnpay_payment_url_and_callback_mark_booking_payment_paid(): void
     {
         config([
-            'services.vnpay.url' => 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html',
+            'services.vnpay.enabled' => true, 'services.vnpay.url' => 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html',
             'services.vnpay.tmn_code' => 'TESTCODE',
             'services.vnpay.secret_key' => 'TESTSECRET',
             'services.vnpay.return_url' => 'http://localhost:8080/api/v1/payment/vn-pay-callback',

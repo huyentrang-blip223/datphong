@@ -62,20 +62,22 @@ class Week9FreezeReadinessTest extends TestCase
     {
         [$guest, $booking] = $this->bookingForGuest('w9-pay-guest@dt07.test');
 
-        $this->actingAs($guest)->postJson(route('guest.payments.mock', $booking), ['result' => 'success'])->assertCreated();
+        $this->actingAs($guest)->postJson(route('guest.payments.cash', $booking))->assertCreated();
+        $host = $booking->room->homestay->owner;
+        $this->actingAs($host)->postJson(route('host.bookings.cash-received', $booking), ['confirmed' => true])->assertOk();
 
         $this->assertDatabaseHas('loyalty_transactions', [
             'user_id' => $guest->id,
             'booking_id' => $booking->id,
-            'reason' => 'mock_payment_booking',
+            'reason' => 'cash_payment_booking',
         ]);
         $this->assertDatabaseHas('notifications', [
             'user_id' => $guest->id,
             'type' => 'payment_paid',
         ]);
         $this->assertDatabaseHas('audit_logs', [
-            'actor_id' => $guest->id,
-            'action' => 'mock_payment_paid',
+            'actor_id' => $host->id,
+            'action' => 'cash_payment_paid',
             'entity' => 'payments',
         ]);
     }
@@ -185,7 +187,8 @@ class Week9FreezeReadinessTest extends TestCase
         $admin = $this->user('w9-admin-finance@dt07.test', 'admin');
         [$guest, $booking] = $this->bookingForGuest('w9-admin-finance-guest@dt07.test');
 
-        $this->actingAs($guest)->postJson(route('guest.payments.mock', $booking), ['result' => 'success'])->assertCreated();
+        $this->actingAs($guest)->postJson(route('guest.payments.cash', $booking))->assertCreated();
+        $this->actingAs($booking->room->homestay->owner)->postJson(route('host.bookings.cash-received', $booking), ['confirmed' => true])->assertOk();
 
         $this->actingAs($admin)
             ->get(route('admin.payments.index'))
@@ -199,7 +202,7 @@ class Week9FreezeReadinessTest extends TestCase
             ->get(route('admin.audit-logs.index', ['entity' => 'payments']))
             ->assertOk()
             ->assertSee('Audit logs')
-            ->assertSee('mock_payment_paid');
+            ->assertSee('cash_payment_paid');
     }
 
     private function bookingForGuest(string $email): array

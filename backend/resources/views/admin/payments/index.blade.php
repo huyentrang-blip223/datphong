@@ -29,7 +29,7 @@
                         <td><span class="badge badge-outline">{{ $payment['type'] }}</span></td>
                         <td style="font-family: monospace; font-weight: 700;">{{ $payment['code'] }}</td>
                         <td>{{ $payment['customer'] }}</td>
-                        <td>{{ $payment['gateway'] }}</td>
+                        <td>{{ match($payment['gateway']) { 'cash' => 'Tiền mặt', 'vnpay' => 'VNPay', default => 'Giao dịch cũ' } }}</td>
                         <td style="font-family: monospace;">{{ $payment['txn_ref'] }}</td>
                         <td style="font-weight: 750;">{{ number_format($payment['amount']) }} đ</td>
                         <td>
@@ -38,10 +38,10 @@
                             </span>
                             @if($payment['type'] === 'booking' && $payment['gateway'] === 'vnpay')
                             <span>{{ $payment['refund_state'] ?? '' }}</span>
-                            <form method="post" action="{{ route('admin.payments.reconcile',$payment['payment_id']) }}">@csrf<button class="btn btn-small">Đối soát VNPay sandbox</button></form>
+                            <form method="post" action="{{ route('admin.payments.reconcile',$payment['payment_id']) }}">@csrf<button class="btn btn-small">Đối soát VNPay</button></form>
                             @endif
-                            @if($payment['type'] === 'booking' && $payment['status'] === 'paid' && in_array($payment['booking_status'] ?? '', ['cancelled','expired'],true))
-                            <form method="post" action="{{ route('admin.bookings.refund', $payment['booking_id']) }}">@csrf<button class="btn btn-small">Hoàn tiền test/sandbox</button></form>
+                            @if($payment['type'] === 'booking' && $payment['gateway'] === 'vnpay' && $payment['status'] === 'paid' && in_array($payment['booking_status'] ?? '', ['cancelled','expired'],true))
+                            <form method="post" action="{{ route('admin.bookings.refund', $payment['booking_id']) }}">@csrf<button class="btn btn-small">Hoàn tiền VNPay</button></form>
                             @endif
                         </td>
                         <td>{{ $payment['paid_at'] ? $payment['paid_at']->format('d/m/Y H:i') : optional($payment['created_at'])->format('d/m/Y H:i') }}</td>

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\MockPaymentRequest;
+use App\Http\Requests\CashPaymentRequest;
 use App\Models\Booking;
-use App\Services\PaymentService;
+use App\Services\CashPaymentService;
 use App\Services\VnPayPaymentService;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
@@ -40,10 +40,10 @@ class PaymentController extends Controller
         return view('payments.show', compact('booking'));
     }
 
-    public function store(MockPaymentRequest $request, Booking $booking, PaymentService $service)
+    public function store(CashPaymentRequest $request, Booking $booking, CashPaymentService $service)
     {
         try {
-            $payment = $service->payTest($booking, $request->user(), $request->validated('result'));
+            $payment = $service->select($booking, $request->user());
         } catch (InvalidArgumentException $exception) {
             return $request->expectsJson()
                 ? response()->json(['message' => $exception->getMessage()], 422)
@@ -51,8 +51,8 @@ class PaymentController extends Controller
         }
 
         return $request->expectsJson()
-            ? response()->json(['data' => $payment], $payment->status === 'paid' ? 201 : 200)
-            : back()->with('status', $payment->status === 'paid' ? 'Thanh toán test thành công.' : 'Thanh toán test thất bại.');
+            ? response()->json(['data' => $payment], 201)
+            : back()->with('status', 'Đã chọn thanh toán tiền mặt. Vui lòng thanh toán trực tiếp cho chủ homestay.');
     }
 
     public function createVnPay(Request $request, Booking $booking, VnPayPaymentService $service)

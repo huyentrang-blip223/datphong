@@ -19,7 +19,7 @@ class VnPayGatewayTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config(['services.vnpay.tmn_code' => 'TEST', 'services.vnpay.secret_key' => 'SECRET', 'services.vnpay.url' => 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html']);
+        config(['services.vnpay.tmn_code' => 'TEST', 'services.vnpay.secret_key' => 'SECRET', 'services.vnpay.enabled' => true, 'services.vnpay.url' => 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html']);
     }
 
     public function test_refund_requires_signed_matching_gateway_success_before_marking_refunded(): void

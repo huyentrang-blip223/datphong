@@ -123,8 +123,10 @@ class ProductOrderService
             }
 
             $fromStatus = $order->status;
-            if (in_array($nextStatus, ['packing', 'delivered'], true) && ! $order->payments()->where('status', 'paid')->exists()) {
-                throw new InvalidArgumentException('Đơn phải thanh toán trước khi đóng gói/giao hàng.');
+            if (in_array($nextStatus, ['packing', 'delivered'], true)
+                && ! $order->payments()->where('status', 'paid')->exists()
+                && ! $order->payments()->where('gateway', 'cash')->where('status', 'initiated')->exists()) {
+                throw new InvalidArgumentException('Đơn phải thanh toán hoặc chọn tiền mặt khi nhận hàng trước khi đóng gói/giao hàng.');
             }
             $order->update(['status' => $nextStatus]);
 
@@ -133,11 +135,10 @@ class ProductOrderService
                 foreach ($items as $item) {
                     LocalProduct::whereKey($item->product_id)->lockForUpdate()->firstOrFail()->increment('stock_qty', $item->quantity);
                 }
-                $order->payments()->where('status', 'paid')->update(['status' => 'refunded']);
                 $this->loyaltyService->reverse((int) $order->buyer_id, null, $order->id);
             }
 
-            if ($nextStatus === 'delivered') {
+            if ($nextStatus === 'delivered' && $order->payments()->where('status', 'paid')->exists()) {
                 $this->loyaltyService->award((int) $order->buyer_id, (int) floor((float) $order->total_amount / 10000), 'product_order_delivered', null, $order->id);
             }
 

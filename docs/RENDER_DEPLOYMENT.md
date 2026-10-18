@@ -37,7 +37,7 @@ Free chặn cổng SMTP 25/465/587. Đã thêm mailer HTTP Resend để gửi qu
 
 ## VNPay sandbox
 
-Nhập VNPAY_TMN_CODE và VNPAY_SECRET_KEY của merchant **đã được phê duyệt**, và VNPAY_RETURN_URL là URL website thật cộng `/api/v1/payment/vn-pay-callback`. Đăng ký IPN HTTPS với VNPay tại `/api/v1/payment/vn-pay-ipn`.
+Giữ `VNPAY_ENABLED=false` khi merchant chưa hoạt động; website cho khách chọn thanh toán tiền mặt và hiển thị VNPay chưa khả dụng. Khi merchant đã được phê duyệt, nhập VNPAY_TMN_CODE và VNPAY_SECRET_KEY, đặt VNPAY_RETURN_URL là URL website thật cộng `/api/v1/payment/vn-pay-callback`, rồi đặt `VNPAY_ENABLED=true` để mở thanh toán phòng. Đăng ký IPN HTTPS với VNPay tại `/api/v1/payment/vn-pay-ipn`. VNPay cho sản phẩm/trải nghiệm hiện chưa khả dụng.
 
 Kiểm tra trực tiếp ngày 2026-10-18 bằng cấu hình local hiện có đã tới máy chủ sandbox, nhưng trang cổng phản hồi **Website này chưa được phê duyệt**. Không có giao dịch thành công hoặc hoàn tiền bên ngoài nào được tuyên bố. Mã đã hỗ trợ hoàn tiền/query sandbox có xác thực phản hồi; timeout giữ trạng thái unknown để đối soát, không tự gửi yêu cầu tài chính lặp.
 

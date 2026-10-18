@@ -14,7 +14,7 @@
     </a>
     <span class="eyebrow">Thanh toán trải nghiệm văn hóa</span>
     <h1>Thanh toán đặt chỗ #{{ $experienceBooking->id }}</h1>
-    <p>Kiểm tra thông tin tham gia và ghi nhận thanh toán mô phỏng.</p>
+    <p>Kiểm tra thông tin tham gia và chọn phương thức thanh toán.</p>
 </div>
 
 <div class="form-grid" style="grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr); gap: 20px; align-items: start;">
@@ -51,27 +51,11 @@
         </div>
     </section>
 
-    <aside class="card" style="padding: 24px;">
-        <h2 style="margin-top: 0;">Cổng thanh toán demo</h2>
-        <p style="color: var(--muted); margin-bottom: 18px;">Ghi nhận thanh toán đặt chỗ trải nghiệm, tự chuyển pending sang confirmed khi thành công.</p>
-
-        @if($canPay)
-            <form method="post" action="{{ route('guest.experience-payments.mock', $experienceBooking) }}" style="display: grid; gap: 10px;">
-                @csrf
-                <input type="hidden" name="result" value="success">
-                <button class="btn btn-accent" type="submit">Thanh toán thành công</button>
-            </form>
-            <form method="post" action="{{ route('guest.experience-payments.mock', $experienceBooking) }}" style="display: grid; gap: 10px; margin-top: 10px;">
-                @csrf
-                <input type="hidden" name="result" value="fail">
-                <button class="btn btn-secondary" type="submit">Mô phỏng thất bại</button>
-            </form>
-        @elseif($paidPayment)
-            <div class="alert" role="status" style="margin: 0;">Đặt chỗ đã thanh toán lúc {{ optional($paidPayment->paid_at)->format('d/m/Y H:i') }}.</div>
-        @else
-            <div class="alert alert-danger" role="status" style="margin: 0;">Trạng thái đặt chỗ hiện tại không cho phép thanh toán.</div>
-        @endif
-    </aside>
+    @include('payments.options', [
+        'paymentSubject' => $experienceBooking,
+        'cashRoute' => route('guest.experience-payments.cash', $experienceBooking),
+        'cashDescription' => __('payments.cash_experience', [], 'vi'),
+    ])
 </div>
 
 <section class="card" style="padding: 24px; margin-top: 20px;">
@@ -91,7 +75,7 @@
                 @forelse($experienceBooking->payments as $payment)
                     <tr>
                         <td style="font-family: monospace; font-weight: 700;">{{ $payment->txn_ref }}</td>
-                        <td>{{ $payment->gateway }}</td>
+                        <td>{{ match($payment->gateway) { 'cash' => 'Ti?n m?t', 'vnpay' => 'VNPay', default => 'Giao d?ch c?' } }}</td>
                         <td>{{ number_format($payment->amount) }} đ</td>
                         <td><span class="badge {{ $payment->status === 'paid' ? 'badge-success' : 'badge-warning' }}">{{ $payment->status }}</span></td>
                         <td>{{ $payment->paid_at ? $payment->paid_at->format('d/m/Y H:i') : 'Chưa thanh toán' }}</td>

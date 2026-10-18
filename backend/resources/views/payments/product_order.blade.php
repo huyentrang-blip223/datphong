@@ -15,7 +15,7 @@
     <span class="eyebrow">Thanh toán sản phẩm địa phương</span>
     <h1>Thanh toán đơn {{ $order->code }}</h1>
     <p>Tạm tính: {{ number_format($order->subtotal) }} đ · Dùng {{ $order->points_redeemed }} điểm, giảm {{ number_format($order->discount_amount) }} đ · Còn thanh toán: {{ number_format($order->total_amount) }} đ</p>
-    <p>Kiểm tra sản phẩm OCOP/nông sản đã đặt và ghi nhận thanh toán mô phỏng.</p>
+    <p>Kiểm tra đơn hàng và chọn phương thức thanh toán.</p>
 </div>
 
 <div class="form-grid" style="grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr); gap: 20px; align-items: start;">
@@ -52,27 +52,11 @@
         </div>
     </section>
 
-    <aside class="card" style="padding: 24px;">
-        <h2 style="margin-top: 0;">Cổng thanh toán demo</h2>
-        <p style="color: var(--muted); margin-bottom: 18px;">Ghi nhận thanh toán đơn hàng sản phẩm, tự chuyển đơn từ pending sang confirmed khi thành công.</p>
-
-        @if($canPay)
-            <form method="post" action="{{ route('guest.order-payments.mock', $order) }}" style="display: grid; gap: 10px;">
-                @csrf
-                <input type="hidden" name="result" value="success">
-                <button class="btn btn-accent" type="submit">Thanh toán thành công</button>
-            </form>
-            <form method="post" action="{{ route('guest.order-payments.mock', $order) }}" style="display: grid; gap: 10px; margin-top: 10px;">
-                @csrf
-                <input type="hidden" name="result" value="fail">
-                <button class="btn btn-secondary" type="submit">Mô phỏng thất bại</button>
-            </form>
-        @elseif($paidPayment)
-            <div class="alert" role="status" style="margin: 0;">Đơn hàng đã thanh toán lúc {{ optional($paidPayment->paid_at)->format('d/m/Y H:i') }}.</div>
-        @else
-            <div class="alert alert-danger" role="status" style="margin: 0;">Trạng thái đơn hàng hiện tại không cho phép thanh toán.</div>
-        @endif
-    </aside>
+    @include('payments.options', [
+        'paymentSubject' => $order,
+        'cashRoute' => route('guest.order-payments.cash', $order),
+        'cashDescription' => __('payments.cash_order', [], 'vi'),
+    ])
 </div>
 
 <section class="card" style="padding: 24px; margin-top: 20px;">
@@ -92,7 +76,7 @@
                 @forelse($order->payments as $payment)
                     <tr>
                         <td style="font-family: monospace; font-weight: 700;">{{ $payment->txn_ref }}</td>
-                        <td>{{ $payment->gateway }}</td>
+                        <td>{{ match($payment->gateway) { 'cash' => 'Ti?n m?t', 'vnpay' => 'VNPay', default => 'Giao d?ch c?' } }}</td>
                         <td>{{ number_format($payment->amount) }} đ</td>
                         <td><span class="badge {{ $payment->status === 'paid' ? 'badge-success' : 'badge-warning' }}">{{ $payment->status }}</span></td>
                         <td>{{ $payment->paid_at ? $payment->paid_at->format('d/m/Y H:i') : 'Chưa thanh toán' }}</td>

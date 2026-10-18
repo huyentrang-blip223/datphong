@@ -50,6 +50,9 @@
                             };
                         @endphp
                         <span class="badge {{ $stClass }}">{{ $booking->status }}</span>
+                        @include('payments.cash_receipt', ['subject' => $booking,
+                            'collectRoute' => route('host.bookings.cash-received', $booking),
+                            'refundRoute' => route('host.bookings.cash-refunded', $booking)])
                         @if($booking->status === 'confirmed')
                         <form method="post" action="{{ route('host.bookings.complete', $booking) }}">@csrf<button class="btn btn-small">Hoàn tất lưu trú</button></form>
                         @endif

@@ -146,7 +146,7 @@
             </div>
             <div class="footer-status">
                 <span class="status-indicator"></span>
-                <span>Dữ liệu mô phỏng phục vụ học thuật. Week 9 code freeze package.</span>
+                <span>Kết nối homestay cộng đồng, sản phẩm địa phương và trải nghiệm văn hóa.</span>
             </div>
         </div>
     </div>

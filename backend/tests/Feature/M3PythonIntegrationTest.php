@@ -123,16 +123,16 @@ class M3PythonIntegrationTest extends TestCase
             ->get(route('guest.experience-payments.show', $booking))
             ->assertOk()
             ->assertSee('Thanh toán đặt chỗ #'.$booking->id)
-            ->assertSee('Thanh toán thành công');
+            ->assertSee('Thanh toán tiền mặt');
 
         $this->actingAs($guest)
-            ->postJson(route('guest.experience-payments.mock', $booking), ['result' => 'success'])
+            ->postJson(route('guest.experience-payments.cash', $booking))
             ->assertCreated()
-            ->assertJsonPath('data.status', 'paid');
+            ->assertJsonPath('data.status', 'initiated');
 
         $this->assertDatabaseHas('experience_booking_payments', [
             'experience_booking_id' => $booking->id,
-            'status' => 'paid',
+            'status' => 'initiated',
         ]);
     }
 

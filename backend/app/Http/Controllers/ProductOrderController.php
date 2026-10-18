@@ -14,7 +14,7 @@ class ProductOrderController extends Controller
     public function index()
     {
         $user = request()->user();
-        $orders = ProductOrder::with('items.product')
+        $orders = ProductOrder::with('items.product', 'payments')
             ->when($user->role === 'guest', fn ($q) => $q->where('buyer_id', $user->id))
             ->when($user->role === 'seller', fn ($q) => $q->whereHas('items.product', fn ($p) => $p->where('seller_id', $user->id)))
             ->orderByDesc('id')

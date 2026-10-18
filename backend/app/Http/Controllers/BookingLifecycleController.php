@@ -29,7 +29,7 @@ class BookingLifecycleController extends Controller
         try {
             $booking = $action();
 
-            return $request->expectsJson() ? response()->json(['data' => $booking]) : back()->with('status', 'Đã cập nhật booking. Giao dịch VNPay được xử lý qua sandbox; giao dịch mock được mô phỏng.');
+            return $request->expectsJson() ? response()->json(['data' => $booking]) : back()->with('status', 'Đã cập nhật booking.');
         } catch (InvalidArgumentException $e) {
             return $request->expectsJson() ? response()->json(['message' => $e->getMessage()], 422) : back()->withErrors(['booking' => $e->getMessage()]);
         }

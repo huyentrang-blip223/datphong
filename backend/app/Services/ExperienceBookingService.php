@@ -69,12 +69,9 @@ class ExperienceBookingService
                 $experience->status = 'open';
             }
             $experience->save();
-            foreach ($paid as $payment) {
-                $payment->update(['status' => 'refunded']);
-            }
             $locked->update(['status' => 'cancelled']);
-            app(AuditLogService::class)->record($actor, 'experience_cancelled_sandbox_refund', 'experience_bookings', $locked->id);
-            app(NotificationService::class)->send($actor, 'experience_cancelled', 'Đã hủy trải nghiệm', 'Chỗ đã được trả lại. Giao dịch đã trả tiền được hoàn mô phỏng.', 'experience_booking', $locked->id);
+            app(AuditLogService::class)->record($actor, 'experience_cancelled', 'experience_bookings', $locked->id);
+            app(NotificationService::class)->send($actor, 'experience_cancelled', 'Đã hủy trải nghiệm', 'Chỗ đã được trả lại. Nếu đã thanh toán, vui lòng liên hệ chủ homestay để nhận lại tiền.', 'experience_booking', $locked->id);
 
             return $locked;
         }, 3);

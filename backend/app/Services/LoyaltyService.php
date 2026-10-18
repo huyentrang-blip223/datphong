@@ -48,7 +48,7 @@ class LoyaltyService
                 LoyaltyTransaction::create(['user_id' => $userId, 'booking_id' => $bookingId,
                     'order_id' => $orderId, 'points_delta' => -$points,
                     'balance_after' => max(0, (int) LoyaltyTransaction::where('user_id', $userId)->sum('points_delta') - $points),
-                    'reason' => 'sandbox_refund_reversal']);
+                    'reason' => 'refund_reversal']);
             }
         });
     }

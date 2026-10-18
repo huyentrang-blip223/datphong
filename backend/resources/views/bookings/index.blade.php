@@ -57,8 +57,10 @@
                     </td>
                     <td>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
-                            @if(in_array($booking->status,['cancelled','expired'],true) && $booking->payments->contains('status', 'paid'))
-                            <form method="post" action="{{ route('guest.bookings.refund', $booking) }}">@csrf<button class="btn btn-small">Hoàn tiền 100% (test/sandbox)</button></form>
+                            @if(in_array($booking->status,['cancelled','expired'],true) && $booking->payments->where('gateway', 'vnpay')->contains('status', 'paid'))
+                            <form method="post" action="{{ route('guest.bookings.refund', $booking) }}">@csrf<button class="btn btn-small">Hoàn tiền VNPay</button></form>
+                            @elseif(in_array($booking->status,['cancelled','expired'],true) && $booking->payments->where('gateway', 'cash')->contains('status', 'paid'))
+                            <p>Liên hệ chủ homestay để nhận lại tiền mặt.</p>
                             @endif
                             @if(in_array($booking->status, ['holding','pending_payment','confirmed'], true))
                                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
@@ -66,13 +68,6 @@
                                         @csrf
                                         <button class="btn btn-small btn-secondary" type="submit" style="color: var(--danger) !important; border-color: var(--danger) !important;">
                                             Hủy
-                                        </button>
-                                    </form>
-                                    <form method="post" action="{{ route('guest.payments.mock', $booking) }}" style="display: inline;">
-                                        @csrf
-                                        <input type="hidden" name="result" value="success">
-                                        <button class="btn btn-small btn-accent" type="submit">
-                                            Thanh toán test
                                         </button>
                                     </form>
                                     <a class="btn btn-small" href="{{ route('guest.payments.show', $booking) }}">

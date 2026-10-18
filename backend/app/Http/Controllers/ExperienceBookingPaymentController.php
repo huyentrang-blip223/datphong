@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests\MockPaymentRequest;
+use App\Http\Requests\CashPaymentRequest;
 use App\Models\ExperienceBooking;
-use App\Services\CommercePaymentService;
+use App\Services\CashPaymentService;
 use InvalidArgumentException;
 
 class ExperienceBookingPaymentController extends Controller
@@ -20,10 +20,10 @@ class ExperienceBookingPaymentController extends Controller
         return view('payments.experience_booking', compact('experienceBooking'));
     }
 
-    public function store(MockPaymentRequest $request, ExperienceBooking $experienceBooking, CommercePaymentService $service)
+    public function store(CashPaymentRequest $request, ExperienceBooking $experienceBooking, CashPaymentService $service)
     {
         try {
-            $payment = $service->payExperienceBooking($experienceBooking, $request->user(), $request->validated('result'));
+            $payment = $service->select($experienceBooking, $request->user());
         } catch (InvalidArgumentException $exception) {
             return $request->expectsJson()
                 ? response()->json(['message' => $exception->getMessage()], 422)
@@ -31,7 +31,7 @@ class ExperienceBookingPaymentController extends Controller
         }
 
         return $request->expectsJson()
-            ? response()->json(['data' => $payment], $payment->status === 'paid' ? 201 : 200)
-            : back()->with('status', $payment->status === 'paid' ? 'Thanh toán trải nghiệm thành công.' : 'Thanh toán trải nghiệm thất bại.');
+            ? response()->json(['data' => $payment], 201)
+            : back()->with('status', 'Đã chọn thanh toán tiền mặt trực tiếp cho chủ homestay. Chưa ghi nhận đã thu tiền.');
     }
 }
