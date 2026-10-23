@@ -11,6 +11,14 @@ load_dotenv()
 
 @lru_cache(maxsize=1)
 def get_database_url() -> str:
+    if os.getenv("DT07_DB_HOST"):
+        return mysql_url(
+            os.getenv("DT07_DB_USER", "root"),
+            os.getenv("DT07_DB_PASSWORD", ""),
+            os.environ["DT07_DB_HOST"],
+            int(os.getenv("DT07_DB_PORT", "3306")),
+            os.getenv("DT07_DB_NAME", "dt07_homestay"),
+        )
     return os.getenv("DT07_DB_URL", "mysql+pymysql://root:123456@127.0.0.1:3306/dt07_homestay")
 
 

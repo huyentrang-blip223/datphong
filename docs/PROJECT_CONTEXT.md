@@ -335,3 +335,12 @@ This section supersedes every earlier description of mock/test payment and autom
 - No schema reset or migration is needed: all payment tables already support the cash gateway and initiated/paid/refunded statuses.
 
 Current operation and validation: `docs/CASH_PAYMENTS.md`.
+
+## 19. Docker deployment hardening — 2026-10-23
+
+- Docker Compose now builds immutable Laravel/Nginx/FastAPI images rather than bind-mounting the repository over the built Laravel image.
+- Container service discovery explicitly uses `mysql` and `python`; credentials are supplied through an ignored `.env.docker` based on `.env.docker.example`.
+- A one-shot `init` service safely prepares an empty schema, runs migrations and creates the first administrator before the app and scheduler start.
+- MySQL data and Laravel uploaded/runtime storage use named volumes. Nginx serves public assets from its image and uploaded public files from the shared storage volume.
+- The base Compose port remains loopback-only. `docker-compose.https.yml` adds public Caddy HTTPS for a DNS-backed VPS deployment.
+- The FastAPI database configuration accepts discrete Docker database variables, avoiding URL parsing failures when passwords contain reserved URL characters; the existing `DT07_DB_URL` remains supported for Render and local use.
