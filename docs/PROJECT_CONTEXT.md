@@ -344,3 +344,10 @@ Current operation and validation: `docs/CASH_PAYMENTS.md`.
 - MySQL data and Laravel uploaded/runtime storage use named volumes. Nginx serves public assets from its image and uploaded public files from the shared storage volume.
 - The base Compose port remains loopback-only. `docker-compose.https.yml` adds public Caddy HTTPS for a DNS-backed VPS deployment.
 - The FastAPI database configuration accepts discrete Docker database variables, avoiding URL parsing failures when passwords contain reserved URL characters; the existing `DT07_DB_URL` remains supported for Render and local use.
+
+## 20. VNPay sandbox merchant refresh — 2026-10-24
+
+- Local ignored `backend/.env` now enables the VNPay sandbox merchant `BDU3W4CJ`; the checksum secret remains environment-only and is not committed to source or documentation.
+- A signed sandbox checkout probe returned HTTP 200 with checkout markers and no terminal-approval error.
+- Room booking remains `holding` until a valid signed VNPay result with matching amount reports both response and transaction status `00`; only then is it moved atomically to `confirmed`. Failed, late, duplicate, cancelled and expired callback paths retain the existing inventory and reconciliation protections.
+- End-to-end browser payment with a VNPay sandbox test card and independently delivered IPN still requires manual verification.

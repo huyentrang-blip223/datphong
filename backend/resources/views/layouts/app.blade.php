@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;850&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    @stack('styles')
     <script>
         (function () {
             const saved = localStorage.getItem('dt07-theme');
@@ -109,7 +110,7 @@
                 </p>
                 <span class="badge badge-success">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    Xác thực thực địa & Chống trùng phòng
+                    Xác thực thực địa &amp; Chống trùng phòng
                 </span>
             </div>
 
@@ -123,7 +124,7 @@
             </div>
 
             <div class="footer-col">
-                <h4>Tiêu chuẩn & An toàn</h4>
+                <h4>Tiêu chuẩn &amp; An toàn</h4>
                 <ul class="footer-links">
                     <li><a href="#kiem-duyet">Quy chuẩn kiểm duyệt homestay</a></li>
                     <li><a href="#chong-trung">Bảo đảm lịch phòng thời gian thực</a></li>
@@ -132,7 +133,7 @@
             </div>
 
             <div class="footer-col">
-                <h4>Học thuật & Đồ án</h4>
+                <h4>Học thuật &amp; Đồ án</h4>
                 <p style="margin-bottom: 6px;"><strong>Môn học:</strong> CSE703073 — Lập trình ứng dụng web trong du lịch 2</p>
                 <p style="margin-bottom: 6px;"><strong>Đề tài:</strong> ĐT-07 Sàn lưu trú cộng đồng homestay gắn với sản phẩm địa phương</p>
                 <p style="margin: 0;"><strong>Hỗ trợ kỹ thuật:</strong> hotro@dt07-homestay.vn</p>
@@ -152,5 +153,6 @@
     </div>
 </footer>
 <script src="{{ asset('js/theme.js') }}" defer></script>
+@stack('scripts')
 </body>
 </html>

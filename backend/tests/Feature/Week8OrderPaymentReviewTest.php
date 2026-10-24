@@ -182,6 +182,7 @@ class Week8OrderPaymentReviewTest extends TestCase
             ->assertJsonPath('payment_status', 'paid');
 
         $this->assertSame('paid', $payment->fresh()->status);
+        $this->assertSame('confirmed', $booking->fresh()->status);
     }
 
     public function test_web_booking_redirects_to_payment_checkout(): void

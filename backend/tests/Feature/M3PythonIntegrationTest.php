@@ -211,7 +211,7 @@ class M3PythonIntegrationTest extends TestCase
             'homestay_id' => $homestay->id,
             'title' => 'M3 Tea Workshop',
             'description' => 'Local cultural workshop.',
-            'start_at' => '2026-10-20 09:00:00',
+            'start_at' => now()->addDays(7)->setTime(9, 0),
             'duration_minutes' => 120,
             'capacity' => 6,
             'booked_count' => 1,

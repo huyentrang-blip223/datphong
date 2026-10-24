@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500">
+  <defs>
+    <linearGradient id="sky-sapa" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a3a52;stop-opacity:1"/>
+      <stop offset="40%" style="stop-color:#2d6a7a;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#3d8f6e;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="mist1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#b8d8c8;stop-opacity:0.5"/>
+      <stop offset="100%" style="stop-color:#b8d8c8;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="hill1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2e7d52;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1a5c3a;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="hill2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3a9464;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#27724e;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="hill3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#52b87a;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#3a9464;stop-opacity:1"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="75%" cy="20%" r="18%">
+      <stop offset="0%" style="stop-color:#fff7c2;stop-opacity:0.7"/>
+      <stop offset="60%" style="stop-color:#f5c842;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#f5c842;stop-opacity:0"/>
+    </radialGradient>
+    <filter id="blur1">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1200" height="500" fill="url(#sky-sapa)"/>
+  <!-- Sun glow -->
+  <ellipse cx="900" cy="100" rx="200" ry="120" fill="url(#sun)"/>
+
+  <!-- Distant mountains (dark silhouette) -->
+  <polygon points="0,280 120,160 220,220 350,130 480,190 600,110 720,170 850,90 980,155 1100,105 1200,140 1200,320 0,320" fill="#1a4a35" opacity="0.7" filter="url(#blur1)"/>
+
+  <!-- Mid mountains -->
+  <polygon points="0,310 100,210 200,260 320,180 440,240 550,170 680,220 800,155 920,205 1060,160 1200,200 1200,360 0,360" fill="#2e7d52" opacity="0.85"/>
+
+  <!-- Mist layer -->
+  <ellipse cx="300" cy="290" rx="320" ry="50" fill="url(#mist1)" opacity="0.8"/>
+  <ellipse cx="900" cy="270" rx="350" ry="45" fill="url(#mist1)" opacity="0.6"/>
+
+  <!-- Terraced rice fields - back rows -->
+  <path d="M0,340 Q150,310 300,330 Q450,350 600,320 Q750,295 900,315 Q1050,335 1200,310 L1200,370 Q1050,390 900,375 Q750,360 600,380 Q450,400 300,385 Q150,370 0,390 Z" fill="#3a9464" opacity="0.9"/>
+  <path d="M0,375 Q150,355 300,370 Q450,388 600,360 Q750,335 900,355 Q1050,375 1200,350 L1200,410 Q1050,430 900,415 Q750,398 600,418 Q450,438 300,420 Q150,402 0,425 Z" fill="#2e7d52"/>
+  <path d="M0,415 Q180,395 350,408 Q500,420 650,398 Q800,378 950,395 Q1100,412 1200,395 L1200,455 Q1100,472 950,458 Q800,445 650,462 Q500,480 350,465 Q180,450 0,468 Z" fill="#52b87a" opacity="0.8"/>
+
+  <!-- Foreground terraces -->
+  <path d="M0,455 Q200,435 400,445 Q600,455 800,438 Q1000,420 1200,435 L1200,500 L0,500 Z" fill="#27724e"/>
+
+  <!-- Terrace lines (curved horizontal lines suggesting rice fields) -->
+  <path d="M0,342 Q300,325 600,335 Q900,345 1200,328" fill="none" stroke="#78c896" stroke-width="1.5" opacity="0.6"/>
+  <path d="M0,380 Q300,362 600,372 Q900,382 1200,366" fill="none" stroke="#78c896" stroke-width="1.5" opacity="0.5"/>
+  <path d="M0,418 Q300,400 600,410 Q900,420 1200,405" fill="none" stroke="#78c896" stroke-width="1.5" opacity="0.5"/>
+  <path d="M0,456 Q300,438 600,448 Q900,458 1200,443" fill="none" stroke="#78c896" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- Small pine trees on ridge -->
+  <g fill="#1a4a2e" opacity="0.85">
+    <polygon points="155,215 161,240 149,240"/>
+    <polygon points="170,220 176,243 164,243"/>
+    <polygon points="420,195 426,218 414,218"/>
+    <polygon points="435,200 441,223 429,223"/>
+    <polygon points="780,165 786,188 774,188"/>
+    <polygon points="795,170 801,193 789,193"/>
+  </g>
+
+  <!-- Water reflections in paddies -->
+  <ellipse cx="200" cy="462" rx="80" ry="8" fill="#5ab8d4" opacity="0.3"/>
+  <ellipse cx="600" cy="448" rx="100" ry="8" fill="#5ab8d4" opacity="0.25"/>
+  <ellipse cx="950" cy="455" rx="90" ry="8" fill="#5ab8d4" opacity="0.3"/>
+
+  <!-- Cloud wisps -->
+  <ellipse cx="200" cy="140" rx="120" ry="22" fill="white" opacity="0.15"/>
+  <ellipse cx="500" cy="110" rx="90" ry="18" fill="white" opacity="0.12"/>
+  <ellipse cx="1000" cy="130" rx="110" ry="20" fill="white" opacity="0.13"/>
+
+  <!-- Overlay gradient for text contrast -->
+  <rect width="1200" height="500" fill="url(#sky-sapa)" opacity="0.1"/>
+</svg>

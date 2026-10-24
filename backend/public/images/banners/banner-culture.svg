@@ -1,0 +1,224 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500">
+  <defs>
+    <linearGradient id="sky-cult" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e0533;stop-opacity:1"/>
+      <stop offset="40%" style="stop-color:#3b0a5e;stop-opacity:1"/>
+      <stop offset="80%" style="stop-color:#6b1a8a;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#9a2a7a;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="stage" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a1a08;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#2a0e04;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="fire" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff8c00;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#ff4400;stop-opacity:0.9"/>
+      <stop offset="100%" style="stop-color:#ff0000;stop-opacity:0"/>
+    </linearGradient>
+    <radialGradient id="fireGlow" cx="50%" cy="80%" r="60%">
+      <stop offset="0%" style="stop-color:#ff8c00;stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#ff4400;stop-opacity:0"/>
+    </radialGradient>
+    <filter id="glow-cult">
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="blur-cult">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+
+  <!-- Night sky with purple hues -->
+  <rect width="1200" height="500" fill="url(#sky-cult)"/>
+
+  <!-- Stars -->
+  <g fill="white">
+    <circle cx="60" cy="30" r="1.2" opacity="0.8"/>
+    <circle cx="180" cy="55" r="1" opacity="0.7"/>
+    <circle cx="290" cy="25" r="1.4" opacity="0.9"/>
+    <circle cx="420" cy="45" r="1" opacity="0.6"/>
+    <circle cx="550" cy="20" r="1.3" opacity="0.8"/>
+    <circle cx="680" cy="50" r="1.1" opacity="0.7"/>
+    <circle cx="810" cy="30" r="1.2" opacity="0.9"/>
+    <circle cx="940" cy="48" r="1" opacity="0.7"/>
+    <circle cx="1060" cy="22" r="1.4" opacity="0.8"/>
+    <circle cx="1150" cy="55" r="1.1" opacity="0.6"/>
+    <circle cx="120" cy="80" r="0.8" opacity="0.6"/>
+    <circle cx="350" cy="70" r="0.9" opacity="0.7"/>
+    <circle cx="730" cy="75" r="0.8" opacity="0.6"/>
+    <circle cx="1000" cy="65" r="1" opacity="0.8"/>
+  </g>
+
+  <!-- Temple/pagoda silhouette in background -->
+  <g fill="#1e0533" opacity="0.8" filter="url(#blur-cult)">
+    <!-- Main pagoda body -->
+    <rect x="500" y="180" width="200" height="200"/>
+    <!-- Tiered roofs -->
+    <polygon points="450,240 600,175 750,240"/>
+    <polygon points="480,215 600,158 720,215"/>
+    <polygon points="510,190 600,140 690,190"/>
+    <!-- Spire -->
+    <polygon points="590,140 600,100 610,140"/>
+    <rect x="597" y="100" width="6" height="45"/>
+    <!-- Sides -->
+    <rect x="380" y="260" width="120" height="120"/>
+    <polygon points="360,290 440,248 520,290"/>
+    <rect x="700" y="260" width="120" height="120"/>
+    <polygon points="680,290 760,248 840,290"/>
+  </g>
+
+  <!-- Traditional drums / musical instruments on stage (silhouettes) -->
+  <g fill="#2a0a10" opacity="0.9">
+    <ellipse cx="200" cy="330" rx="35" ry="20"/>
+    <rect x="165" y="290" width="70" height="40" rx="5"/>
+    <ellipse cx="200" cy="290" rx="35" ry="20"/>
+
+    <ellipse cx="1000" cy="330" rx="35" ry="20"/>
+    <rect x="965" y="290" width="70" height="40" rx="5"/>
+    <ellipse cx="1000" cy="290" rx="35" ry="20"/>
+  </g>
+
+  <!-- Stage/platform -->
+  <rect x="0" y="370" width="1200" height="130" fill="url(#stage)"/>
+  <!-- Stage edge highlight -->
+  <rect x="0" y="370" width="1200" height="6" fill="#7a3a18" opacity="0.8"/>
+  <!-- Stage decorative patterns -->
+  <g stroke="#6a2a08" stroke-width="1" fill="none" opacity="0.5">
+    <line x1="0" y1="390" x2="1200" y2="390"/>
+    <line x1="0" y1="410" x2="1200" y2="410"/>
+    <line x1="0" y1="430" x2="1200" y2="430"/>
+  </g>
+
+  <!-- Fire/torches on sides -->
+  <g filter="url(#glow-cult)">
+    <!-- Left torch -->
+    <ellipse cx="130" cy="320" rx="30" ry="50" fill="url(#fireGlow)" opacity="0.7"/>
+    <polygon points="115,340 130,280 145,340" fill="url(#fire)" opacity="0.9"/>
+    <polygon points="122,340 130,295 138,340" fill="#ffdd00" opacity="0.7"/>
+    <rect x="126" y="338" width="8" height="35" fill="#3a2010"/>
+
+    <!-- Right torch -->
+    <ellipse cx="1070" cy="320" rx="30" ry="50" fill="url(#fireGlow)" opacity="0.7"/>
+    <polygon points="1055,340 1070,280 1085,340" fill="url(#fire)" opacity="0.9"/>
+    <polygon points="1062,340 1070,295 1078,340" fill="#ffdd00" opacity="0.7"/>
+    <rect x="1066" y="338" width="8" height="35" fill="#3a2010"/>
+
+    <!-- Additional smaller torches -->
+    <ellipse cx="350" cy="345" rx="20" ry="35" fill="url(#fireGlow)" opacity="0.5"/>
+    <polygon points="340,358 350,305 360,358" fill="url(#fire)" opacity="0.8"/>
+    <rect x="347" y="356" width="6" height="18" fill="#3a2010"/>
+
+    <ellipse cx="850" cy="345" rx="20" ry="35" fill="url(#fireGlow)" opacity="0.5"/>
+    <polygon points="840,358 850,305 860,358" fill="url(#fire)" opacity="0.8"/>
+    <rect x="847" y="356" width="6" height="18" fill="#3a2010"/>
+  </g>
+
+  <!-- Dancer silhouettes (center stage) -->
+  <!-- Dancer 1 (center) - big dramatic pose -->
+  <g fill="#0e0520" opacity="0.95">
+    <!-- Body -->
+    <ellipse cx="550" cy="285" rx="12" ry="15"/><!-- head -->
+    <path d="M550,300 L545,345 L540,380" stroke="#0e0520" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <path d="M550,300 L555,345 L560,380" stroke="#0e0520" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <!-- Arms raised dramatically -->
+    <path d="M550,315 Q520,295 498,272" stroke="#0e0520" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M550,315 Q580,295 602,272" stroke="#0e0520" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <!-- Traditional costume flowing sleeves -->
+    <path d="M498,272 Q480,258 470,248" stroke="#0e0520" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M602,272 Q620,258 630,248" stroke="#0e0520" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <!-- Skirt/costume -->
+    <path d="M545,345 Q520,358 510,385" stroke="#0e0520" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M555,345 Q580,358 590,385" stroke="#0e0520" stroke-width="10" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Dancer 2 (left) -->
+  <g fill="#0e0520" opacity="0.9">
+    <ellipse cx="420" cy="298" rx="10" ry="12"/>
+    <path d="M420,310 L415,350 L410,378" stroke="#0e0520" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M420,310 L425,350 L430,378" stroke="#0e0520" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M420,325 Q395,305 375,285" stroke="#0e0520" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M420,325 Q445,310 460,295" stroke="#0e0520" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M375,285 Q360,272 350,262" stroke="#0e0520" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Dancer 3 (right) -->
+  <g fill="#0e0520" opacity="0.9">
+    <ellipse cx="680" cy="298" rx="10" ry="12"/>
+    <path d="M680,310 L675,350 L670,378" stroke="#0e0520" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M680,310 L685,350 L690,378" stroke="#0e0520" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M680,325 Q705,305 725,285" stroke="#0e0520" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M680,325 Q655,310 640,295" stroke="#0e0520" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M725,285 Q740,272 750,262" stroke="#0e0520" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Audience silhouettes (background, small) -->
+  <g fill="#1a0828" opacity="0.7">
+    <circle cx="50" cy="368" r="12"/><rect x="42" y="378" width="16" height="18" rx="3"/>
+    <circle cx="85" cy="365" r="11"/><rect x="78" y="374" width="14" height="16" rx="3"/>
+    <circle cx="118" cy="362" r="12"/><rect x="110" y="372" width="16" height="16" rx="3"/>
+
+    <circle cx="1082" cy="368" r="12"/><rect x="1074" y="378" width="16" height="18" rx="3"/>
+    <circle cx="1115" cy="365" r="11"/><rect x="1108" y="374" width="14" height="16" rx="3"/>
+    <circle cx="1148" cy="362" r="12"/><rect x="1140" y="372" width="16" height="16" rx="3"/>
+
+    <circle cx="220" cy="368" r="10"/><rect x="213" y="377" width="14" height="15" rx="3"/>
+    <circle cx="248" cy="365" r="10"/><rect x="241" y="374" width="14" height="14" rx="3"/>
+    <circle cx="960" cy="368" r="10"/><rect x="953" y="377" width="14" height="15" rx="3"/>
+    <circle cx="990" cy="365" r="10"/><rect x="983" y="374" width="14" height="14" rx="3"/>
+  </g>
+
+  <!-- Traditional instruments (gong-like shapes) -->
+  <g filter="url(#glow-cult)">
+    <circle cx="175" cy="310" r="32" fill="none" stroke="#c88a00" stroke-width="4" opacity="0.8"/>
+    <circle cx="175" cy="310" r="20" fill="none" stroke="#c88a00" stroke-width="2" opacity="0.6"/>
+    <circle cx="175" cy="310" r="8" fill="#c88a00" opacity="0.7"/>
+
+    <circle cx="1025" cy="310" r="32" fill="none" stroke="#c88a00" stroke-width="4" opacity="0.8"/>
+    <circle cx="1025" cy="310" r="20" fill="none" stroke="#c88a00" stroke-width="2" opacity="0.6"/>
+    <circle cx="1025" cy="310" r="8" fill="#c88a00" opacity="0.7"/>
+  </g>
+
+  <!-- Colorful floating lanterns in sky -->
+  <g filter="url(#glow-cult)">
+    <ellipse cx="200" cy="120" rx="18" ry="22" fill="#ff6b35" opacity="0.8"/>
+    <ellipse cx="340" cy="80" rx="15" ry="19" fill="#ffe066" opacity="0.8"/>
+    <ellipse cx="480" cy="105" rx="17" ry="21" fill="#ff3366" opacity="0.8"/>
+    <ellipse cx="700" cy="90" rx="16" ry="20" fill="#66bbff" opacity="0.8"/>
+    <ellipse cx="850" cy="115" rx="18" ry="22" fill="#ff6b35" opacity="0.8"/>
+    <ellipse cx="980" cy="78" rx="15" ry="19" fill="#ffe066" opacity="0.8"/>
+    <ellipse cx="1100" cy="100" rx="17" ry="21" fill="#cc44ff" opacity="0.8"/>
+    <!-- Lantern strings -->
+    <line x1="200" y1="98" x2="200" y2="110" stroke="#cc6600" stroke-width="1" opacity="0.6"/>
+    <line x1="340" y1="61" x2="340" y2="73" stroke="#cc8800" stroke-width="1" opacity="0.6"/>
+    <line x1="480" y1="84" x2="480" y2="96" stroke="#cc0044" stroke-width="1" opacity="0.6"/>
+    <line x1="700" y1="70" x2="700" y2="82" stroke="#0066aa" stroke-width="1" opacity="0.6"/>
+    <line x1="850" y1="93" x2="850" y2="105" stroke="#cc6600" stroke-width="1" opacity="0.6"/>
+    <line x1="980" y1="59" x2="980" y2="70" stroke="#cc8800" stroke-width="1" opacity="0.6"/>
+    <line x1="1100" y1="79" x2="1100" y2="91" stroke="#8800cc" stroke-width="1" opacity="0.6"/>
+  </g>
+
+  <!-- Glow halos on lanterns -->
+  <g opacity="0.2">
+    <circle cx="200" cy="120" r="40" fill="#ff6b35"/>
+    <circle cx="480" cy="105" r="35" fill="#ff3366"/>
+    <circle cx="700" cy="90" r="38" fill="#66bbff"/>
+    <circle cx="1100" cy="100" r="35" fill="#cc44ff"/>
+  </g>
+
+  <!-- Decorative confetti/petals falling -->
+  <g opacity="0.6">
+    <ellipse cx="160" cy="200" rx="5" ry="3" fill="#ff6b35" transform="rotate(30,160,200)"/>
+    <ellipse cx="380" cy="160" rx="4" ry="2.5" fill="#ffe066" transform="rotate(-20,380,160)"/>
+    <ellipse cx="620" cy="180" rx="5" ry="3" fill="#ff3366" transform="rotate(45,620,180)"/>
+    <ellipse cx="800" cy="145" rx="4" ry="2.5" fill="#66ff88" transform="rotate(-35,800,145)"/>
+    <ellipse cx="1020" cy="165" rx="5" ry="3" fill="#ff6b35" transform="rotate(25,1020,165)"/>
+    <ellipse cx="280" cy="240" rx="4" ry="2.5" fill="#ffe066" transform="rotate(-15,280,240)"/>
+    <ellipse cx="760" cy="220" rx="5" ry="3" fill="#cc44ff" transform="rotate(40,760,220)"/>
+    <ellipse cx="950" cy="200" rx="4" ry="2.5" fill="#ff3366" transform="rotate(-25,950,200)"/>
+  </g>
+
+  <!-- Ambient ground light from fire reflection -->
+  <ellipse cx="130" cy="375" rx="120" ry="20" fill="#ff6600" opacity="0.12"/>
+  <ellipse cx="1070" cy="375" rx="120" ry="20" fill="#ff6600" opacity="0.12"/>
+  <ellipse cx="550" cy="378" rx="200" ry="25" fill="#cc4400" opacity="0.08"/>
+</svg>

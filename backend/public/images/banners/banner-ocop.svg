@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500">
+  <defs>
+    <linearGradient id="sky-ocop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8b500;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#e85d04;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#d00000;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5e3c;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#6b4226;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="canopy1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e63900;stop-opacity:0.95"/>
+      <stop offset="100%" style="stop-color:#c22a00;stop-opacity:0.95"/>
+    </linearGradient>
+    <linearGradient id="canopy2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3a8c3f;stop-opacity:0.95"/>
+      <stop offset="100%" style="stop-color:#246228;stop-opacity:0.95"/>
+    </linearGradient>
+    <linearGradient id="canopy3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e6a800;stop-opacity:0.95"/>
+      <stop offset="100%" style="stop-color:#b87e00;stop-opacity:0.95"/>
+    </linearGradient>
+    <linearGradient id="canopy4" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a62c8;stop-opacity:0.95"/>
+      <stop offset="100%" style="stop-color:#1048a0;stop-opacity:0.95"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky (warm market atmosphere) -->
+  <rect width="1200" height="500" fill="url(#sky-ocop)"/>
+
+  <!-- Decorative background circles (bokeh) -->
+  <g opacity="0.1">
+    <circle cx="100" cy="100" r="80" fill="#fff"/>
+    <circle cx="400" cy="50" r="60" fill="#fff"/>
+    <circle cx="700" cy="80" r="90" fill="#fff"/>
+    <circle cx="1000" cy="60" r="70" fill="#fff"/>
+    <circle cx="1150" cy="120" r="50" fill="#fff"/>
+  </g>
+
+  <!-- Background: traditional houses -->
+  <g fill="#4a2010" opacity="0.4">
+    <rect x="50" y="200" width="100" height="180"/>
+    <polygon points="50,200 100,165 150,200"/>
+    <rect x="200" y="210" width="120" height="170"/>
+    <polygon points="200,210 260,172 320,210"/>
+    <rect x="900" y="205" width="110" height="175"/>
+    <polygon points="900,205 955,168 1010,205"/>
+    <rect x="1050" y="200" width="100" height="180"/>
+    <polygon points="1050,200 1100,163 1150,200"/>
+  </g>
+
+  <!-- Ground/floor of market -->
+  <rect x="0" y="380" width="1200" height="120" fill="url(#ground)"/>
+  <!-- Ground tiles/stones -->
+  <g stroke="#7a4e2a" stroke-width="1" fill="none" opacity="0.4">
+    <line x1="0" y1="400" x2="1200" y2="400"/>
+    <line x1="0" y1="420" x2="1200" y2="420"/>
+    <line x1="0" y1="440" x2="1200" y2="440"/>
+    <line x1="0" y1="460" x2="1200" y2="460"/>
+    <line x1="0" y1="480" x2="1200" y2="480"/>
+    <!-- Vertical lines -->
+    <line x1="100" y1="380" x2="100" y2="500"/><line x1="200" y1="380" x2="200" y2="500"/>
+    <line x1="300" y1="380" x2="300" y2="500"/><line x1="400" y1="380" x2="400" y2="500"/>
+    <line x1="500" y1="380" x2="500" y2="500"/><line x1="600" y1="380" x2="600" y2="500"/>
+    <line x1="700" y1="380" x2="700" y2="500"/><line x1="800" y1="380" x2="800" y2="500"/>
+    <line x1="900" y1="380" x2="900" y2="500"/><line x1="1000" y1="380" x2="1000" y2="500"/>
+    <line x1="1100" y1="380" x2="1100" y2="500"/>
+  </g>
+
+  <!-- Market stall 1 - Red canopy (fruit/vegetables) -->
+  <g>
+    <!-- Canopy -->
+    <path d="M0,230 Q100,210 200,220 L200,280 Q100,290 0,280 Z" fill="url(#canopy1)"/>
+    <line x1="0" y1="230" x2="0" y2="385" stroke="#8a2000" stroke-width="6"/>
+    <line x1="200" y1="220" x2="200" y2="378" stroke="#8a2000" stroke-width="6"/>
+    <!-- Hanging fringe -->
+    <g fill="#cc2200">
+      <rect x="0" y="276" width="8" height="18" rx="4"/>
+      <rect x="20" y="280" width="8" height="16" rx="4"/>
+      <rect x="40" y="278" width="8" height="19" rx="4"/>
+      <rect x="60" y="282" width="8" height="16" rx="4"/>
+      <rect x="80" y="278" width="8" height="18" rx="4"/>
+      <rect x="100" y="280" width="8" height="17" rx="4"/>
+      <rect x="120" y="276" width="8" height="19" rx="4"/>
+      <rect x="140" y="282" width="8" height="16" rx="4"/>
+      <rect x="160" y="278" width="8" height="18" rx="4"/>
+      <rect x="180" y="280" width="8" height="17" rx="4"/>
+    </g>
+    <!-- Products on table -->
+    <rect x="10" y="340" width="180" height="40" fill="#5a3520" rx="3"/>
+    <!-- Fruits/vegs -->
+    <circle cx="40" cy="335" r="14" fill="#ff4500"/><circle cx="40" cy="335" r="14" fill="#ff6622" opacity="0.5"/>
+    <circle cx="70" cy="332" r="12" fill="#e63900"/>
+    <circle cx="98" cy="335" r="14" fill="#ff7700"/>
+    <circle cx="128" cy="332" r="13" fill="#e63900"/>
+    <circle cx="155" cy="335" r="12" fill="#ff4500"/>
+    <!-- Basket -->
+    <ellipse cx="180" cy="340" rx="15" ry="8" fill="#8b5e3c"/>
+    <ellipse cx="40" cy="368" rx="18" ry="6" fill="#6b4226"/>
+  </g>
+
+  <!-- Market stall 2 - Green canopy (tea/herbs) -->
+  <g>
+    <path d="M230,220 Q330,198 430,210 L430,275 Q330,288 230,278 Z" fill="url(#canopy2)"/>
+    <line x1="230" y1="220" x2="230" y2="382" stroke="#1a5a1e" stroke-width="6"/>
+    <line x1="430" y1="210" x2="430" y2="378" stroke="#1a5a1e" stroke-width="6"/>
+    <g fill="#1c6020">
+      <rect x="232" y="274" width="8" height="18" rx="4"/>
+      <rect x="252" y="278" width="8" height="16" rx="4"/>
+      <rect x="272" y="276" width="8" height="19" rx="4"/>
+      <rect x="292" y="280" width="8" height="16" rx="4"/>
+      <rect x="312" y="276" width="8" height="18" rx="4"/>
+      <rect x="332" y="278" width="8" height="17" rx="4"/>
+      <rect x="352" y="274" width="8" height="19" rx="4"/>
+      <rect x="372" y="280" width="8" height="16" rx="4"/>
+      <rect x="392" y="276" width="8" height="18" rx="4"/>
+      <rect x="412" y="278" width="8" height="17" rx="4"/>
+    </g>
+    <rect x="240" y="340" width="180" height="40" fill="#3a5a20" rx="3"/>
+    <!-- Tea products, bundles -->
+    <ellipse cx="270" cy="335" rx="20" ry="12" fill="#5a8a3a" opacity="0.9"/>
+    <ellipse cx="305" cy="332" rx="18" ry="11" fill="#3a7a28"/>
+    <ellipse cx="338" cy="335" rx="20" ry="12" fill="#4a8a32"/>
+    <rect x="360" y="322" width="25" height="20" rx="4" fill="#7a5a28"/>
+    <rect x="388" y="324" width="22" height="18" rx="4" fill="#6a4a1e"/>
+    <!-- Leaves scattered -->
+    <ellipse cx="255" cy="342" rx="8" ry="4" fill="#62a83a" opacity="0.7" transform="rotate(-20,255,342)"/>
+    <ellipse cx="310" cy="338" rx="7" ry="3" fill="#5a9832" opacity="0.7" transform="rotate(15,310,338)"/>
+  </g>
+
+  <!-- Market stall 3 - Yellow (honey/OCOP) -->
+  <g>
+    <path d="M460,210 Q560,188 660,200 L660,268 Q560,282 460,272 Z" fill="url(#canopy3)"/>
+    <line x1="460" y1="210" x2="460" y2="380" stroke="#9a6a00" stroke-width="6"/>
+    <line x1="660" y1="200" x2="660" y2="376" stroke="#9a6a00" stroke-width="6"/>
+    <g fill="#c88e00">
+      <rect x="462" y="268" width="8" height="18" rx="4"/>
+      <rect x="482" y="272" width="8" height="16" rx="4"/>
+      <rect x="502" y="270" width="8" height="19" rx="4"/>
+      <rect x="522" y="274" width="8" height="16" rx="4"/>
+      <rect x="542" y="270" width="8" height="18" rx="4"/>
+      <rect x="562" y="272" width="8" height="17" rx="4"/>
+      <rect x="582" y="268" width="8" height="19" rx="4"/>
+      <rect x="602" y="274" width="8" height="16" rx="4"/>
+      <rect x="622" y="270" width="8" height="18" rx="4"/>
+      <rect x="642" y="272" width="8" height="17" rx="4"/>
+    </g>
+    <rect x="470" y="338" width="180" height="42" fill="#7a5010" rx="3"/>
+    <!-- Honey jars / products -->
+    <rect x="480" y="310" width="22" height="30" rx="6" fill="#f5a800" stroke="#e08800" stroke-width="1"/>
+    <rect x="510" y="315" width="20" height="25" rx="5" fill="#f5b800" stroke="#e09800" stroke-width="1"/>
+    <rect x="538" y="308" width="24" height="32" rx="6" fill="#e89000" stroke="#d07800" stroke-width="1"/>
+    <rect x="570" y="312" width="22" height="28" rx="5" fill="#f5a000"/>
+    <rect x="598" y="310" width="20" height="30" rx="6" fill="#f5b000"/>
+    <rect x="625" y="318" width="18" height="22" rx="5" fill="#e89500"/>
+    <!-- OCOP star -->
+    <polygon points="644,305 646,312 653,312 648,317 650,324 644,320 638,324 640,317 635,312 642,312" fill="#ff4400" opacity="0.9"/>
+  </g>
+
+  <!-- Market stall 4 - Blue (textiles/handicrafts) -->
+  <g>
+    <path d="M690,200 Q790,178 890,190 L890,260 Q790,275 690,265 Z" fill="url(#canopy4)"/>
+    <line x1="690" y1="200" x2="690" y2="378" stroke="#0a3878" stroke-width="6"/>
+    <line x1="890" y1="190" x2="890" y2="374" stroke="#0a3878" stroke-width="6"/>
+    <g fill="#0c4498">
+      <rect x="692" y="261" width="8" height="18" rx="4"/>
+      <rect x="712" y="265" width="8" height="16" rx="4"/>
+      <rect x="732" y="263" width="8" height="19" rx="4"/>
+      <rect x="752" y="267" width="8" height="16" rx="4"/>
+      <rect x="772" y="263" width="8" height="18" rx="4"/>
+      <rect x="792" y="265" width="8" height="17" rx="4"/>
+      <rect x="812" y="261" width="8" height="19" rx="4"/>
+      <rect x="832" y="267" width="8" height="16" rx="4"/>
+      <rect x="852" y="263" width="8" height="18" rx="4"/>
+      <rect x="872" y="265" width="8" height="17" rx="4"/>
+    </g>
+    <rect x="700" y="338" width="180" height="42" fill="#2a3a6a" rx="3"/>
+    <!-- Textile rolls, baskets -->
+    <rect x="710" y="305" width="30" height="35" rx="4" fill="#e63900" opacity="0.9"/>
+    <rect x="748" y="310" width="28" height="30" rx="4" fill="#2a8a2a" opacity="0.9"/>
+    <rect x="784" y="302" width="32" height="38" rx="4" fill="#f5a800" opacity="0.9"/>
+    <rect x="824" y="308" width="28" height="32" rx="4" fill="#cc1a88" opacity="0.9"/>
+    <!-- Stripe patterns on textiles -->
+    <line x1="710" y1="313" x2="740" y2="313" stroke="#fff" stroke-width="1.5" opacity="0.6"/>
+    <line x1="710" y1="318" x2="740" y2="318" stroke="#fff" stroke-width="1.5" opacity="0.6"/>
+    <line x1="784" y1="310" x2="816" y2="310" stroke="#fff" stroke-width="1.5" opacity="0.6"/>
+    <line x1="784" y1="316" x2="816" y2="316" stroke="#fff" stroke-width="1.5" opacity="0.6"/>
+    <!-- Hanging fabric strips -->
+    <rect x="700" y="200" width="15" height="70" fill="#e63900" opacity="0.8" rx="2"/>
+    <rect x="722" y="205" width="15" height="65" fill="#2a8a2a" opacity="0.8" rx="2"/>
+    <rect x="744" y="200" width="15" height="68" fill="#f5a800" opacity="0.8" rx="2"/>
+    <rect x="766" y="208" width="15" height="60" fill="#cc1a88" opacity="0.8" rx="2"/>
+    <rect x="788" y="202" width="15" height="66" fill="#1a62c8" opacity="0.8" rx="2"/>
+    <rect x="810" y="206" width="15" height="62" fill="#e63900" opacity="0.8" rx="2"/>
+    <rect x="832" y="200" width="15" height="68" fill="#2a8a2a" opacity="0.8" rx="2"/>
+    <rect x="854" y="204" width="15" height="64" fill="#f5a800" opacity="0.8" rx="2"/>
+    <rect x="876" y="200" width="12" height="68" fill="#cc1a88" opacity="0.8" rx="2"/>
+  </g>
+
+  <!-- People silhouettes -->
+  <g fill="#1a0a00" opacity="0.7">
+    <!-- Person 1 -->
+    <circle cx="150" cy="348" r="14"/>
+    <rect x="140" y="362" width="20" height="22" rx="4"/>
+    <line x1="140" y1="368" x2="128" y2="380" stroke="#1a0a00" stroke-width="4" stroke-linecap="round"/>
+    <line x1="160" y1="368" x2="172" y2="380" stroke="#1a0a00" stroke-width="4" stroke-linecap="round"/>
+    <!-- Traditional hat (nón lá) -->
+    <path d="M136,348 Q150,332 164,348 Z" fill="#c8a040" opacity="0.8"/>
+
+    <!-- Person 2 -->
+    <circle cx="580" cy="350" r="13"/>
+    <rect x="571" y="363" width="18" height="20" rx="4"/>
+    <path d="M567,350 Q580,335 593,350 Z" fill="#c8a040" opacity="0.8"/>
+
+    <!-- Person 3 -->
+    <circle cx="820" cy="345" r="14"/>
+    <rect x="810" y="359" width="20" height="22" rx="4"/>
+    <path d="M806,345 Q820,329 834,345 Z" fill="#c8a040" opacity="0.8"/>
+  </g>
+
+  <!-- OCOP star ratings floating -->
+  <g fill="#f5a800" opacity="0.8">
+    <polygon points="120,185 123,195 133,195 125,201 128,211 120,205 112,211 115,201 107,195 117,195"/>
+    <polygon points="380,172 382,180 390,180 384,185 386,193 380,188 374,193 376,185 370,180 378,180"/>
+    <polygon points="980,180 982,188 990,188 984,193 986,201 980,196 974,201 976,193 970,188 978,188"/>
+  </g>
+
+  <!-- Banners/flags -->
+  <g>
+    <line x1="580" y1="100" x2="580" y2="180" stroke="#cc2200" stroke-width="3"/>
+    <polygon points="580,100 620,115 580,130" fill="#cc2200"/>
+    <line x1="620" y1="95" x2="620" y2="175" stroke="#2a8a2a" stroke-width="3"/>
+    <polygon points="620,95 660,110 620,125" fill="#2a8a2a"/>
+  </g>
+
+  <!-- Foreground shadow overlay at bottom -->
+  <rect x="0" y="450" width="1200" height="50" fill="#1a0a00" opacity="0.3"/>
+</svg>

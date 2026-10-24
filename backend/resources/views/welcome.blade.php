@@ -1,23 +1,541 @@
 @extends('layouts.app')
 @section('title', 'ĐT-07 — Sàn Homestay Cộng Đồng & Đặc Sản Bản Địa')
+
+@push('styles')
+<style>
+/* ==========================================================================
+   ĐT-07 HOMEPAGE STYLES — CHUYỂN ĐỘNG TỰ ĐỘNG & SCROLL REVEAL AN TOÀN
+   ========================================================================== */
+
+/* 1. KEYFRAME ANIMATIONS */
+@keyframes kenburnsZoom {
+    0%   { transform: scale(1); }
+    100% { transform: scale(1.08); }
+}
+
+@keyframes bannerProgress {
+    0%   { width: 0%; }
+    100% { width: 100%; }
+}
+
+@keyframes radarPulse {
+    0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+    70%  { transform: scale(1);    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+@keyframes floatGentle {
+    0%, 100% { transform: translateY(0px); }
+    50%      { transform: translateY(-8px); }
+}
+
+@keyframes marqueeInfinite {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+@keyframes orbDrift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%      { transform: translate(30px, -20px) scale(1.1); }
+    66%      { transform: translate(-20px, 20px) scale(0.95); }
+}
+
+@keyframes iconWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25%      { transform: rotate(-8deg); }
+    75%      { transform: rotate(8deg); }
+}
+
+/* 2. SCROLL REVEAL (Mặc định luôn HIỆN để chống lỗi tàng hình, chỉ animate khi JS sẵn sàng) */
+body.has-reveal .scroll-reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+body.has-reveal .scroll-reveal.is-visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* Stagger cho card grids */
+body.has-reveal .stagger-grid > * {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.has-reveal .stagger-grid.is-visible > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.04s; }
+body.has-reveal .stagger-grid.is-visible > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.10s; }
+body.has-reveal .stagger-grid.is-visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.16s; }
+body.has-reveal .stagger-grid.is-visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.22s; }
+body.has-reveal .stagger-grid.is-visible > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.28s; }
+body.has-reveal .stagger-grid.is-visible > *:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 0.34s; }
+
+/* 3. HERO BANNER SLIDESHOW CHUẨN GIAO DIỆN */
+.hero-wrapper {
+    position: relative;
+    padding: 16px 0 24px;
+}
+
+.hero-slider-container {
+    position: relative;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px -10px rgba(10, 32, 28, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #081c18;
+    color: #ffffff;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 44px 36px;
+}
+
+/* Các tầng slide background */
+.hero-slides {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-slide-item {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1.2s ease-in-out, visibility 1.2s;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(1);
+}
+
+.hero-slide-item.active {
+    opacity: 1;
+    visibility: visible;
+    animation: kenburnsZoom 7s ease-out forwards;
+}
+
+/* Lớp phủ gradient để chữ luôn đọc cực rõ nét */
+.hero-slider-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(6, 22, 19, 0.90) 0%,
+        rgba(10, 36, 31, 0.78) 50%,
+        rgba(8, 26, 23, 0.62) 100%
+    );
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Ambient glow orb trôi tự động */
+.ambient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.45;
+    animation: orbDrift 12s ease-in-out infinite alternate;
+}
+.ambient-orb-1 {
+    width: 320px;
+    height: 320px;
+    top: -60px;
+    left: -40px;
+    background: radial-gradient(circle, #1e827b 0%, rgba(30, 130, 123, 0) 70%);
+}
+.ambient-orb-2 {
+    width: 280px;
+    height: 280px;
+    bottom: -40px;
+    right: 10%;
+    background: radial-gradient(circle, #c56a2c 0%, rgba(197, 106, 44, 0) 70%);
+}
+
+/* Nội dung Hero */
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 860px;
+}
+
+.hero-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.hero-chip-radar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: rgba(18, 96, 90, 0.75);
+    border: 1px solid rgba(126, 212, 167, 0.4);
+    color: #ffffff;
+    backdrop-filter: blur(8px);
+}
+
+.radar-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    display: inline-block;
+    animation: radarPulse 2s infinite;
+}
+
+.hero-location-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffd299;
+    backdrop-filter: blur(8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.hero-content h1 {
+    font-size: 2.75rem;
+    font-weight: 850;
+    margin-bottom: 16px;
+    color: #ffffff;
+    line-height: 1.18;
+    letter-spacing: -0.025em;
+    text-shadow: 0 3px 14px rgba(0, 0, 0, 0.5);
+}
+
+.hero-desc {
+    font-size: 1.12rem;
+    color: rgba(255, 255, 255, 0.92);
+    margin-bottom: 24px;
+    line-height: 1.65;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    max-width: 760px;
+}
+
+.hero-trust-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.trust-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7ed4a7;
+    flex-shrink: 0;
+}
+
+/* ĐIỀU KHIỂN SLIDER (Dots & Prev/Next & Progress bar) */
+.slider-nav-bar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-top: 10px;
+}
+
+.slider-dots {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.slider-dot {
+    width: 32px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.35);
+    border: none;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    padding: 0;
+}
+
+.slider-dot.active {
+    width: 48px;
+    background: #7ed4a7;
+    box-shadow: 0 0 10px rgba(126, 212, 167, 0.6);
+}
+
+.slider-arrows {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.slider-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: all 0.25s ease;
+}
+
+.slider-btn:hover {
+    background: var(--primary, #12605a);
+    border-color: #7ed4a7;
+    transform: scale(1.08);
+}
+
+/* Thanh progress chạy tự động */
+.hero-progress-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 4;
+}
+.hero-progress-active {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #12605a, #7ed4a7, #f0b36d);
+    box-shadow: 0 0 8px rgba(126, 212, 167, 0.8);
+}
+
+/* 4. MARQUEE TICKER CHẠY NGANG LIÊN TỤC VÔ TẬN */
+.dest-ticker-wrapper {
+    overflow: hidden;
+    position: relative;
+    padding: 16px 0;
+    margin: 12px 0 28px;
+    border-radius: 16px;
+    background: var(--surface-alt, #edf3f0);
+    border: 1px solid var(--border-light, #e6ece9);
+}
+
+.dest-ticker-wrapper::before,
+.dest-ticker-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50px;
+    z-index: 2;
+    pointer-events: none;
+}
+.dest-ticker-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--surface-alt, #edf3f0), transparent);
+}
+.dest-ticker-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--surface-alt, #edf3f0), transparent);
+}
+
+.dest-ticker-track {
+    display: flex;
+    width: max-content;
+    gap: 14px;
+    animation: marqueeInfinite 28s linear infinite;
+}
+.dest-ticker-track:hover {
+    animation-play-state: paused;
+}
+
+.ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 9999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    background: var(--surface, #ffffff);
+    color: var(--text, #17212b);
+    border: 1px solid var(--border, #d4deda);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+.ticker-item:hover {
+    background: var(--primary, #12605a);
+    color: #ffffff;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+.ticker-item svg {
+    color: var(--accent, #c56a2c);
+    transition: transform 0.25s ease;
+}
+.ticker-item:hover svg {
+    color: #ffd299;
+    transform: scale(1.15);
+}
+
+/* 5. NÂNG CẤP THẺ CARD VỚI HIỆU ỨNG CHUYỂN ĐỘNG MƯỢT MÀ */
+.homestay-card,
+.product-card,
+.dest-card,
+.exp-card {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.homestay-card:hover,
+.product-card:hover,
+.dest-card:hover,
+.exp-card:hover {
+    transform: translateY(-7px) scale(1.01) !important;
+    box-shadow: 0 18px 38px rgba(18, 96, 90, 0.16) !important;
+}
+
+.homestay-card:hover img,
+.product-card:hover img {
+    transform: scale(1.06) !important;
+}
+
+/* Nút bấm xem chi tiết khi hover */
+.homestay-card:hover .btn-small svg,
+.product-card:hover .btn-small svg,
+.exp-card:hover .btn-small svg {
+    transform: translateX(4px);
+}
+.btn-small svg {
+    transition: transform 0.25s ease;
+}
+
+/* 6. STATS BANNER ANIMATION */
+.stat-box {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.stat-box:hover {
+    transform: translateY(-4px);
+}
+.stat-box:hover .stat-icon svg {
+    animation: iconWiggle 0.6s ease;
+}
+
+/* 7. FLOATING QUICK-SEARCH BUTTON */
+.floating-search-fab {
+    position: fixed;
+    bottom: 26px;
+    right: 26px;
+    z-index: 999;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--primary-gradient, linear-gradient(135deg, #12605a 0%, #1e827b 100%));
+    color: #ffffff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(18, 96, 90, 0.4);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+}
+.floating-search-fab:hover {
+    transform: scale(1.12) rotate(8deg);
+    box-shadow: 0 10px 28px rgba(18, 96, 90, 0.55);
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .hero-slider-container { padding: 32px 20px 24px; min-height: 460px; }
+    .hero-content h1 { font-size: 2rem; }
+    .hero-trust-row { gap: 10px; }
+}
+</style>
+@endpush
+
 @section('content')
 
-{{-- 1. HERO SECTION & FAST SEARCH --}}
-<div class="hero-wrapper">
-    <div class="hero-banner" style="background-image: linear-gradient(135deg, rgba(8, 28, 24, 0.88) 0%, rgba(12, 42, 36, 0.76) 50%, rgba(10, 32, 28, 0.65) 100%), url('{{ asset('images/banners/hero-banner.jpg') }}');">
+{{-- =========================================================================
+     1. HERO SECTION & FAST SEARCH VỚI BANNER LUÂN PHIÊN ĐA ẢNH
+     ========================================================================= --}}
+<div class="hero-wrapper scroll-reveal">
+    <div class="hero-slider-container" id="heroBannerSlider">
+        
+        {{-- Lớp các slide hình ảnh luân phiên --}}
+        <div class="hero-slides">
+            <div class="hero-slide-item active" style="background-image: url('{{ asset('images/banners/hero-banner.jpg') }}');" data-location="🌾 Sa Pa (Lào Cai) • Ruộng bậc thang di sản"></div>
+            <div class="hero-slide-item" style="background-image: url('{{ asset('images/banners/hoian-homestay.jpg') }}');" data-location="🏮 Phố Cổ Hội An (Quảng Nam) • Di sản văn hóa"></div>
+            <div class="hero-slide-item" style="background-image: url('{{ asset('images/banners/ninhbinh-homestay.jpg') }}');" data-location="⛰️ Tràng An (Ninh Bình) • Non nước hữu tình"></div>
+            <div class="hero-slide-item" style="background-image: url('{{ asset('images/banners/dalat-homestay.jpg') }}');" data-location="🌲 Đà Lạt (Lâm Đồng) • Rừng thông &amp; sương mù"></div>
+            <div class="hero-slide-item" style="background-image: url('{{ asset('images/banners/ocop-products.jpg') }}');" data-location="🍯 Đặc Sản OCOP • Nông sản sạch từ bản làng"></div>
+        </div>
+
+        {{-- Ambient orbs chuyển động trôi nhẹ --}}
+        <div class="ambient-orb ambient-orb-1" aria-hidden="true"></div>
+        <div class="ambient-orb ambient-orb-2" aria-hidden="true"></div>
+
+        {{-- Thanh progress tự động đếm giờ cho slide --}}
+        <div class="hero-progress-line" aria-hidden="true">
+            <div class="hero-progress-active" id="heroProgressBar"></div>
+        </div>
+
+        {{-- Nội dung tiêu đề Hero --}}
         <div class="hero-content">
             <div class="hero-badge-row">
-                <span class="hero-chip">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6.4-4.8-6.4 4.8 2.4-7.2-6-4.8h7.6z"/></svg>
+                <span class="hero-chip-radar">
+                    <span class="radar-dot"></span>
                     Sàn Du Lịch Cộng Đồng ĐT-07
                 </span>
                 <span class="hero-chip hero-chip-ghost">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                     100% Xác thực thực địa
                 </span>
+                <span class="hero-location-tag" id="heroLocationTag">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    <span id="heroLocationText">🌾 Sa Pa (Lào Cai) • Ruộng bậc thang di sản</span>
+                </span>
             </div>
 
-            <h1>Homestay Bản Địa, Đặc Sản OCOP & Trải Nghiệm Văn Hóa</h1>
+            <h1>Homestay Bản Địa, Đặc Sản OCOP &amp; Trải Nghiệm Văn Hóa</h1>
             <p class="hero-desc">
                 Khám phá không gian lưu trú mộc mạc giữa thiên nhiên hùng vĩ, kết nối trực tiếp với người nông dân địa phương, thưởng thức đặc sản OCOP và trải nghiệm văn hóa truyền thống độc bản.
             </p>
@@ -50,7 +568,26 @@
             </div>
         </div>
 
-        {{-- HERO SEARCH FORM --}}
+        {{-- Điều khiển Slider: Dots & Nút lật trang --}}
+        <div class="slider-nav-bar">
+            <div class="slider-dots" id="sliderDotsContainer">
+                <button class="slider-dot active" data-index="0" aria-label="Slide 1"></button>
+                <button class="slider-dot" data-index="1" aria-label="Slide 2"></button>
+                <button class="slider-dot" data-index="2" aria-label="Slide 3"></button>
+                <button class="slider-dot" data-index="3" aria-label="Slide 4"></button>
+                <button class="slider-dot" data-index="4" aria-label="Slide 5"></button>
+            </div>
+            <div class="slider-arrows">
+                <button class="slider-btn" id="sliderPrevBtn" aria-label="Slide trước">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button class="slider-btn" id="sliderNextBtn" aria-label="Slide tiếp theo">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+        </div>
+
+        {{-- FORM TÌM PHÒNG NHANH HERO --}}
         <div class="hero-search-card">
             <form method="get" action="{{ route('search.results') }}" class="hero-search-form">
                 <div class="search-field">
@@ -97,11 +634,49 @@
                 @endforeach
             </div>
         </div>
+
     </div>
 </div>
 
-{{-- 2. STATS BANNER --}}
-<div class="stats-banner">
+{{-- =========================================================================
+     2. DẢI TICKER MARQUEE ĐIỂM ĐẾN TỰ ĐỘNG CHẠY NGANG LIÊN TỤC
+     ========================================================================= --}}
+<div class="dest-ticker-wrapper scroll-reveal" aria-hidden="true">
+    <div class="dest-ticker-track">
+        @php
+            $tickerItems = [
+                ['name' => '🌾 Sa Pa (Lào Cai)', 'loc' => 'Lao Cai'],
+                ['name' => '🏮 Phố Cổ Hội An', 'loc' => 'Quang Nam'],
+                ['name' => '⛰️ Tràng An (Ninh Bình)', 'loc' => 'Ninh Binh'],
+                ['name' => '🌲 Rừng Thông Đà Lạt', 'loc' => 'Lam Dong'],
+                ['name' => '🌾 Ruộng Bậc Thang Mù Cang Chải', 'loc' => 'Yen Bai'],
+                ['name' => '🌸 Cao Nguyên Đá Hà Giang', 'loc' => 'Ha Giang'],
+                ['name' => '⛵ Chợ Nổi Cái Răng', 'loc' => 'Can Tho'],
+                ['name' => '🍵 Đồi Chè Cầu Đất', 'loc' => 'Lam Dong'],
+                ['name' => '🏺 Làng Gốm Bát Tràng', 'loc' => 'Ha Noi'],
+            ];
+        @endphp
+        {{-- Vòng lặp thứ nhất --}}
+        @foreach($tickerItems as $item)
+            <a href="{{ route('search.results', ['location' => $item['loc'], 'checkin' => date('Y-m-d', strtotime('+1 day')), 'checkout' => date('Y-m-d', strtotime('+2 days')), 'guests' => 2]) }}" class="ticker-item">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{ $item['name'] }}
+            </a>
+        @endforeach
+        {{-- Nhân bản để tạo dòng chạy liên tục không ngắt quãng --}}
+        @foreach($tickerItems as $item)
+            <a href="{{ route('search.results', ['location' => $item['loc'], 'checkin' => date('Y-m-d', strtotime('+1 day')), 'checkout' => date('Y-m-d', strtotime('+2 days')), 'guests' => 2]) }}" class="ticker-item">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{ $item['name'] }}
+            </a>
+        @endforeach
+    </div>
+</div>
+
+{{-- =========================================================================
+     3. STATS BANNER VỚI HIỆU ỨNG ĐẾM SỐ TỰ ĐỘNG
+     ========================================================================= --}}
+<div class="stats-banner scroll-reveal stagger-grid" id="statsBannerSection">
     <div class="stat-box">
         <div class="stat-icon">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -110,7 +685,7 @@
             </svg>
         </div>
         <div class="stat-info">
-            <strong>{{ $stats['homestays_count'] ?? '12+' }}</strong>
+            <strong class="count-up-number" data-target="{{ $stats['homestays_count'] ?? 12 }}">{{ $stats['homestays_count'] ?? '12+' }}</strong>
             <span>Homestay cộng đồng</span>
         </div>
     </div>
@@ -121,7 +696,7 @@
             </svg>
         </div>
         <div class="stat-info">
-            <strong>{{ $stats['rooms_count'] ?? '36+' }}</strong>
+            <strong class="count-up-number" data-target="{{ $stats['rooms_count'] ?? 36 }}">{{ $stats['rooms_count'] ?? '36+' }}</strong>
             <span>Phòng có lịch trực tuyến</span>
         </div>
     </div>
@@ -133,7 +708,7 @@
             </svg>
         </div>
         <div class="stat-info">
-            <strong>{{ $stats['products_count'] ?? '24+' }}</strong>
+            <strong class="count-up-number" data-target="{{ $stats['products_count'] ?? 24 }}">{{ $stats['products_count'] ?? '24+' }}</strong>
             <span>Đặc sản OCOP bản địa</span>
         </div>
     </div>
@@ -145,18 +720,20 @@
             </svg>
         </div>
         <div class="stat-info">
-            <strong>{{ $stats['experiences_count'] ?? '24+' }}</strong>
+            <strong class="count-up-number" data-target="{{ $stats['experiences_count'] ?? 24 }}">{{ $stats['experiences_count'] ?? '24+' }}</strong>
             <span>Trải nghiệm văn hóa</span>
         </div>
     </div>
 </div>
 
-{{-- 3. ROLE WORKSPACE PANEL (KHI ĐÃ ĐĂNG NHẬP) --}}
+{{-- =========================================================================
+     4. KHU VỰC LÀM VIỆC THEO VAI TRÒ (KHI ĐÃ ĐĂNG NHẬP)
+     ========================================================================= --}}
 @auth
     @php
         $role = auth()->user()->role;
     @endphp
-    <section class="role-panel">
+    <section class="role-panel scroll-reveal">
         <div class="role-panel-info">
             <span class="role-badge-pill">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -188,8 +765,10 @@
     </section>
 @endauth
 
-{{-- 4. POPULAR DESTINATIONS --}}
-<section class="home-section">
+{{-- =========================================================================
+     5. ĐIỂM ĐẾN DU LỊCH CỘNG ĐỒNG NỔI BẬT
+     ========================================================================= --}}
+<section class="home-section scroll-reveal">
     <div class="section-header">
         <div class="section-header-left">
             <span class="eyebrow">Vùng đất di sản</span>
@@ -202,10 +781,10 @@
         </a>
     </div>
 
-    <div class="dest-grid">
+    <div class="dest-grid stagger-grid">
         @foreach($popularDestinations ?? [] as $destination)
             <a href="{{ route('search.results', ['location' => $destination['keyword'], 'checkin' => date('Y-m-d', strtotime('+1 day')), 'checkout' => date('Y-m-d', strtotime('+2 days')), 'guests' => 2]) }}"
-               class="dest-card" style="background-image: linear-gradient(180deg, rgba(12, 28, 24, 0.25) 0%, rgba(10, 25, 21, 0.9) 100%), url('{{ $destination['image'] ?? '' }}');">
+               class="dest-card" style="background-image: linear-gradient(180deg, rgba(12, 28, 24, 0.25) 0%, rgba(10, 25, 21, 0.9) 100%), url('{{ $destination['image'] ?? asset('images/banners/hero-banner.jpg') }}');">
                 <div class="dest-card-header">
                     <span class="dest-badge">{{ $destination['badge'] }}</span>
                     <div class="dest-icon-bubble">
@@ -225,8 +804,10 @@
     </div>
 </section>
 
-{{-- 5. FEATURED HOMESTAYS --}}
-<section class="home-section">
+{{-- =========================================================================
+     6. HOMESTAY CỘNG ĐỒNG TIÊU BIỂU
+     ========================================================================= --}}
+<section class="home-section scroll-reveal">
     <div class="section-header">
         <div class="section-header-left">
             <span class="eyebrow">Lưu trú chất lượng</span>
@@ -239,20 +820,19 @@
         </a>
     </div>
 
-    <div class="cards-grid">
-@forelse(($featuredHomestays ?? []) as $homestay)
-    @php
-        $featuredRoom = $homestay->rooms->first();
-        $cardImageUrl = $homestay->cover_image_url;
-        $detailUrl = $featuredRoom ? route('rooms.show', $featuredRoom) : route('search.results', ['location' => $homestay->province, 'checkin' => date('Y-m-d', strtotime('+1 day')), 'checkout' => date('Y-m-d', strtotime('+2 days')), 'guests' => 2]);
-    @endphp
-    <article class="homestay-card">
+    <div class="cards-grid stagger-grid">
+        @forelse(($featuredHomestays ?? []) as $homestay)
+            @php
+                $featuredRoom = $homestay->rooms->first();
+                $cardImageUrl = $homestay->cover_image_url;
+                $detailUrl = $featuredRoom ? route('rooms.show', $featuredRoom) : route('search.results', ['location' => $homestay->province, 'checkin' => date('Y-m-d', strtotime('+1 day')), 'checkout' => date('Y-m-d', strtotime('+2 days')), 'guests' => 2]);
+            @endphp
+            <article class="homestay-card">
                 <div style="height: 200px; position: relative; overflow: hidden; background: var(--surface-alt);">
                     <a href="{{ $detailUrl }}" style="display: block; width: 100%; height: 100%;">
                         <img src="{{ $cardImageUrl }}" alt="Ảnh homestay {{ $homestay->name }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/homestays/default.svg') }}';"
-                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease;"
-                             onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
                     </a>
                     <div style="position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: none;">
                         <span class="badge badge-success" style="box-shadow: 0 2px 8px rgba(0,0,0,0.25);">
@@ -306,12 +886,14 @@
     </div>
 </section>
 
-{{-- 6. LOCAL PRODUCTS / OCOP --}}
-<section class="home-section">
+{{-- =========================================================================
+     7. ĐẶC SẢN OCOP & NÔNG SẢN ĐỊA PHƯƠNG
+     ========================================================================= --}}
+<section class="home-section scroll-reveal">
     <div class="section-header">
         <div class="section-header-left">
             <span class="eyebrow">Sản vật bản địa</span>
-            <h2>Đặc sản OCOP & Nông sản địa phương</h2>
+            <h2>Đặc sản OCOP &amp; Nông sản địa phương</h2>
             <p>Gắn kết trực tiếp từ các hợp tác xã, nghệ nhân và gắn liền với từng homestay bản địa</p>
         </div>
         <a href="{{ route('products.index') }}" class="section-link">
@@ -320,14 +902,14 @@
         </a>
     </div>
 
-    <div class="products-grid">
+    <div class="products-grid stagger-grid">
         @forelse($featuredProducts ?? [] as $product)
             <article class="product-card">
-                <div class="product-card-top">
+                <div class="product-card-top" style="height: 180px; position: relative; overflow: hidden; background: var(--surface-alt);">
                     <a href="{{ route('products.show', $product) }}" style="display: block; width: 100%; height: 100%;">
                         <img src="{{ $product->image_url }}" alt="Ảnh {{ $product->name }}"
                              onerror="this.onerror=null;this.src='{{ asset('images/products/default.svg') }}';"
-                             style="width: 100%; height: 100%; object-fit: cover;">
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
                     </a>
                 </div>
                 <div class="product-card-body">
@@ -352,6 +934,7 @@
                         </div>
                         <a href="{{ route('products.show', $product) }}" class="btn btn-small btn-secondary">
                             Chi tiết
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                         </a>
                     </div>
                 </div>
@@ -362,8 +945,10 @@
     </div>
 </section>
 
-{{-- 7. CULTURAL EXPERIENCES --}}
-<section class="home-section">
+{{-- =========================================================================
+     8. TRẢI NGHIỆM VĂN HÓA BẢN ĐỊA
+     ========================================================================= --}}
+<section class="home-section scroll-reveal">
     <div class="section-header">
         <div class="section-header-left">
             <span class="eyebrow">Hành trình độc đáo</span>
@@ -376,7 +961,7 @@
         </a>
     </div>
 
-    <div class="exp-grid">
+    <div class="exp-grid stagger-grid">
         @forelse($featuredExperiences ?? [] as $exp)
             <article class="exp-card">
                 <div class="exp-card-header" style="background-image: linear-gradient(180deg, rgba(14, 38, 34, 0.3) 0%, rgba(10, 26, 22, 0.88) 100%), url('{{ $exp->image_url }}');">
@@ -425,15 +1010,17 @@
     </div>
 </section>
 
-{{-- 8. CORE VALUES / WHY CHOOSE US --}}
-<section class="features-container">
+{{-- =========================================================================
+     9. VÌ SAO NÊN CHỌN ĐT-07
+     ========================================================================= --}}
+<section class="features-container scroll-reveal">
     <div class="section-header-left">
         <span class="eyebrow">Giá trị cốt lõi</span>
         <h2>Vì sao nên chọn Sàn Homestay Cộng Đồng ĐT-07?</h2>
         <p>Hệ sinh thái du lịch bền vững kết nối trực tiếp du khách với cộng đồng địa phương</p>
     </div>
 
-    <div class="features-grid-custom">
+    <div class="features-grid-custom stagger-grid">
         <div class="feature-item">
             <div class="feature-icon-wrapper">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -481,8 +1068,10 @@
     </div>
 </section>
 
-{{-- 9. CALL TO ACTION --}}
-<div class="cta-banner">
+{{-- =========================================================================
+     10. CALL TO ACTION BANNER
+     ========================================================================= --}}
+<div class="cta-banner scroll-reveal">
     <div>
         <h2>Đồng hành cùng Du lịch Cộng đồng</h2>
         <p>Bạn là chủ homestay hoặc nhà sản xuất đặc sản địa phương? Hãy tham gia mạng lưới của chúng tôi để tiếp cận du khách trong và ngoài nước.</p>
@@ -498,4 +1087,210 @@
     </div>
 </div>
 
+{{-- Nút nổi tìm phòng nhanh góc phải màn hình --}}
+<a href="#heroBannerSlider" class="floating-search-fab" title="Lên đầu trang tìm phòng">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+</a>
+
 @endsection
+
+@push('scripts')
+<script>
+/* ==========================================================================
+   HOMEPAGE SCRIPTS: BANNER SLIDESHOW + SCROLL REVEAL + AUTO COUNTERS
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
+
+    // -------------------------------------------------------------------------
+    // 1. BANNER SLIDESHOW LUÂN PHIÊN ĐA ẢNH
+    // -------------------------------------------------------------------------
+    (function initHeroSlider() {
+        var slides = document.querySelectorAll('.hero-slide-item');
+        var dots = document.querySelectorAll('.slider-dot');
+        var prevBtn = document.getElementById('sliderPrevBtn');
+        var nextBtn = document.getElementById('sliderNextBtn');
+        var locationText = document.getElementById('heroLocationText');
+        var progressBar = document.getElementById('heroProgressBar');
+
+        if (!slides.length) return;
+
+        var currentIndex = 0;
+        var totalSlides = slides.length;
+        var SLIDE_DURATION = 4800; // 4.8 giây đổi slide
+        var slideTimer = null;
+        var progressAnimation = null;
+
+        function showSlide(index) {
+            slides[currentIndex].classList.remove('active');
+            if (dots[currentIndex]) dots[currentIndex].classList.remove('active');
+
+            currentIndex = (index + totalSlides) % totalSlides;
+
+            slides[currentIndex].classList.add('active');
+            if (dots[currentIndex]) dots[currentIndex].classList.add('active');
+
+            // Cập nhật nhãn địa danh
+            if (locationText) {
+                var loc = slides[currentIndex].getAttribute('data-location') || '';
+                locationText.textContent = loc;
+            }
+
+            // Chạy lại thanh tiến trình
+            restartProgressBar();
+        }
+
+        function restartProgressBar() {
+            if (!progressBar) return;
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '0%';
+            void progressBar.offsetWidth; // Force reflow
+            progressBar.style.transition = 'width ' + SLIDE_DURATION + 'ms linear';
+            progressBar.style.width = '100%';
+        }
+
+        function nextSlide() {
+            showSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentIndex - 1);
+        }
+
+        function startAutoPlay() {
+            clearInterval(slideTimer);
+            restartProgressBar();
+            slideTimer = setInterval(nextSlide, SLIDE_DURATION);
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function () {
+                nextSlide();
+                startAutoPlay();
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function () {
+                prevSlide();
+                startAutoPlay();
+            });
+        }
+
+        dots.forEach(function (dot) {
+            dot.addEventListener('click', function () {
+                var idx = parseInt(this.getAttribute('data-index'), 10);
+                showSlide(idx);
+                startAutoPlay();
+            });
+        });
+
+        // Tạm dừng khi rê chuột vào khu vực tìm kiếm hero
+        var heroBox = document.getElementById('heroBannerSlider');
+        if (heroBox) {
+            heroBox.addEventListener('mouseenter', function () {
+                clearInterval(slideTimer);
+            });
+            heroBox.addEventListener('mouseleave', function () {
+                startAutoPlay();
+            });
+        }
+
+        startAutoPlay();
+    })();
+
+    // -------------------------------------------------------------------------
+    // 2. SCROLL REVEAL AN TOÀN (KHÔNG BAO GIỜ BỊ ẨN MẤT NỘI DUNG)
+    // -------------------------------------------------------------------------
+    (function initScrollReveal() {
+        // Kích hoạt class cho body để bật animation
+        document.body.classList.add('has-reveal');
+
+        var revealElements = document.querySelectorAll('.scroll-reveal, .stagger-grid');
+        if (!revealElements.length) return;
+
+        if (!('IntersectionObserver' in window)) {
+            // Trình duyệt cũ: hiện tất cả ngay
+            revealElements.forEach(function (el) {
+                el.classList.add('is-visible');
+            });
+            return;
+        }
+
+        var revealObserver = new IntersectionObserver(function (entries, observer) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.08,
+            rootMargin: '0px 0px -20px 0px'
+        });
+
+        revealElements.forEach(function (el) {
+            // Nếu phần tử đã nằm trong tầm nhìn lúc đầu: hiện luôn
+            var rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight + 50) {
+                el.classList.add('is-visible');
+            } else {
+                revealObserver.observe(el);
+            }
+        });
+
+        // BẢO VỆ CHỐNG LỖI: Sau 800ms tự động mở tất cả nếu chưa hiện
+        setTimeout(function () {
+            revealElements.forEach(function (el) {
+                el.classList.add('is-visible');
+            });
+        }, 800);
+    })();
+
+    // -------------------------------------------------------------------------
+    // 3. HIỆU ỨNG ĐẾM SỐ TĂNG DẦN (AUTO NUMBER COUNTER)
+    // -------------------------------------------------------------------------
+    (function initNumberCounters() {
+        var numbers = document.querySelectorAll('.count-up-number');
+        if (!numbers.length) return;
+
+        var hasCounted = false;
+        function runCounters() {
+            if (hasCounted) return;
+            hasCounted = true;
+
+            numbers.forEach(function (num) {
+                var target = parseInt(num.getAttribute('data-target'), 10) || 0;
+                var current = 0;
+                var duration = 1200;
+                var stepTime = Math.max(Math.floor(duration / (target || 1)), 25);
+
+                var timer = setInterval(function () {
+                    current += Math.ceil(target / 25);
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                        num.textContent = target + '+';
+                    } else {
+                        num.textContent = current + '+';
+                    }
+                }, stepTime);
+            });
+        }
+
+        var statsSection = document.getElementById('statsBannerSection');
+        if (statsSection && 'IntersectionObserver' in window) {
+            var statsObserver = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) {
+                    runCounters();
+                    statsObserver.unobserve(statsSection);
+                }
+            }, { threshold: 0.3 });
+            statsObserver.observe(statsSection);
+        } else {
+            runCounters();
+        }
+    })();
+});
+</script>
+@endpush

@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500">
+  <defs>
+    <linearGradient id="sky-nb" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b8fb9;stop-opacity:1"/>
+      <stop offset="40%" style="stop-color:#87c2d8;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#b8dfe8;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="river-nb" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#5ea8c4;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#2d7a9a;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="karst1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a7a3a;stop-opacity:1"/>
+      <stop offset="60%" style="stop-color:#2d5a28;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1e3d1a;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="karst2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5a8a48;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#2a5020;stop-opacity:1"/>
+    </linearGradient>
+    <radialGradient id="sun-nb" cx="30%" cy="15%" r="20%">
+      <stop offset="0%" style="stop-color:#fff5c0;stop-opacity:0.8"/>
+      <stop offset="100%" style="stop-color:#fff5c0;stop-opacity:0"/>
+    </radialGradient>
+    <filter id="blur-nb">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1200" height="500" fill="url(#sky-nb)"/>
+  <!-- Sun -->
+  <circle cx="360" cy="80" r="45" fill="#fff8d4" opacity="0.9"/>
+  <ellipse cx="360" cy="80" rx="120" ry="80" fill="url(#sun-nb)"/>
+
+  <!-- Distant karst peaks (small, misty) -->
+  <g fill="#7aacba" opacity="0.4" filter="url(#blur-nb)">
+    <polygon points="50,260 130,160 210,260"/>
+    <polygon points="160,255 250,145 340,255"/>
+    <polygon points="320,258 410,158 500,258"/>
+    <polygon points="700,252 800,140 900,252"/>
+    <polygon points="950,256 1050,148 1150,256"/>
+    <polygon points="1080,258 1150,168 1200,245"/>
+  </g>
+
+  <!-- Mid-distance karst mountains (green) -->
+  <g fill="#3d6a2e">
+    <polygon points="0,320 90,185 180,240 100,320"/>
+    <polygon points="80,318 170,170 280,220 210,318"/>
+    <polygon points="200,316 310,155 420,205 360,316"/>
+    <polygon points="380,314 490,145 600,190 540,314"/>
+    <polygon points="550,316 650,160 760,210 690,316"/>
+    <polygon points="720,314 830,150 940,195 870,314"/>
+    <polygon points="890,318 990,162 1100,210 1030,318"/>
+    <polygon points="1060,316 1150,170 1200,210 1200,316"/>
+  </g>
+
+  <!-- Karst mountain highlights (lighter left faces) -->
+  <g fill="#4e8038" opacity="0.7">
+    <polygon points="90,185 180,240 110,240"/>
+    <polygon points="170,170 280,220 195,215"/>
+    <polygon points="310,155 420,205 325,200"/>
+    <polygon points="490,145 600,190 505,188"/>
+    <polygon points="650,160 760,210 665,207"/>
+    <polygon points="830,150 940,195 845,193"/>
+    <polygon points="990,162 1100,210 1005,207"/>
+  </g>
+
+  <!-- Vegetation on karsts -->
+  <g fill="#2a5020" opacity="0.8">
+    <!-- Treetops on mountains -->
+    <circle cx="100" cy="200" r="12"/><circle cx="115" cy="195" r="10"/><circle cx="85" cy="198" r="11"/>
+    <circle cx="260" cy="188" r="13"/><circle cx="278" cy="182" r="11"/><circle cx="242" cy="185" r="12"/>
+    <circle cx="430" cy="175" r="14"/><circle cx="448" cy="168" r="12"/><circle cx="412" cy="172" r="13"/>
+    <circle cx="600" cy="170" r="13"/><circle cx="618" cy="163" r="11"/>
+    <circle cx="775" cy="178" r="14"/><circle cx="793" cy="172" r="12"/><circle cx="757" cy="176" r="13"/>
+    <circle cx="942" cy="175" r="13"/><circle cx="960" cy="168" r="11"/>
+    <circle cx="1100" cy="182" r="14"/><circle cx="1118" cy="175" r="12"/>
+  </g>
+
+  <!-- Rice fields / flat land -->
+  <rect x="0" y="310" width="1200" height="60" fill="#5a9a3a" opacity="0.9"/>
+  <rect x="0" y="318" width="1200" height="4" fill="#7abd52" opacity="0.6"/>
+  <rect x="0" y="338" width="1200" height="4" fill="#7abd52" opacity="0.5"/>
+  <rect x="0" y="356" width="1200" height="4" fill="#6aad42" opacity="0.4"/>
+
+  <!-- River (main) -->
+  <path d="M0,360 Q200,345 400,358 Q600,370 800,355 Q1000,340 1200,353 L1200,500 L0,500 Z" fill="url(#river-nb)"/>
+
+  <!-- River reflections of karst -->
+  <g opacity="0.35">
+    <polygon points="90,365 170,420 10,420" fill="#3d6a2e"/>
+    <polygon points="310,360 420,430 200,430" fill="#3d6a2e"/>
+    <polygon points="530,358 640,438 420,438" fill="#3d6a2e"/>
+    <polygon points="770,360 880,440 660,440" fill="#3d6a2e"/>
+    <polygon points="990,362 1100,435 880,435" fill="#3d6a2e"/>
+  </g>
+
+  <!-- Water ripples -->
+  <g stroke="#4a9ab8" stroke-width="1.5" fill="none" opacity="0.5">
+    <ellipse cx="200" cy="400" rx="60" ry="8"/>
+    <ellipse cx="500" cy="418" rx="75" ry="10"/>
+    <ellipse cx="800" cy="405" rx="65" ry="9"/>
+    <ellipse cx="1050" cy="420" rx="70" ry="9"/>
+  </g>
+
+  <!-- Boat silhouettes on river -->
+  <g fill="#1a2a0a" opacity="0.8">
+    <!-- Boat 1 -->
+    <path d="M220,378 Q260,370 300,378 L295,390 Q260,385 225,390 Z"/>
+    <line x1="260" y1="370" x2="258" y2="340" stroke="#1a2a0a" stroke-width="2"/>
+
+    <!-- Boat 2 -->
+    <path d="M680,372 Q720,364 760,372 L755,383 Q720,378 685,383 Z"/>
+    <line x1="720" y1="364" x2="718" y2="336" stroke="#1a2a0a" stroke-width="2"/>
+  </g>
+
+  <!-- Foreground grassy banks -->
+  <path d="M0,365 Q100,355 200,360 Q300,365 400,358 Q500,350 600,358 Q700,365 800,358 Q900,350 1000,358 Q1100,365 1200,360 L1200,380 Q1100,375 1000,372 Q900,368 800,374 Q700,380 600,374 Q500,368 400,374 Q300,380 200,374 Q100,368 0,374 Z" fill="#4a8030"/>
+
+  <!-- Clouds -->
+  <g fill="white" opacity="0.7">
+    <ellipse cx="200" cy="60" rx="80" ry="22"/>
+    <ellipse cx="160" cy="58" rx="60" ry="18"/>
+    <ellipse cx="240" cy="62" rx="55" ry="16"/>
+    <ellipse cx="700" cy="45" rx="100" ry="25"/>
+    <ellipse cx="650" cy="42" rx="70" ry="20"/>
+    <ellipse cx="760" cy="48" rx="65" ry="18"/>
+    <ellipse cx="1100" cy="70" rx="85" ry="22"/>
+    <ellipse cx="1050" cy="68" rx="65" ry="18"/>
+  </g>
+
+  <!-- Birds in sky -->
+  <g stroke="#2a3a5a" stroke-width="1.5" fill="none" opacity="0.5">
+    <path d="M450,90 Q460,82 470,90"/>
+    <path d="M475,82 Q485,74 495,82"/>
+    <path d="M900,75 Q912,67 922,75"/>
+    <path d="M930,85 Q942,77 952,85"/>
+  </g>
+</svg>

@@ -4,10 +4,10 @@ VNPay cho phòng sử dụng HMAC SHA512 và kiểm tra chữ ký, số tiền, 
 
 ## Cấu hình local
 
-Thông tin merchant trong ảnh mới của người dùng (mã website `WQL46SV0`) đã thay thế cấu hình trước trong `backend/.env` ngày 2026-10-18. File này được Git bỏ qua; không chép khóa bí mật vào tài liệu hoặc mã nguồn.
+Thông tin merchant sandbox mới (mã website `BDU3W4CJ`) được cấu hình trong `backend/.env` ngày 2026-10-24. File này được Git bỏ qua; không chép khóa bí mật vào tài liệu hoặc mã nguồn.
 
 ```dotenv
-VNPAY_ENABLED=false
+VNPAY_ENABLED=true
 VNPAY_PAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
 VNPAY_TMN_CODE=<ma-website-sandbox>
 VNPAY_SECRET_KEY=<khoa-bi-mat-sandbox>
@@ -22,15 +22,16 @@ URL trả kết quả dùng cổng 8000 theo `run.txt`. Đường dẫn mẫu `h
 ## Dùng thử
 
 1. Chạy website theo `run.txt`, truy cập `http://127.0.0.1:8000` và đăng nhập tài khoản guest.
-2. VNPay hiện bị vô hiệu hóa vì merchant chưa được phê duyệt. Sau khi merchant hoạt động, đặt `VNPAY_ENABLED=true`, chạy `php artisan config:clear`, đặt phòng còn trống và chọn **Thanh toán VNPay** trước khi hết hạn giữ phòng.
+2. Đặt phòng còn trống và chọn **Thanh toán VNPay** trước khi hết hạn giữ phòng.
 3. Hoàn tất thanh toán thử trên VNPay; trình duyệt quay về trang thanh toán booking. Chỉ kết quả có chữ ký hợp lệ và khớp số tiền mới được ghi nhận.
 
 Khi triển khai Render, nhập khóa trong Environment của dịch vụ, đặt Return URL theo URL HTTPS thực tế và đăng ký IPN `/api/v1/payment/vn-pay-ipn` với VNPay. File `.env` local không được đẩy lên GitHub.
 
-## Kết quả kiểm tra ngày 2026-10-18
+## Kết quả kiểm tra ngày 2026-10-24
 
-- Đã tạo URL thanh toán từ cấu hình mới trong ảnh và gửi yêu cầu đến VNPay sandbox. Nhà cung cấp trả HTTP 200 ở trang lỗi với thông báo **The terminal (website) not approved** (mã tra cứu `zZzSGa1Ora`). Cần chủ tài khoản kiểm tra trạng thái kích hoạt mã website với VNPay. Chưa vào được bước chọn ngân hàng, chưa thực hiện giao dịch sandbox thành công.
-- Dữ liệu phòng/booking của yêu cầu kiểm tra được tạo trong transaction và rollback sau khi tạo URL, không lưu booking thử vào dữ liệu đang dùng.
-- `C:\xampp\php\php.exe artisan test --filter='VnPay|vnpay'`: **8 passed**. Các bài kiểm thử dùng thông tin giả và callback được ký trong test; kết quả này không thay thế việc thanh toán trên hệ thống VNPay.
+- Đã tạo URL có checksum bằng cấu hình merchant `BDU3W4CJ` và gửi một yêu cầu đọc trang thanh toán đến VNPay sandbox. Sandbox trả HTTP 200, không còn thông báo terminal chưa được phê duyệt và có nội dung trang checkout. Yêu cầu probe không tạo booking/giao dịch trong cơ sở dữ liệu ứng dụng.
+- `C:\xampp\php\php.exe artisan config:clear`: thành công.
+- `C:\xampp\php\php.exe artisan test --filter="VnPay|vnpay"`: **9 passed**. Các bài kiểm thử callback dùng thông tin giả và chữ ký test; vẫn cần người dùng hoàn tất một giao dịch bằng thẻ sandbox để kiểm tra toàn bộ luồng trình duyệt/IPN bên ngoài.
+- Trạng thái booking chỉ chuyển từ `holding` sang `confirmed` sau khi cả `vnp_ResponseCode` và `vnp_TransactionStatus` bằng `00`, chữ ký hợp lệ và số tiền khớp. Giao dịch lỗi được lưu `failed`; callback muộn không được phép khôi phục booking đã hủy/hết hạn.
 
 Tham khảo giao thức: [tài liệu thanh toán VNPay](https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.html).
