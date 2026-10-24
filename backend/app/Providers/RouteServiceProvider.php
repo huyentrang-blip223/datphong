@@ -53,5 +53,9 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by(strtolower((string) $request->input('email')).'|'.$request->ip());
         });
         RateLimiter::for('recovery', fn (Request $request) => [Limit::perMinute(5)->by('recovery:'.$request->ip()), Limit::perMinute(2)->by('recovery:'.strtolower((string) $request->input('email')))]);
+        RateLimiter::for('room-chatbot', fn (Request $request) => [
+            Limit::perMinute(10)->by('room-chatbot:'.$request->ip()),
+            Limit::perDay(100)->by('room-chatbot-daily:'.$request->ip()),
+        ]);
     }
 }

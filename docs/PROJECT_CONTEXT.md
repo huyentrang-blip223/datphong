@@ -358,3 +358,11 @@ Current operation and validation: `docs/CASH_PAYMENTS.md`.
 - Room booking lifecycle email now reaches both the guest and owning host for creation, confirmation, cancellation, hold expiry, refund and completion.
 - VNPay paid/failed/late-settlement notifications now reach both sides. Replayed failed callbacks do not resend the same payment-result email; late settlement warns that inventory was not restored and reconciliation is required.
 - Cash selection, receipt and cash-refund notifications include the booking reference and notify both relevant parties for room bookings.
+
+## 22. Gemini grounded room chatbot — 2026-10-24
+
+- A responsive floating chatbot recommends real rooms from the existing MySQL catalogue using party size, location, optional stay dates, nightly budget and free-text preferences.
+- Laravel enforces approved/active rooms, capacity, date inventory and effective price before Gemini ranks candidates. Model output is treated as untrusted: unknown/duplicate room IDs are discarded and room details/links always come from Eloquent.
+- Gemini uses a server-only API key, short timeout, low-temperature JSON output, five-minute cache and per-IP throttling. Database-ranked fallback remains available when the provider is disabled, unavailable or over quota.
+- Render Blueprint declares Gemini configuration with the API key at `sync: false`; current configured model is `gemini-3.5-flash` because a live provider probe accepted the supplied key and completed structured generation on that model.
+- Implementation and manual verification steps: `docs/GEMINI_ROOM_CHATBOT.md`.

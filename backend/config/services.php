@@ -3,6 +3,13 @@
 return [
     'resend' => ['key' => env('RESEND_API_KEY')],
 
+    'gemini' => [
+        'enabled' => env('GEMINI_ENABLED', false),
+        'api_key' => env('GEMINI_API_KEY', ''),
+        'model' => env('GEMINI_MODEL', 'gemini-3.5-flash'),
+        'timeout' => env('GEMINI_TIMEOUT', 12),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

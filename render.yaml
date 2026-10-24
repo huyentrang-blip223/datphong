@@ -54,6 +54,14 @@ services:
         sync: false
       - key: MAIL_FROM_NAME
         value: "DT07 Homestay"
+      - key: GEMINI_ENABLED
+        value: "true"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash
+      - key: GEMINI_TIMEOUT
+        value: "12"
       - key: VNPAY_ENABLED
         value: "true"
       - key: VNPAY_PAY_URL

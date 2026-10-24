@@ -25,6 +25,7 @@ use App\Http\Controllers\ProductOrderController;
 use App\Http\Controllers\ProductOrderPaymentController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoomDetailController;
+use App\Http\Controllers\RoomChatbotController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Seller\ProductController as SellerProductController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,9 @@ Route::get('/san-pham-dia-phuong', [LocalProductController::class, 'index'])->na
 Route::get('/san-pham-dia-phuong/{product}', [LocalProductController::class, 'show'])->name('products.show');
 Route::get('/trai-nghiem', [ExperienceController::class, 'index'])->name('experiences.index');
 Route::get('/trai-nghiem/{experience}', [ExperienceController::class, 'show'])->name('experiences.show');
+Route::post('/chatbot/goi-y-phong', RoomChatbotController::class)
+    ->middleware('throttle:room-chatbot')
+    ->name('chatbot.rooms');
 
 Route::middleware('guest')->group(function () {
     Route::get('/quen-mat-khau', [\App\Http\Controllers\AccountController::class, 'forgot'])->name('password.request');

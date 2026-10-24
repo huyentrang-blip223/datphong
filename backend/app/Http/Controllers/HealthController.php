@@ -22,6 +22,7 @@ class HealthController extends Controller
             'application' => 'ok',
             'database' => $database,
             'python' => $python,
+            'gemini' => config('services.gemini.enabled') && config('services.gemini.api_key') ? 'configured' : 'disabled',
             'timestamp' => Carbon::now()->toIso8601String(),
         ], $database === 'ok' ? 200 : 503);
     }

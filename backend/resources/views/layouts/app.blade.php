@@ -152,7 +152,9 @@
         </div>
     </div>
 </footer>
+@include('components.room-chatbot')
 <script src="{{ asset('js/theme.js') }}" defer></script>
+<script src="{{ asset('js/room-chatbot.js') }}" defer></script>
 @stack('scripts')
 </body>
 </html>

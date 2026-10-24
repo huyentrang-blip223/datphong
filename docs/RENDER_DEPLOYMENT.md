@@ -43,6 +43,10 @@ Blueprint bật VNPay sandbox và khai báo Terminal ID; nhập `VNPAY_SECRET_KE
 
 Kiểm tra trực tiếp ngày 2026-10-24 với merchant mới đã nhận HTTP 200 và nội dung checkout, không còn lỗi terminal chưa được phê duyệt. Vẫn cần chạy một giao dịch bằng thẻ sandbox trên URL Render để xác minh Return URL và IPN công khai. Mã hỗ trợ hoàn tiền/query sandbox có xác thực phản hồi; timeout giữ trạng thái unknown để đối soát, không tự gửi yêu cầu tài chính lặp.
 
+## Gemini room chatbot
+
+Blueprint bật chatbot và giữ `GEMINI_API_KEY` ở `sync: false`. Nhập key trong Environment của service Laravel; không nhập vào service Python. Các biến còn lại là `GEMINI_ENABLED=true`, `GEMINI_MODEL=gemini-3.5-flash`, `GEMINI_TIMEOUT=12`. Sau khi rebuild, `/healthz` phải báo `gemini: configured`. Chi tiết: `docs/GEMINI_ROOM_CHATBOT.md`.
+
 ## Trạng thái kiểm chứng
 
 - Khởi tạo database tạm mới: PASS, 30 bảng/view và hai trigger; startup lần hai giữ một admin, không tạo trùng. Database tạm được xóa sau kiểm tra.
