@@ -81,6 +81,7 @@ Route::middleware(['auth', 'role:guest'])->prefix('tai-khoan')->name('guest.')->
     Route::get('/orders', [ProductOrderController::class, 'index'])->name('orders.index');
     Route::post('/orders', [ProductOrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{order}/payment', [ProductOrderPaymentController::class, 'show'])->name('order-payments.show');
+    Route::post('/orders/{order}/payments/vnpay', [ProductOrderPaymentController::class, 'createVnPay'])->name('order-payments.vnpay');
     Route::post('/orders/{order}/payments/cash', [ProductOrderPaymentController::class, 'store'])->name('order-payments.cash');
     Route::get('/experience-bookings', [\App\Http\Controllers\ExperienceBookingController::class, 'index'])->name('experience-bookings.index');
     Route::post('/experience-bookings/{experienceBooking}/cancel', [\App\Http\Controllers\ExperienceBookingController::class, 'cancel'])->name('experience-bookings.cancel');

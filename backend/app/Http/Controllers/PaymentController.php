@@ -82,11 +82,24 @@ class PaymentController extends Controller
         }
 
         if ($request->expectsJson()) {
-            return response()->json([
+            $payload = [
                 'success' => $result['success'],
-                'booking_code' => $result['booking']->code,
                 'payment_status' => $result['payment']->status,
-            ]);
+            ];
+            if (isset($result['product_order'])) {
+                $payload['order_code'] = $result['product_order']->code;
+            } else {
+                $payload['booking_code'] = $result['booking']->code;
+            }
+
+            return response()->json($payload);
+        }
+
+        if (isset($result['product_order'])) {
+            return redirect()->route('guest.order-payments.show', $result['product_order'])->with(
+                'status',
+                $result['success'] ? 'Thanh toán VNPay thành công.' : 'Thanh toán VNPay thất bại.'
+            );
         }
 
         return redirect()->route('guest.payments.show', $result['booking'])->with(

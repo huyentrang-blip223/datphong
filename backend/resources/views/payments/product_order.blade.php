@@ -56,6 +56,7 @@
         'paymentSubject' => $order,
         'cashRoute' => route('guest.order-payments.cash', $order),
         'cashDescription' => __('payments.cash_order', [], 'vi'),
+        'vnpayRoute' => route('guest.order-payments.vnpay', $order),
     ])
 </div>
 

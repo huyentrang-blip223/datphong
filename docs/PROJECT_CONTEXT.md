@@ -366,3 +366,11 @@ Current operation and validation: `docs/CASH_PAYMENTS.md`.
 - Gemini uses a server-only API key, short timeout, low-temperature JSON output, five-minute cache and per-IP throttling. Database-ranked fallback remains available when the provider is disabled, unavailable or over quota.
 - Render Blueprint declares Gemini configuration with the API key at `sync: false`; current configured model is `gemini-3.5-flash` because a live provider probe accepted the supplied key and completed structured generation on that model.
 - Implementation and manual verification steps: `docs/GEMINI_ROOM_CHATBOT.md`.
+
+## 23. VNPay product-order checkout — 2026-10-25
+
+- Product-order checkout now creates signed VNPay sandbox URLs from the locked server-side order total. Ownership, payable status, existing cash selection and duplicate paid transactions are enforced before initiation.
+- Shared callback/IPN dispatch recognizes `PO` transaction references, verifies checksum and amount, updates the payment atomically, and moves a successfully paid product order from `pending` to `confirmed`. Replayed callbacks are idempotent.
+- Buyer and seller receive payment-result notifications; audit logs identify the product-order payment. A successful settlement received after cancellation is recorded without reviving the order and is flagged through notifications for manual refund reconciliation.
+- Product checkout displays VNPay when enabled. Experience VNPay and automated product-order VNPay refunds remain outside this change.
+- Render no longer hardcodes MySQL port 3306 in Blueprint; `DB_PORT` is dashboard-provided so external Aiven ports are not overwritten during Blueprint sync.

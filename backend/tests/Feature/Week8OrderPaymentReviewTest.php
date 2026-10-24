@@ -1,16 +1,18 @@
 <?php
+
 namespace Tests\Feature;
 
 use App\Mail\BusinessNotificationMail;
 use App\Models\Booking;
 use App\Models\Homestay;
 use App\Models\LocalProduct;
-use App\Models\ProductOrder;
 use App\Models\Payment;
+use App\Models\ProductOrder;
 use App\Models\Room;
 use App\Models\RoomAvailability;
 use App\Models\User;
 use App\Services\BookingService;
+use App\Services\ProductOrderService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -77,7 +79,7 @@ class Week8OrderPaymentReviewTest extends TestCase
         $this->actingAs($guest)
             ->get(route('guest.order-payments.show', $order))
             ->assertOk()
-            ->assertSee('Thanh toán đơn ' . $order->code)
+            ->assertSee('Thanh toán đơn '.$order->code)
             ->assertSee('Thanh toán tiền mặt');
 
         $this->actingAs($guest)
@@ -137,9 +139,9 @@ class Week8OrderPaymentReviewTest extends TestCase
         $this->actingAs($guest)
             ->get(route('guest.payments.show', $booking))
             ->assertOk()
-            ->assertSee('Thanh toán booking ' . $booking->code)
+            ->assertSee('Thanh toán booking '.$booking->code)
             ->assertSee('Thanh toán tiền mặt')
-            ->assertSee(number_format($booking->total_amount) . ' đ');
+            ->assertSee(number_format($booking->total_amount).' đ');
 
         $this->actingAs($other)
             ->get(route('guest.payments.show', $booking))
@@ -172,7 +174,7 @@ class Week8OrderPaymentReviewTest extends TestCase
         $callbackParams = $this->signedVnPayParams([
             'vnp_Amount' => (string) ((int) round((float) $payment->amount * 100)),
             'vnp_BankCode' => 'NCB',
-            'vnp_OrderInfo' => 'Thanh toan booking ' . $booking->code,
+            'vnp_OrderInfo' => 'Thanh toan booking '.$booking->code,
             'vnp_PayDate' => '20261008120000',
             'vnp_ResponseCode' => '00',
             'vnp_TmnCode' => 'TESTCODE',
@@ -194,6 +196,63 @@ class Week8OrderPaymentReviewTest extends TestCase
             && $mail->title === 'Booking đã thanh toán qua VNPay');
     }
 
+    public function test_vnpay_payment_confirms_product_order_and_replayed_callback_is_idempotent(): void
+    {
+        config([
+            'services.vnpay.enabled' => true,
+            'services.vnpay.url' => 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html',
+            'services.vnpay.tmn_code' => 'TESTCODE',
+            'services.vnpay.secret_key' => 'TESTSECRET',
+            'services.vnpay.return_url' => 'http://localhost:8080/api/v1/payment/vn-pay-callback',
+            'services.vnpay.version' => '2.1.0',
+            'services.vnpay.command' => 'pay',
+            'services.vnpay.order_type' => 'other',
+            'mail.notifications_enabled' => false,
+        ]);
+        $guest = $this->user('w8-product-vnpay-guest@dt07.test', 'guest');
+        $seller = $this->user('w8-product-vnpay-seller@dt07.test', 'seller');
+        $product = $this->productForSeller($seller, ['price' => 75000]);
+        $order = app(ProductOrderService::class)->createOrder($guest, [
+            ['product_id' => $product->id, 'quantity' => 2],
+        ]);
+
+        $this->actingAs($guest)->get(route('guest.order-payments.show', $order))
+            ->assertOk()
+            ->assertSee(route('guest.order-payments.vnpay', $order), false)
+            ->assertDontSee('VNPay hiện chưa khả dụng.');
+
+        $response = $this->postJson(route('guest.order-payments.vnpay', $order));
+        $response->assertOk()->assertJsonStructure(['payment_url']);
+        $payment = $order->payments()->where('gateway', 'vnpay')->firstOrFail();
+        $this->assertStringStartsWith('PO'.$order->id, $payment->txn_ref);
+        $this->assertSame('initiated', $payment->status);
+
+        $callbackParams = $this->signedVnPayParams([
+            'vnp_Amount' => (string) ((int) round((float) $payment->amount * 100)),
+            'vnp_BankCode' => 'NCB',
+            'vnp_OrderInfo' => 'Thanh toan don san pham '.$order->code,
+            'vnp_PayDate' => '20261025120000',
+            'vnp_ResponseCode' => '00',
+            'vnp_TmnCode' => 'TESTCODE',
+            'vnp_TransactionNo' => '22345678',
+            'vnp_TransactionStatus' => '00',
+            'vnp_TxnRef' => $payment->txn_ref,
+        ], 'TESTSECRET');
+
+        $this->getJson(route('api.v1.payment.vnpay-callback', $callbackParams))
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('order_code', $order->code)
+            ->assertJsonPath('payment_status', 'paid');
+        $this->assertSame('confirmed', $order->fresh()->status);
+        $this->assertSame('paid', $payment->fresh()->status);
+
+        $this->getJson(route('api.v1.payment.vnpay-ipn', $callbackParams))
+            ->assertOk()
+            ->assertJsonPath('RspCode', '02');
+        $this->assertSame(1, $order->payments()->where('status', 'paid')->count());
+    }
+
     public function test_web_booking_redirects_to_payment_checkout(): void
     {
         $guest = $this->user('w8-booking-payment-redirect@dt07.test', 'guest');
@@ -201,7 +260,7 @@ class Week8OrderPaymentReviewTest extends TestCase
         $homestay = Homestay::create([
             'owner_id' => $host->id,
             'name' => 'W8 Payment Redirect Homestay',
-            'slug' => 'w8-payment-redirect-' . uniqid(),
+            'slug' => 'w8-payment-redirect-'.uniqid(),
             'province' => 'Lam Dong',
             'address_line' => '1 Redirect',
             'status' => 'approved',
@@ -272,11 +331,11 @@ class Week8OrderPaymentReviewTest extends TestCase
     private function bookingForGuest(string $email): array
     {
         $guest = $this->user($email, 'guest');
-        $host = $this->user($email . '.host', 'host');
+        $host = $this->user($email.'.host', 'host');
         $homestay = Homestay::create([
             'owner_id' => $host->id,
-            'name' => 'W8 Booking Homestay ' . uniqid(),
-            'slug' => 'w8-booking-' . uniqid(),
+            'name' => 'W8 Booking Homestay '.uniqid(),
+            'slug' => 'w8-booking-'.uniqid(),
             'province' => 'Lam Dong',
             'address_line' => '1 Week8',
             'status' => 'approved',
@@ -307,7 +366,7 @@ class Week8OrderPaymentReviewTest extends TestCase
     {
         return LocalProduct::create(array_merge([
             'seller_id' => $seller->id,
-            'name' => 'W8 Product ' . uniqid(),
+            'name' => 'W8 Product '.uniqid(),
             'origin_place' => 'Da Lat',
             'description' => 'Week8 product',
             'unit' => 'goi',
@@ -322,7 +381,7 @@ class Week8OrderPaymentReviewTest extends TestCase
         ksort($params);
         $hashData = [];
         foreach ($params as $key => $value) {
-            $hashData[] = urlencode((string) $key) . '=' . urlencode((string) $value);
+            $hashData[] = urlencode((string) $key).'='.urlencode((string) $value);
         }
         $params['vnp_SecureHash'] = hash_hmac('sha512', implode('&', $hashData), $secret);
 
@@ -335,7 +394,7 @@ class Week8OrderPaymentReviewTest extends TestCase
             'email' => $email,
             'password_hash' => Hash::make('Dt07@2026!'),
             'role' => $role,
-            'full_name' => 'Week8 ' . $role,
+            'full_name' => 'Week8 '.$role,
             'status' => 'active',
         ]);
     }

@@ -12,7 +12,7 @@ Gói này giữ Laravel 9, MySQL 8 và FastAPI. Chưa có dịch vụ Render nà
 ## Thao tác Render
 
 1. Đẩy mã đã kiểm tra lên GitHub. Trong Render chọn **New -> Blueprint**, kết nối repo và dùng `render.yaml`.
-2. Dịch vụ `dt07-homestay`: nhập APP_KEY, DB_HOST/DB_PORT/DB_DATABASE/DB_USERNAME/DB_PASSWORD, BOOTSTRAP_ADMIN_EMAIL và BOOTSTRAP_ADMIN_PASSWORD. Nếu cần CA, thêm file bí mật CA và đặt MYSQL_ATTR_SSL_CA là đường dẫn file đó. Tránh log thông tin đăng nhập.
+2. Dịch vụ `dt07-homestay`: nhập APP_KEY, DB_HOST/DB_PORT/DB_DATABASE/DB_USERNAME/DB_PASSWORD, BOOTSTRAP_ADMIN_EMAIL và BOOTSTRAP_ADMIN_PASSWORD. `DB_PORT` là biến dashboard (`sync: false`), phải dùng đúng cổng công khai của nhà cung cấp (Aiven hiện dùng cổng khác 3306). Nếu cần CA, thêm file bí mật CA và đặt MYSQL_ATTR_SSL_CA là đường dẫn file đó. Tránh log thông tin đăng nhập.
 3. Dịch vụ `dt07-python`: DT07_DB_URL theo dạng `mysql+pymysql://USER:PASSWORD@HOST:PORT/DATABASE` (URL encode mật khẩu), SERVICE_TOKEN tự chọn. Nếu dùng TLS, thêm MYSQL_SSL_CA trỏ tới file CA.
 4. Điền PY_SERVICE_URL của Laravel bằng URL thực của dịch vụ Python; PY_SERVICE_TOKEN phải giống SERVICE_TOKEN của Python. Hai web service Free không nhận kết nối nội bộ nên dùng URL HTTPS công khai của Python.
 5. Runtime tự dùng RENDER_EXTERNAL_URL làm APP_URL. Nginx/PHP-FPM phục vụ port 8080; supervisor quản lý scheduler. Blueprint không cần Node/npm.
@@ -39,7 +39,7 @@ Các email booking phòng được gửi cho cả guest và chủ homestay khi t
 
 ## VNPay sandbox
 
-Blueprint bật VNPay sandbox và khai báo Terminal ID; nhập `VNPAY_SECRET_KEY` trong Render Dashboard, đặt `VNPAY_RETURN_URL` là URL website thật cộng `/api/v1/payment/vn-pay-callback`. Đăng ký IPN HTTPS với VNPay tại `/api/v1/payment/vn-pay-ipn`. VNPay cho sản phẩm/trải nghiệm hiện chưa khả dụng.
+Blueprint bật VNPay sandbox và khai báo Terminal ID; nhập `VNPAY_SECRET_KEY` trong Render Dashboard, đặt `VNPAY_RETURN_URL` là URL website thật cộng `/api/v1/payment/vn-pay-callback`. Đăng ký IPN HTTPS với VNPay tại `/api/v1/payment/vn-pay-ipn`. VNPay dùng được cho phòng và đơn sản phẩm; trải nghiệm hiện vẫn chỉ hỗ trợ tiền mặt.
 
 Kiểm tra trực tiếp ngày 2026-10-24 với merchant mới đã nhận HTTP 200 và nội dung checkout, không còn lỗi terminal chưa được phê duyệt. Vẫn cần chạy một giao dịch bằng thẻ sandbox trên URL Render để xác minh Return URL và IPN công khai. Mã hỗ trợ hoàn tiền/query sandbox có xác thực phản hồi; timeout giữ trạng thái unknown để đối soát, không tự gửi yêu cầu tài chính lặp.
 

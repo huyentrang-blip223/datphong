@@ -1,6 +1,6 @@
 # Thanh toán thử VNPay
 
-VNPay cho phòng sử dụng HMAC SHA512 và kiểm tra chữ ký, số tiền, trạng thái giao dịch khi nhận kết quả. Các lựa chọn thanh toán mô phỏng đã được gỡ theo yêu cầu mới; xem [thanh toán tiền mặt và VNPay](CASH_PAYMENTS.md).
+VNPay cho phòng và đơn sản phẩm sử dụng HMAC SHA512 và kiểm tra chữ ký, số tiền, trạng thái giao dịch khi nhận kết quả. Các lựa chọn thanh toán mô phỏng đã được gỡ theo yêu cầu mới; xem [thanh toán tiền mặt và VNPay](CASH_PAYMENTS.md).
 
 ## Cấu hình local
 
@@ -24,6 +24,8 @@ URL trả kết quả dùng cổng 8000 theo `run.txt`. Đường dẫn mẫu `h
 1. Chạy website theo `run.txt`, truy cập `http://127.0.0.1:8000` và đăng nhập tài khoản guest.
 2. Đặt phòng còn trống và chọn **Thanh toán VNPay** trước khi hết hạn giữ phòng.
 3. Hoàn tất thanh toán thử trên VNPay; trình duyệt quay về trang thanh toán booking. Chỉ kết quả có chữ ký hợp lệ và khớp số tiền mới được ghi nhận.
+
+Đơn sản phẩm cũng có nút VNPay khi chưa chọn tiền mặt. Callback hợp lệ chuyển giao dịch sang `paid` và đơn từ `pending` sang `confirmed`; callback lặp không tạo thanh toán hoặc thông báo trùng. VNPay cho trải nghiệm vẫn chưa được triển khai.
 
 Khi triển khai Render, nhập khóa trong Environment của dịch vụ, đặt Return URL theo URL HTTPS thực tế và đăng ký IPN `/api/v1/payment/vn-pay-ipn` với VNPay. File `.env` local không được đẩy lên GitHub.
 

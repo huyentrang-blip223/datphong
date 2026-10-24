@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\ProductOrder;
+use App\Models\ProductOrderPayment;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +79,51 @@ class VnPayPaymentService
         return rtrim((string) config('services.vnpay.url'), '?').'?'.http_build_query($params);
     }
 
+    public function createProductOrderPaymentUrl(ProductOrder $order, User $guest, string $ipAddress): string
+    {
+        if (! config('services.vnpay.enabled')) {
+            throw new InvalidArgumentException('VNPay hiện chưa khả dụng. Vui lòng chọn thanh toán tiền mặt.');
+        }
+        if ((int) $order->buyer_id !== (int) $guest->id || $guest->role !== 'guest') {
+            throw new InvalidArgumentException('Không có quyền thanh toán đơn hàng này.');
+        }
+
+        $this->assertConfigured();
+
+        $payment = DB::transaction(function () use ($order) {
+            $locked = ProductOrder::whereKey($order->id)->lockForUpdate()->firstOrFail();
+            if (! in_array($locked->status, ['pending', 'confirmed'], true)) {
+                throw new InvalidArgumentException('Đơn hàng không còn cho phép thanh toán.');
+            }
+            if ($locked->payments()->where('gateway', 'cash')->where('status', 'initiated')->exists()) {
+                throw new InvalidArgumentException('Đơn hàng đã chọn thanh toán tiền mặt.');
+            }
+            if ($locked->payments()->where('status', 'paid')->exists()) {
+                throw new InvalidArgumentException('Đơn hàng đã được thanh toán.');
+            }
+
+            return ProductOrderPayment::create([
+                'order_id' => $locked->id,
+                'gateway' => 'vnpay',
+                'txn_ref' => $this->newProductOrderTxnRef($locked),
+                'amount' => $locked->total_amount,
+                'status' => 'initiated',
+            ]);
+        }, 3);
+
+        $createdAt = CarbonImmutable::now('Asia/Ho_Chi_Minh');
+        $params = $this->paymentParams(
+            $payment->txn_ref,
+            (float) $payment->amount,
+            'Thanh toan don san pham '.$order->code,
+            $ipAddress,
+            $createdAt
+        );
+        $params['vnp_SecureHash'] = $this->secureHash($params);
+
+        return rtrim((string) config('services.vnpay.url'), '?').'?'.http_build_query($params);
+    }
+
     public function handleReturn(array $input): array
     {
         $this->assertConfigured();
@@ -105,6 +152,10 @@ class VnPayPaymentService
         $responseCode = (string) ($input['vnp_ResponseCode'] ?? '');
         $transactionStatus = (string) ($input['vnp_TransactionStatus'] ?? '');
         $isPaid = $responseCode === '00' && $transactionStatus === '00';
+
+        if (str_starts_with($txnRef, 'PO')) {
+            return $this->handleProductOrderReturn($txnRef, $isPaid, $input);
+        }
 
         return DB::transaction(function () use ($txnRef, $isPaid, $input) {
             $reference = Payment::where('gateway', 'vnpay')->where('txn_ref', $txnRef)->firstOrFail();
@@ -187,6 +238,100 @@ class VnPayPaymentService
         });
     }
 
+    private function handleProductOrderReturn(string $txnRef, bool $isPaid, array $input): array
+    {
+        return DB::transaction(function () use ($txnRef, $isPaid, $input) {
+            $reference = ProductOrderPayment::where('gateway', 'vnpay')->where('txn_ref', $txnRef)->firstOrFail();
+            $order = ProductOrder::whereKey($reference->order_id)->lockForUpdate()->firstOrFail();
+            $payment = ProductOrderPayment::where('gateway', 'vnpay')
+                ->where('txn_ref', $txnRef)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $expectedAmount = (int) round((float) $payment->amount * 100);
+            $receivedAmount = (int) ($input['vnp_Amount'] ?? 0);
+            if ($receivedAmount !== $expectedAmount) {
+                throw new InvalidArgumentException('Số tiền VNPay không khớp giao dịch.', 4);
+            }
+
+            $wasAlreadyPaid = $payment->status === 'paid';
+            if ($payment->status === 'refunded') {
+                return ['payment' => $payment, 'product_order' => $order, 'success' => false, 'duplicate' => true];
+            }
+
+            if (! $wasAlreadyPaid && $isPaid && $order->payments()->where('status', 'paid')->exists()) {
+                throw new InvalidArgumentException('Đơn hàng đã có giao dịch thanh toán thành công khác.');
+            }
+
+            $status = $isPaid ? 'paid' : 'failed';
+            $paymentStatusChanged = $payment->status !== $status;
+            if (! $wasAlreadyPaid) {
+                $payment->update([
+                    'status' => $status,
+                    'paid_at' => $isPaid ? now() : null,
+                ]);
+            }
+
+            $orderCanBeConfirmed = in_array($order->status, ['pending', 'confirmed'], true);
+            if ($isPaid && ! $wasAlreadyPaid && $order->status === 'pending') {
+                $order->update(['status' => 'confirmed']);
+            }
+
+            $buyer = $order->buyer;
+            $sellerIds = $order->items()->with('product:id,seller_id')->get()
+                ->pluck('product.seller_id')->filter()->unique()->map(fn ($id) => (int) $id);
+            if ($isPaid && ! $wasAlreadyPaid && $orderCanBeConfirmed) {
+                $message = 'Đơn sản phẩm '.$order->code.' đã được VNPay xác nhận thanh toán '.number_format((float) $payment->amount).' đ.';
+                $this->notificationService->send($buyer, 'vnpay_product_order_paid', 'Thanh toán VNPay thành công', $message, 'product_order', $order->id);
+                foreach ($sellerIds as $sellerId) {
+                    $this->notificationService->send($sellerId, 'vnpay_product_order_paid', 'Đơn sản phẩm đã thanh toán', $message, 'product_order', $order->id);
+                }
+            } elseif ($isPaid && ! $wasAlreadyPaid) {
+                $message = 'VNPay đã báo thanh toán cho đơn '.$order->code.' sau khi đơn không còn ở trạng thái có thể xác nhận. Cần đối soát hoàn tiền thủ công.';
+                $this->notificationService->send($buyer, 'vnpay_product_order_late', 'Thanh toán VNPay cần đối soát', $message, 'product_order', $order->id);
+                foreach ($sellerIds as $sellerId) {
+                    $this->notificationService->send($sellerId, 'vnpay_product_order_late', 'Thanh toán VNPay cần đối soát', $message, 'product_order', $order->id);
+                }
+            } elseif (! $isPaid && ! $wasAlreadyPaid && $paymentStatusChanged) {
+                $message = 'Đơn sản phẩm '.$order->code.' chưa được VNPay xác nhận thanh toán. Mã phản hồi: '.($input['vnp_ResponseCode'] ?? 'không có').'.';
+                $this->notificationService->send($buyer, 'vnpay_product_order_failed', 'Thanh toán VNPay thất bại', $message, 'product_order', $order->id);
+            }
+
+            $this->auditLogService->record($buyer, 'vnpay_product_order_'.$status, 'product_order_payments', $payment->id, null, [
+                'order_id' => $order->id,
+                'txn_ref' => $txnRef,
+                'response_code' => $input['vnp_ResponseCode'] ?? null,
+                'transaction_status' => $input['vnp_TransactionStatus'] ?? null,
+            ]);
+
+            return [
+                'payment' => $payment->fresh(),
+                'product_order' => $order->fresh(),
+                'success' => $isPaid && $orderCanBeConfirmed,
+                'duplicate' => $wasAlreadyPaid,
+            ];
+        }, 3);
+    }
+
+    private function paymentParams(string $txnRef, float $amount, string $orderInfo, string $ipAddress, CarbonImmutable $createdAt): array
+    {
+        return [
+            'vnp_Version' => config('services.vnpay.version'),
+            'vnp_Command' => config('services.vnpay.command'),
+            'vnp_TmnCode' => config('services.vnpay.tmn_code'),
+            'vnp_Amount' => (string) ((int) round($amount * 100)),
+            'vnp_CurrCode' => 'VND',
+            'vnp_TxnRef' => $txnRef,
+            'vnp_OrderInfo' => $orderInfo,
+            'vnp_OrderType' => config('services.vnpay.order_type'),
+            'vnp_Locale' => 'vn',
+            'vnp_ReturnUrl' => config('services.vnpay.return_url'),
+            'vnp_IpAddr' => $ipAddress,
+            'vnp_CreateDate' => $createdAt->format('YmdHis'),
+            'vnp_ExpireDate' => $createdAt->addMinutes(15)->format('YmdHis'),
+        ];
+    }
+
     private function secureHash(array $params): string
     {
         ksort($params);
@@ -204,6 +349,11 @@ class VnPayPaymentService
     private function newTxnRef(Booking $booking): string
     {
         return 'BK'.$booking->id.now('Asia/Ho_Chi_Minh')->format('YmdHis').strtoupper(\Illuminate\Support\Str::random(8));
+    }
+
+    private function newProductOrderTxnRef(ProductOrder $order): string
+    {
+        return 'PO'.$order->id.now('Asia/Ho_Chi_Minh')->format('YmdHis').strtoupper(\Illuminate\Support\Str::random(8));
     }
 
     private function assertConfigured(): void

@@ -14,9 +14,9 @@ Các thao tác xác nhận nhận/trả tiền phải gửi `confirmed=1`; số 
 
 ## VNPay
 
-Thông tin trong ảnh người dùng được giữ trong `backend/.env`, không đưa vào Git. `VNPAY_ENABLED=false` vì kiểm tra sandbox trả lỗi merchant chưa được phê duyệt. Khách thấy **VNPay hiện chưa khả dụng** và nút bị vô hiệu hóa; gọi trực tiếp endpoint tạo thanh toán cũng bị từ chối.
+Thông tin bí mật VNPay được giữ trong `backend/.env` hoặc Render Environment, không đưa vào Git. Khi `VNPAY_ENABLED=false`, khách thấy **VNPay hiện chưa khả dụng**, nút bị vô hiệu hóa và endpoint tạo thanh toán từ chối yêu cầu. Merchant sandbox hiện tại đã vượt qua probe trang checkout nên Render cấu hình `VNPAY_ENABLED=true`.
 
-Sau khi merchant hoạt động, đặt `VNPAY_ENABLED=true` rồi chạy `php artisan config:clear` trong `backend` để mở lại VNPay cho đặt phòng. Return URL local là `http://127.0.0.1:8000/api/v1/payment/vn-pay-callback`. Callback/IPN vẫn kiểm tra chữ ký, số tiền và trạng thái; không dùng kết quả giả. VNPay cho sản phẩm và trải nghiệm chưa được triển khai, vì vậy tiếp tục vô hiệu hóa ở hai trang đó.
+Sau khi merchant hoạt động, đặt `VNPAY_ENABLED=true` rồi chạy `php artisan config:clear` trong `backend` để mở VNPay cho đặt phòng và đơn sản phẩm. Return URL local là `http://127.0.0.1:8000/api/v1/payment/vn-pay-callback`. Callback/IPN vẫn kiểm tra chữ ký, số tiền và trạng thái; không dùng kết quả giả. VNPay cho trải nghiệm chưa được triển khai nên vẫn bị vô hiệu hóa ở trang trải nghiệm.
 
 ## Kiểm chứng
 
