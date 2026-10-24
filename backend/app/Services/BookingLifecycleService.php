@@ -78,7 +78,6 @@ class BookingLifecycleService
             $this->release($locked, $locked->status === 'confirmed' ? 'units_sold' : 'units_held');
             $locked->cancel_reason = 'guest_cancelled';
             $this->change($locked, 'cancelled', $actor, 'guest_cancelled');
-            app(NotificationService::class)->send((int) $locked->room->homestay->owner_id, 'booking_cancelled', 'Khách đã hủy booking', $locked->code, 'booking', $locked->id);
 
             return $locked;
         }, 3);
@@ -160,6 +159,26 @@ class BookingLifecycleService
         $booking->save();
         BookingStatusLog::create(['booking_id' => $booking->id, 'from_status' => $from, 'to_status' => $status, 'actor_id' => $actor?->id, 'reason' => $reason]);
         app(AuditLogService::class)->record($actor, $reason, 'bookings', $booking->id, ['status' => $from], ['status' => $status]);
-        app(NotificationService::class)->send((int) $booking->guest_id, 'booking_'.$status, 'Cập nhật booking '.$booking->code, 'Trạng thái: '.$status, 'booking', $booking->id);
+
+        $labels = [
+            'confirmed' => 'đã được xác nhận',
+            'cancelled' => 'đã bị hủy',
+            'expired' => 'đã hết hạn giữ chỗ',
+            'refunded' => 'đã hoàn tiền',
+            'completed' => 'đã hoàn tất',
+        ];
+        $label = $labels[$status] ?? ('đã chuyển sang '.$status);
+        $booking->loadMissing('room.homestay');
+        $message = sprintf(
+            'Booking %s cho phòng %s (%s đến %s) %s.',
+            $booking->code,
+            $booking->room->name,
+            $booking->checkin_date->format('d/m/Y'),
+            $booking->checkout_date->format('d/m/Y'),
+            $label
+        );
+        $notifications = app(NotificationService::class);
+        $notifications->send((int) $booking->guest_id, 'booking_'.$status, 'Booking '.$label, $message, 'booking', $booking->id);
+        $notifications->send((int) $booking->room->homestay->owner_id, 'booking_'.$status, 'Booking '.$label, $message, 'booking', $booking->id);
     }
 }

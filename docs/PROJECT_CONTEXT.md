@@ -351,3 +351,10 @@ Current operation and validation: `docs/CASH_PAYMENTS.md`.
 - A signed sandbox checkout probe returned HTTP 200 with checkout markers and no terminal-approval error.
 - Room booking remains `holding` until a valid signed VNPay result with matching amount reports both response and transaction status `00`; only then is it moved atomically to `confirmed`. Failed, late, duplicate, cancelled and expired callback paths retain the existing inventory and reconciliation protections.
 - End-to-end browser payment with a VNPay sandbox test card and independently delivered IPN still requires manual verification.
+
+## 21. Render transactional email completion — 2026-10-24
+
+- The Render Blueprint uses the existing HTTPS-based Resend transport, enables transactional notifications and keeps the API key/sender address as dashboard-provided secrets.
+- Room booking lifecycle email now reaches both the guest and owning host for creation, confirmation, cancellation, hold expiry, refund and completion.
+- VNPay paid/failed/late-settlement notifications now reach both sides. Replayed failed callbacks do not resend the same payment-result email; late settlement warns that inventory was not restored and reconciliation is required.
+- Cash selection, receipt and cash-refund notifications include the booking reference and notify both relevant parties for room bookings.

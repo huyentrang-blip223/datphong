@@ -38,7 +38,12 @@ class CashPaymentService
                 $locked->update(['status' => 'confirmed']);
             }
             app(AuditLogService::class)->record($guest, 'cash_payment_selected', $payment->getTable(), $payment->id);
-            app(NotificationService::class)->send($guest, 'cash_payment_selected', 'Đã chọn thanh toán tiền mặt', 'Vui lòng thanh toán trực tiếp cho đơn vị cung cấp. Chưa ghi nhận đã thu tiền.');
+            $referenceType = $locked instanceof Booking ? 'booking' : ($locked instanceof ProductOrder ? 'product_order' : 'experience_booking');
+            $notifications = app(NotificationService::class);
+            $notifications->send($guest, 'cash_payment_selected', 'Đã chọn thanh toán tiền mặt', 'Vui lòng thanh toán trực tiếp cho đơn vị cung cấp. Chưa ghi nhận đã thu tiền.', $referenceType, $locked->id);
+            if ($locked instanceof Booking) {
+                $notifications->send((int) $locked->room->homestay->owner_id, 'cash_payment_selected', 'Booking chọn thanh toán tiền mặt', 'Booking '.$locked->code.' sẽ thanh toán tiền mặt trực tiếp.', 'booking', $locked->id);
+            }
 
             return $payment;
         }, 3);
@@ -65,7 +70,12 @@ class CashPaymentService
                 app(LoyaltyService::class)->award($this->customerId($locked), (int) floor((float) $locked->total_amount / 10000), 'product_order_delivered', null, $locked->id);
             }
             app(AuditLogService::class)->record($actor, 'cash_payment_paid', $payment->getTable(), $payment->id, ['status' => 'initiated'], ['status' => 'paid', 'amount' => $payment->amount]);
-            app(NotificationService::class)->send($this->customerId($locked), 'payment_paid', 'Đã nhận tiền mặt', 'Đơn vị cung cấp đã xác nhận nhận đủ tiền thanh toán.');
+            $referenceType = $locked instanceof Booking ? 'booking' : ($locked instanceof ProductOrder ? 'product_order' : 'experience_booking');
+            $notifications = app(NotificationService::class);
+            $notifications->send($this->customerId($locked), 'payment_paid', 'Đã nhận tiền mặt', 'Đơn vị cung cấp đã xác nhận nhận đủ tiền thanh toán.', $referenceType, $locked->id);
+            if ($locked instanceof Booking) {
+                $notifications->send($actor, 'payment_paid', 'Đã xác nhận tiền mặt', 'Đã ghi nhận thanh toán tiền mặt cho booking '.$locked->code.'.', 'booking', $locked->id);
+            }
 
             return $payment;
         }, 3);
@@ -95,7 +105,12 @@ class CashPaymentService
                 $locked->update(['status' => 'refunded']);
             }
             app(AuditLogService::class)->record($actor, 'cash_payment_refunded', $payment->getTable(), $payment->id, ['status' => 'paid'], ['status' => 'refunded']);
-            app(NotificationService::class)->send($this->customerId($locked), 'payment_refunded', 'Đã hoàn tiền mặt', 'Đơn vị cung cấp đã xác nhận trả lại tiền mặt.');
+            $referenceType = $locked instanceof Booking ? 'booking' : ($locked instanceof ProductOrder ? 'product_order' : 'experience_booking');
+            $notifications = app(NotificationService::class);
+            $notifications->send($this->customerId($locked), 'payment_refunded', 'Đã hoàn tiền mặt', 'Đơn vị cung cấp đã xác nhận trả lại tiền mặt.', $referenceType, $locked->id);
+            if ($locked instanceof Booking) {
+                $notifications->send($actor, 'payment_refunded', 'Đã xác nhận hoàn tiền mặt', 'Đã ghi nhận hoàn tiền mặt cho booking '.$locked->code.'.', 'booking', $locked->id);
+            }
 
             return $payment;
         }, 3);

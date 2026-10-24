@@ -1,6 +1,7 @@
 <?php
 namespace Tests\Feature;
 
+use App\Mail\BusinessNotificationMail;
 use App\Models\Booking;
 use App\Models\Homestay;
 use App\Models\LocalProduct;
@@ -12,6 +13,7 @@ use App\Models\User;
 use App\Services\BookingService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class Week8OrderPaymentReviewTest extends TestCase
@@ -146,6 +148,7 @@ class Week8OrderPaymentReviewTest extends TestCase
 
     public function test_vnpay_payment_url_and_callback_mark_booking_payment_paid(): void
     {
+        Mail::fake();
         config([
             'services.vnpay.enabled' => true, 'services.vnpay.url' => 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html',
             'services.vnpay.tmn_code' => 'TESTCODE',
@@ -154,8 +157,10 @@ class Week8OrderPaymentReviewTest extends TestCase
             'services.vnpay.version' => '2.1.0',
             'services.vnpay.command' => 'pay',
             'services.vnpay.order_type' => 'other',
+            'mail.notifications_enabled' => true,
         ]);
         [$guest, $booking] = $this->bookingForGuest('w8-vnpay-guest@dt07.test');
+        $host = $booking->room->homestay->owner;
 
         $response = $this->actingAs($guest)->postJson(route('guest.payments.vnpay', $booking));
 
@@ -183,6 +188,10 @@ class Week8OrderPaymentReviewTest extends TestCase
 
         $this->assertSame('paid', $payment->fresh()->status);
         $this->assertSame('confirmed', $booking->fresh()->status);
+        Mail::assertSent(BusinessNotificationMail::class, fn ($mail) => $mail->hasTo($guest->email)
+            && $mail->title === 'Thanh toán VNPay thành công');
+        Mail::assertSent(BusinessNotificationMail::class, fn ($mail) => $mail->hasTo($host->email)
+            && $mail->title === 'Booking đã thanh toán qua VNPay');
     }
 
     public function test_web_booking_redirects_to_payment_checkout(): void

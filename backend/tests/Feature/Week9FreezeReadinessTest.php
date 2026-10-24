@@ -112,6 +112,15 @@ class Week9FreezeReadinessTest extends TestCase
             'type' => 'booking_created',
         ]);
         Mail::assertSent(BusinessNotificationMail::class, 2);
+
+        $booking = Booking::where('guest_id', $guest->id)->latest('id')->firstOrFail();
+        $host = $booking->room->homestay->owner;
+        $this->actingAs($guest)->postJson(route('guest.bookings.cancel', $booking))->assertOk();
+
+        Mail::assertSent(BusinessNotificationMail::class, fn ($mail) => $mail->hasTo($guest->email)
+            && $mail->title === 'Booking đã bị hủy');
+        Mail::assertSent(BusinessNotificationMail::class, fn ($mail) => $mail->hasTo($host->email)
+            && $mail->title === 'Booking đã bị hủy');
     }
 
     public function test_host_can_view_only_related_bookings(): void

@@ -129,8 +129,9 @@ class BookingService
                 'reason' => 'guest_booking_created',
             ]);
 
-            $this->notificationService->send($guest, 'booking_created', 'Đặt phòng thành công', 'Booking '.$booking->code.' đã được tạo.', 'booking', $booking->id);
-            $this->notificationService->send((int) $room->homestay->owner_id, 'booking_created', 'Có booking mới', 'Phòng '.$room->name.' có booking '.$booking->code.'.', 'booking', $booking->id);
+            $bookingMessage = 'Booking '.$booking->code.' cho phòng '.$room->name.' từ '.CarbonImmutable::parse($checkin)->format('d/m/Y').' đến '.CarbonImmutable::parse($checkout)->format('d/m/Y').' đang giữ chỗ đến '.$booking->hold_expires_at->format('H:i d/m/Y').' và chờ thanh toán.';
+            $this->notificationService->send($guest, 'booking_created', 'Đã tạo booking — chờ thanh toán', $bookingMessage, 'booking', $booking->id);
+            $this->notificationService->send((int) $room->homestay->owner_id, 'booking_created', 'Có booking mới đang giữ chỗ', $bookingMessage, 'booking', $booking->id);
             $this->auditLogService->record($guest, 'booking_created', 'bookings', $booking->id, null, [
                 'room_id' => $room->id,
                 'checkin_date' => $checkin,

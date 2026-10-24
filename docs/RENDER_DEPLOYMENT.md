@@ -31,15 +31,17 @@ python scripts/check-https.py https://URL-THAT-CUA-BAN.onrender.com
 - File ảnh/giấy tờ upload trên Free có thể mất khi restart/redeploy. Để giữ đầy đủ chức năng upload, nâng dịch vụ Laravel lên gói hỗ trợ disk và gắn disk tại `/var/www/html/storage`. Mã startup tạo lại thư mục/symlink. Việc nâng gói cần người dùng xem và chấp nhận chi phí trong Render. Không lưu database vào filesystem của Free.
 - Hai dịch vụ dùng chung hạn mức Free của workspace. Kiểm tra hạn mức hiện hành trước khi sử dụng lâu dài.
 
-## Email quên mật khẩu trên Render
+## Email giao dịch và quên mật khẩu trên Render
 
-Free chặn cổng SMTP 25/465/587. Đã thêm mailer HTTP Resend để gửi qua HTTPS: đặt MAIL_MAILER=resend, RESEND_API_KEY và MAIL_FROM_ADDRESS là địa chỉ được nhà cung cấp xác thực. Cấu hình mặc định log chỉ phục vụ kiểm tra ban đầu, chưa gửi email tới người dùng. Khóa và xác thực sender/domain cần tài khoản của người dùng.
+Free chặn cổng SMTP 25/465/587. Mailer HTTP Resend gửi qua HTTPS: đặt `MAIL_MAILER=resend`, `MAIL_NOTIFICATIONS_ENABLED=true`, `RESEND_API_KEY` và `MAIL_FROM_ADDRESS` là địa chỉ thuộc domain đã xác thực. Blueprint đã khai báo các biến này nhưng giữ API key/sender ở `sync: false` để nhập qua Render Dashboard, không commit secret.
+
+Các email booking phòng được gửi cho cả guest và chủ homestay khi tạo booking, xác nhận/hủy/hết hạn/hoàn tiền/hoàn tất, chọn hoặc xác nhận tiền mặt, và khi VNPay thành công/thất bại/đến muộn cần đối soát. Callback VNPay replay không gửi lại email kết quả thanh toán nếu trạng thái giao dịch không đổi. Lỗi nhà cung cấp mail được ghi warning nhưng không làm rollback booking/thanh toán.
 
 ## VNPay sandbox
 
-Giữ `VNPAY_ENABLED=false` khi merchant chưa hoạt động; website cho khách chọn thanh toán tiền mặt và hiển thị VNPay chưa khả dụng. Khi merchant đã được phê duyệt, nhập VNPAY_TMN_CODE và VNPAY_SECRET_KEY, đặt VNPAY_RETURN_URL là URL website thật cộng `/api/v1/payment/vn-pay-callback`, rồi đặt `VNPAY_ENABLED=true` để mở thanh toán phòng. Đăng ký IPN HTTPS với VNPay tại `/api/v1/payment/vn-pay-ipn`. VNPay cho sản phẩm/trải nghiệm hiện chưa khả dụng.
+Blueprint bật VNPay sandbox và khai báo Terminal ID; nhập `VNPAY_SECRET_KEY` trong Render Dashboard, đặt `VNPAY_RETURN_URL` là URL website thật cộng `/api/v1/payment/vn-pay-callback`. Đăng ký IPN HTTPS với VNPay tại `/api/v1/payment/vn-pay-ipn`. VNPay cho sản phẩm/trải nghiệm hiện chưa khả dụng.
 
-Kiểm tra trực tiếp ngày 2026-10-18 bằng cấu hình local hiện có đã tới máy chủ sandbox, nhưng trang cổng phản hồi **Website này chưa được phê duyệt**. Không có giao dịch thành công hoặc hoàn tiền bên ngoài nào được tuyên bố. Mã đã hỗ trợ hoàn tiền/query sandbox có xác thực phản hồi; timeout giữ trạng thái unknown để đối soát, không tự gửi yêu cầu tài chính lặp.
+Kiểm tra trực tiếp ngày 2026-10-24 với merchant mới đã nhận HTTP 200 và nội dung checkout, không còn lỗi terminal chưa được phê duyệt. Vẫn cần chạy một giao dịch bằng thẻ sandbox trên URL Render để xác minh Return URL và IPN công khai. Mã hỗ trợ hoàn tiền/query sandbox có xác thực phản hồi; timeout giữ trạng thái unknown để đối soát, không tự gửi yêu cầu tài chính lặp.
 
 ## Trạng thái kiểm chứng
 

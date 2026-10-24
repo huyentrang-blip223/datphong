@@ -45,7 +45,31 @@ services:
       - key: DEPLOY_DEMO_DATA
         value: "false"
       - key: MAIL_MAILER
-        value: log
+        value: resend
+      - key: MAIL_NOTIFICATIONS_ENABLED
+        value: "true"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: "DT07 Homestay"
+      - key: VNPAY_ENABLED
+        value: "true"
+      - key: VNPAY_PAY_URL
+        value: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+      - key: VNPAY_TMN_CODE
+        value: BDU3W4CJ
+      - key: VNPAY_SECRET_KEY
+        sync: false
+      - key: VNPAY_RETURN_URL
+        sync: false
+      - key: VNPAY_VERSION
+        value: 2.1.0
+      - key: VNPAY_COMMAND
+        value: pay
+      - key: VNPAY_ORDER_TYPE
+        value: other
       - key: PY_SERVICE_URL
         sync: false
       - key: PY_SERVICE_TOKEN

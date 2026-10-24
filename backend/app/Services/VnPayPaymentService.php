@@ -133,6 +133,9 @@ class VnPayPaymentService
                     $payment->update(['status' => 'paid', 'paid_at' => now(), 'gateway_transaction_no' => $input['vnp_TransactionNo'] ?? null, 'refund_state' => 'required']);
                     app(BookingLifecycleService::class)->expireDue($booking->room_id);
                     $this->auditLogService->record($booking->guest, 'late_vnpay_settlement', 'payments', $payment->id, null, ['refund_required' => true]);
+                    $lateMessage = 'VNPay đã báo thanh toán cho booking '.$booking->code.' sau khi giữ chỗ kết thúc. Booking không được khôi phục và giao dịch cần đối soát hoàn tiền.';
+                    $this->notificationService->send($booking->guest, 'vnpay_payment_late', 'Thanh toán VNPay đến muộn', $lateMessage, 'booking', $booking->id);
+                    $this->notificationService->send((int) $booking->room->homestay->owner_id, 'vnpay_payment_late', 'Thanh toán VNPay đến muộn', $lateMessage, 'booking', $booking->id);
 
                     return ['payment' => $payment->fresh(), 'booking' => $booking->fresh(), 'success' => false];
                 }
@@ -145,6 +148,7 @@ class VnPayPaymentService
                 }
             }
 
+            $paymentStatusChanged = $payment->status !== $status;
             if (! $wasAlreadyPaid) {
                 $payment->update([
                     'status' => $status,
@@ -155,11 +159,16 @@ class VnPayPaymentService
             }
 
             $guest = $booking->guest;
+            $hostId = (int) $booking->room->homestay->owner_id;
             if ($isPaid && $guest && ! $wasAlreadyPaid) {
                 $this->loyaltyService->award($guest, (int) floor((float) $booking->total_amount / 10000), 'vnpay_booking_payment', $booking->id);
-                $this->notificationService->send($guest, 'vnpay_payment_paid', 'Thanh toán VNPay thành công', 'Booking '.$booking->code.' đã được VNPay xác nhận.', 'booking', $booking->id);
-            } elseif (! $isPaid && $guest) {
-                $this->notificationService->send($guest, 'vnpay_payment_failed', 'Thanh toán VNPay thất bại', 'Booking '.$booking->code.' chưa được thanh toán thành công.', 'booking', $booking->id);
+                $message = 'Booking '.$booking->code.' đã được VNPay xác nhận thanh toán '.number_format((float) $payment->amount).' đ.';
+                $this->notificationService->send($guest, 'vnpay_payment_paid', 'Thanh toán VNPay thành công', $message, 'booking', $booking->id);
+                $this->notificationService->send($hostId, 'vnpay_payment_paid', 'Booking đã thanh toán qua VNPay', $message, 'booking', $booking->id);
+            } elseif (! $isPaid && $guest && $paymentStatusChanged) {
+                $message = 'Booking '.$booking->code.' chưa được VNPay xác nhận thanh toán. Mã phản hồi: '.($input['vnp_ResponseCode'] ?? 'không có').'.';
+                $this->notificationService->send($guest, 'vnpay_payment_failed', 'Thanh toán VNPay thất bại', $message, 'booking', $booking->id);
+                $this->notificationService->send($hostId, 'vnpay_payment_failed', 'Thanh toán VNPay chưa thành công', $message, 'booking', $booking->id);
             }
 
             $this->auditLogService->record($guest, 'vnpay_payment_'.$status, 'payments', $payment->id, null, [
